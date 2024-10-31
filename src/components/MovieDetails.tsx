@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { fetchMovieById, fetchMovieCast } from "../utils/api";
 import calculateMovieAge from "../utils/calculateMovieAge";
 import { Movie, Actor } from "../types/types";
@@ -88,14 +88,17 @@ const MovieDetails: React.FC = () => {
       <ul className={styles.castList}>
         {filteredCast.map((actor) => (
           <li key={actor.id} className={styles.castItem}>
-            <img
-              src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}
-              alt={`${actor.name}'s profile`}
-              className={`${styles.actorImage} ${
-                actor.deathday ? styles.Deceased : ""
-              }`}
-            />
-            <strong>{actor.name}</strong> as {actor.character}
+            <Link to={`/actor/${actor.id}`}>
+              <img
+                src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}
+                alt={`${actor.name}'s profile`}
+                className={`${styles.actorImage} ${
+                  actor.deathday ? styles.Deceased : ""
+                }`}
+              />
+              <strong>{actor.name}</strong>
+            </Link>
+            as {actor.character}
             <p>Birthday: {actor.birthday || "No Data Available"}</p>
             {/* Conditionally render age details */}
             {actor.deathday ? (

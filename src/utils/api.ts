@@ -105,9 +105,9 @@ export const fetchMovieCast = async (
           birthday: formattedBirthday,
           deathday: formattedDeathday,
           profile_path: actor.profile_path,
-          ageAtRelease: ageAtRelease, // Remove the ternary, just pass null
-          currentAge: currentAge, // Remove the ternary, just pass null
-          ageAtDeath: ageAtDeath, // Remove the ternary, just pass null
+          ageAtRelease,
+          currentAge,
+          ageAtDeath,
         };
       })
     );
@@ -115,6 +115,42 @@ export const fetchMovieCast = async (
     return castWithDetails;
   } catch (error) {
     console.error("Error fetching cast details:", error);
+    return [];
+  }
+};
+
+/**
+ * Fetches an actor's filmography, calculating the actor's age at each movie release.
+ * @param actorId - The unique ID of the actor
+ * @returns A list of movies with age calculations for the actor at the time of each movie's release
+ */
+export const fetchActorFilmography = async (
+  actorId: number
+): Promise<Movie[]> => {
+  try {
+    const actorDetails = await fetchActorDetails(actorId); // Fetch actor’s birth details
+    const response = await axios.get<{ cast: Movie[] }>(
+      `${API_BASE_URL}/person/${actorId}/movie_credits?api_key=${API_KEY}`
+    );
+
+    const filmographyWithAges = response.data.cast.map((movie) => {
+      const formattedReleaseDate = movie.release_date
+        ? new Date(movie.release_date).toISOString().slice(0, 10)
+        : null;
+      const ageAtRelease =
+        actorDetails.birthday && formattedReleaseDate
+          ? calculateAgeAtDate(actorDetails.birthday, formattedReleaseDate)
+          : null;
+
+      return {
+        ...movie,
+        ageAtRelease, // Actor's age during this movie's release
+      };
+    });
+
+    return filmographyWithAges;
+  } catch (error) {
+    console.error("Error fetching actor filmography:", error);
     return [];
   }
 };
