@@ -97,10 +97,16 @@ const MovieDetails: React.FC = () => {
             />
             <strong>{actor.name}</strong> as {actor.character}
             <p>Birthday: {actor.birthday || "No Data Available"}</p>
+            {/* Conditionally render age details */}
             {actor.deathday ? (
-              <p>
-                Deceased: {actor.deathday} (Age at Death: {actor.ageAtDeath})
-              </p>
+              <>
+                <p>
+                  Deceased: {actor.deathday} (Age at Death: {actor.ageAtDeath})
+                </p>
+                <p>
+                  Age at Release: {actor.ageAtRelease ?? "No Data Available"}
+                </p>
+              </>
             ) : (
               <>
                 <p>Current Age: {actor.currentAge ?? "No Data Available"}</p>
