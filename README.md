@@ -1,50 +1,92 @@
-# React + TypeScript + Vite
+# Movie Search App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a Movie Search App built with Vite, React, and TypeScript. It allows users to search for movies, view detailed cast information, and displays each cast member's birthday, current age, age at release, and death information (if applicable).
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Search movies by title
+- View movie cast and detailed actor information, including:
+  - Birthday, deathday (if deceased)
+  - Current age and age at release
 
-## Expanding the ESLint configuration
+## Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **Node.js** (version 14 or higher)
+- **TMDb API Key**: Create a [TMDb](https://www.themoviedb.org/) account to obtain an API key.
 
-- Configure the top-level `parserOptions` property like this:
+## Project Setup
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+1. **Clone the repository**:
+
+   ```bash
+   git clone https://github.com/your-username/your-repo-name.git
+   cd your-repo-name
+   ```
+
+2. **Install dependencies**:
+
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**:
+
+   Create a `.env` file in the root directory and add your TMDb API key:
+
+   ```plaintext
+   VITE_TMDB_API_KEY=YOUR_API_KEY_HERE
+   ```
+
+## Development
+
+To start the development server:
+
+```bash
+npm run dev
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+This will start the Vite development server and open the app at `http://localhost:3000`.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+## Build for Production
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+To build the project for production:
+
+```bash
+npm run build
 ```
+
+The output will be in the `dist/` directory.
+
+## Project Structure
+
+```plaintext
+src
+├── components
+│   ├── MovieSearch.tsx        # Main search component
+│   ├── MovieList.tsx          # Component to list movies
+│   ├── MovieItem.tsx          # Individual movie details with "View Cast" button
+│   └── CastList.tsx           # Component to list cast members and their details
+├── hooks
+│   └── useFetch.ts            # Custom hook for fetching data (optional if using fetch functions directly)
+├── utils
+│   ├── calculateAge.ts        # Utility for age calculations
+│   ├── api.ts                 # Centralized API request functions, including fetchCast
+│   └── fetchActorDetails.ts   # Fetches individual actor details (e.g., birthday, deathday)
+├── types
+│   └── types.ts               # Define types for Movies, Cast, Actor, etc.
+└── App.tsx                    # Main App component
+```
+
+## API Overview
+
+- **`fetchMovies(query: string): Promise<Movie[]>`** - Fetches movies matching the search query.
+- **`fetchMovieCast(movieId: number, releaseDate: string): Promise<Actor[]>`** - Fetches the cast of a movie, with details on each actor’s birthday, deathday, and calculated ages.
+
+## Key Utility Functions
+
+- **`calculateAgeAtDate(birthDate: string | null, targetDate: string): number | null`** - Calculates age at a specified date.
+- **`fetchActorDetails(actorId: number): Promise<ActorDetails>`** - Fetches detailed information for a specific actor, including birthday and deathday.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
