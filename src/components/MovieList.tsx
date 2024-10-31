@@ -1,6 +1,7 @@
 import React from "react";
 import MovieItem from "./MovieItem";
 import { Movie } from "../types/types";
+import "./MovieList.module.css";
 
 interface MovieListProps {
   movies: Movie[];

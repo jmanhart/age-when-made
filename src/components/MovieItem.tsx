@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import CastList from "./CastList";
 import { Movie, Cast } from "../types/types";
 import { fetchMovieCast } from "../utils/api";
+import "./MovieItem.module.css";
 
 interface MovieItemProps {
   movie: Movie;

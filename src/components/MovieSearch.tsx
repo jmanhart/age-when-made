@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import MovieList from "./MovieList";
 import { fetchMovies } from "../utils/api";
+import "./MovieSearch.module.css";
 
 const MovieSearch: React.FC = () => {
   const [query, setQuery] = useState<string>("");
