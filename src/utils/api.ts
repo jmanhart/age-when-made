@@ -105,9 +105,9 @@ export const fetchMovieCast = async (
           birthday: formattedBirthday,
           deathday: formattedDeathday,
           profile_path: actor.profile_path,
-          ageAtRelease: ageAtRelease !== null ? ageAtRelease : "N/A",
-          currentAge: currentAge !== null ? currentAge : "N/A",
-          ageAtDeath: ageAtDeath !== null ? ageAtDeath : "N/A",
+          ageAtRelease: ageAtRelease, // Remove the ternary, just pass null
+          currentAge: currentAge, // Remove the ternary, just pass null
+          ageAtDeath: ageAtDeath, // Remove the ternary, just pass null
         };
       })
     );

@@ -14,10 +14,11 @@ export interface MovieResponse {
 
 // Basic cast information returned by the credits endpoint
 export interface Cast {
-  birthday: string;
+  birthday: string | null;
   id: number;
   name: string;
   character: string;
+  profile_path: string | null;
 }
 
 // Detailed actor information, extending Cast with additional fields
