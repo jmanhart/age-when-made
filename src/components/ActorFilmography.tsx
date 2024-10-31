@@ -15,7 +15,15 @@ const ActorFilmography: React.FC = () => {
     const getActorData = async () => {
       if (actorId) {
         const actorDetails = await fetchActorDetails(Number(actorId));
-        setActor(actorDetails);
+        const actorWithAge: Actor = {
+          ...actorDetails,
+          id: Number(actorId),
+          ageAtRelease: null,
+          currentAge: null,
+          ageAtDeath: null,
+          character: "",
+        };
+        setActor(actorWithAge);
 
         const filmographyData = await fetchActorFilmography(Number(actorId));
         setFilmography(filmographyData);

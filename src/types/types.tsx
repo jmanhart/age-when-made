@@ -1,5 +1,6 @@
 // Movie information returned by the movie search API
 export interface Movie {
+  ageAtRelease: number | null;
   id: number;
   title: string;
   release_date: string;
