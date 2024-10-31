@@ -1,5 +1,6 @@
 import React from "react";
 import { Cast } from "../types/types";
+import "./CastList.module.css";
 
 interface CastListProps {
   cast: Cast[];

@@ -14,6 +14,7 @@ export interface MovieResponse {
 
 // Basic cast information returned by the credits endpoint
 export interface Cast {
+  birthday: string;
   id: number;
   name: string;
   character: string;
