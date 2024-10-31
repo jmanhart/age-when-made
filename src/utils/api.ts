@@ -20,7 +20,7 @@ export const fetchMovies = async (query: string): Promise<Movie[]> => {
 /**
  * Fetches the detailed cast list for a specific movie, including each actor's birthday, deathday, and age calculations.
  * @param movieId - The unique ID of the movie
- * @param releaseDate - The release date of the movie
+ * @param releaseDate - The release date of the movie in "YYYY-MM-DD" format
  * @returns A list of cast members with detailed information
  */
 export const fetchMovieCast = async (
@@ -35,6 +35,13 @@ export const fetchMovieCast = async (
   const castWithDetails = await Promise.all(
     response.data.cast.map(async (actor) => {
       const actorDetails = await fetchActorDetails(actor.id); // Fetch individual details like birthday and deathday
+
+      // Debugging log to verify actor details fetched correctly
+      console.log("Actor Details:", {
+        name: actor.name,
+        birthday: actorDetails.birthday,
+        deathday: actorDetails.deathday,
+      });
 
       // Calculate ages based on birthday and movie release date
       const ageAtRelease = calculateAgeAtDate(
@@ -55,9 +62,9 @@ export const fetchMovieCast = async (
         ...actor,
         birthday: actorDetails.birthday,
         deathday: actorDetails.deathday,
-        ageAtRelease,
-        currentAge,
-        ageAtDeath,
+        ageAtRelease: ageAtRelease !== null ? ageAtRelease : "POOP",
+        currentAge: currentAge !== null ? currentAge : "N/A",
+        ageAtDeath: ageAtDeath !== null ? ageAtDeath : "N/A",
       };
     })
   );
