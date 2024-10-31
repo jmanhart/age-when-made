@@ -1,13 +1,12 @@
 import React from "react";
 import { Cast } from "../types/types";
-import { calculateAgeAtDate } from "../utils/calculateAge";
 
 interface CastListProps {
   cast: Cast[];
   releaseDate: string;
 }
 
-const CastList: React.FC<CastListProps> = ({ cast, releaseDate }) => (
+const CastList: React.FC<CastListProps> = ({ cast }) => (
   <ul>
     {cast.map((actor) => (
       <li key={actor.id}>

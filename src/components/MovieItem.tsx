@@ -11,7 +11,13 @@ const MovieItem: React.FC<MovieItemProps> = ({ movie }) => {
   const [cast, setCast] = useState<Cast[]>([]);
 
   const handleViewCast = async () => {
-    const castData = await fetchMovieCast(movie.id);
+    const releaseDate = movie.release_date; // Pull release date directly from movie data
+    console.log("Calling fetchMovieCast with:", {
+      movieId: movie.id,
+      releaseDate,
+    }); // Log to verify
+
+    const castData = await fetchMovieCast(movie.id, releaseDate); // Pass releaseDate to fetchMovieCast
     setCast(castData);
   };
 

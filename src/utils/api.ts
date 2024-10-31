@@ -27,42 +27,55 @@ export const fetchMovieCast = async (
   movieId: number,
   releaseDate: string
 ): Promise<Actor[]> => {
+  console.log("fetchMovieCast called with:", { movieId, releaseDate }); // Log to check releaseDate
+
   const response = await axios.get<{ cast: Cast[] }>(
     `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${apiKey}`
   );
+
+  // Fallback if releaseDate is empty or invalid
+  const formattedReleaseDate = releaseDate
+    ? new Date(releaseDate).toISOString().slice(0, 10)
+    : "1970-01-01";
 
   // Enrich cast with actor details, including birthday and age calculations
   const castWithDetails = await Promise.all(
     response.data.cast.map(async (actor) => {
       const actorDetails = await fetchActorDetails(actor.id); // Fetch individual details like birthday and deathday
 
-      // Debugging log to verify actor details fetched correctly
       console.log("Actor Details:", {
         name: actor.name,
         birthday: actorDetails.birthday,
         deathday: actorDetails.deathday,
       });
 
-      // Calculate ages based on birthday and movie release date
+      const formattedBirthday = actorDetails.birthday
+        ? new Date(actorDetails.birthday).toISOString().slice(0, 10)
+        : null;
+      const formattedDeathday = actorDetails.deathday
+        ? new Date(actorDetails.deathday).toISOString().slice(0, 10)
+        : null;
+
+      // Calculate ages based on birthday and movie release date with fallback release date
       const ageAtRelease = calculateAgeAtDate(
-        actorDetails.birthday,
-        releaseDate
+        formattedBirthday,
+        formattedReleaseDate
       );
-      const currentAge = actorDetails.deathday
+      const currentAge = formattedDeathday
         ? null
         : calculateAgeAtDate(
-            actorDetails.birthday,
+            formattedBirthday,
             new Date().toISOString().slice(0, 10)
           );
-      const ageAtDeath = actorDetails.deathday
-        ? calculateAgeAtDate(actorDetails.birthday, actorDetails.deathday)
+      const ageAtDeath = formattedDeathday
+        ? calculateAgeAtDate(formattedBirthday, formattedDeathday)
         : null;
 
       return {
         ...actor,
-        birthday: actorDetails.birthday,
-        deathday: actorDetails.deathday,
-        ageAtRelease: ageAtRelease !== null ? ageAtRelease : "POOP",
+        birthday: formattedBirthday,
+        deathday: formattedDeathday,
+        ageAtRelease: ageAtRelease !== null ? ageAtRelease : "N/A",
         currentAge: currentAge !== null ? currentAge : "N/A",
         ageAtDeath: ageAtDeath !== null ? ageAtDeath : "N/A",
       };
