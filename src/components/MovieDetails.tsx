@@ -3,6 +3,7 @@ import { fetchMovieById, fetchMovieCast } from "../utils/api"; // Import fetchMo
 import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
 import calculateMovieAge from "../utils/calculateMovieAge"; // Import the helper function
 import { Movie, Actor } from "../types/types";
+import styles from "./MovieDetails.module.css";
 
 const MovieDetails: React.FC = () => {
   const { movieId } = useParams<{ movieId: string }>();
@@ -32,16 +33,28 @@ const MovieDetails: React.FC = () => {
   if (!movie) return <p>Loading...</p>;
 
   return (
-    <div>
-      <button onClick={() => navigate(-1)}>Back</button> {/* Back button */}
+    <div className={styles.detailsWrapper}>
+      <button onClick={() => navigate(-1)}>Back</button>
       <h1>{movie.title}</h1>
       <p>Release Date: {movie.release_date}</p>
       <p>Movie Age: {calculateMovieAge(movie.release_date)} years</p>
       <p>{movie.overview}</p>
       <h2>Cast</h2>
-      <ul>
+      <ul className={styles.castList}>
         {cast.map((actor) => (
-          <li key={actor.id}>
+          <li key={actor.id} className={styles.castItem}>
+            {actor.profile_path ? (
+              <img
+                src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}
+                alt={`${actor.name}'s profile`}
+                className={`${styles.actorImage} ${
+                  actor.deathday ? styles.Deceased : ""
+                }`}
+              />
+            ) : (
+              <div className="placeholder-image">No Image</div>
+            )}
+            <br />
             <strong>{actor.name}</strong> as {actor.character}
             <p>Birthday: {actor.birthday || "No Data Available"}</p>
             {actor.deathday ? (
