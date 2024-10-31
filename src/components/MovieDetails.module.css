@@ -70,3 +70,19 @@
   color: #666;
   margin-bottom: 10px;
 }
+
+.filterSortContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two equal-width columns */
+  gap: 10px; /* Space between the columns */
+  margin-bottom: 20px;
+}
+
+.statusFilter,
+.sortOrder {
+  width: 100%; /* Full width within the grid column */
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
