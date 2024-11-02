@@ -124,9 +124,7 @@ export const fetchMovieCast = async (
  * @param actorId - The unique ID of the actor
  * @returns A list of movies with age calculations for the actor at the time of each movie's release
  */
-export const fetchActorFilmography = async (
-  actorId: number
-): Promise<Movie[]> => {
+const fetchActorFilmography = async (actorId: number): Promise<Movie[]> => {
   try {
     const actorDetails = await fetchActorDetails(actorId); // Fetch actor’s birth details
     const response = await axios.get<{ cast: Movie[] }>(
@@ -154,3 +152,5 @@ export const fetchActorFilmography = async (
     return [];
   }
 };
+
+export { fetchActorDetails, fetchActorFilmography };
