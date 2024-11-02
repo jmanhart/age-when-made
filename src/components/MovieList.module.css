@@ -1,3 +1,57 @@
-li {
-  padding: 32px;
+/* MovieList Component Styles */
+
+/* Main list container */
+.movieListContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Movie item card */
+.movieItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.movieItem:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Movie poster image */
+.moviePoster {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+/* Movie title */
+.movieTitle {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin: 0;
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+
+/* Movie release date */
+.movieReleaseDate {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  margin-top: 4px;
 }

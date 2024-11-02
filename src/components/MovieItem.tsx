@@ -1,20 +1,31 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Movie } from "../types/types";
-import "./MovieItem.module.css";
+import styles from "./MovieList.module.css";
 
 interface MovieItemProps {
   movie: Movie;
 }
 
 const MovieItem: React.FC<MovieItemProps> = ({ movie }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/movie/${movie.id}`);
+  };
+
   return (
-    <li className="movie-item">
-      <Link to={`/movie/${movie.id}`} className="movie-link">
-        <h2>{movie.title}</h2>
-        <p>Release Date: {movie.release_date}</p>
-      </Link>
-    </li>
+    <div className={styles.movieItem} onClick={handleClick}>
+      <img
+        src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
+        alt={`${movie.title} poster`}
+        className={styles.moviePoster}
+      />
+      <h3 className={styles.movieTitle}>{movie.title}</h3>
+      <p className={styles.movieReleaseDate}>
+        Release Date: {movie.release_date || "N/A"}
+      </p>
+    </div>
   );
 };
 

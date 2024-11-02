@@ -1,88 +1,197 @@
-/* Container for all details */
-.detailsWrapper {
-  width: 80%;
-  max-width: 1200px; /* Optional: Limit maximum width on larger screens */
-  margin: 0 auto; /* Centers the container */
+/* Main movie details container */
+.movieDetailsContainer {
+  max-width: 900px;
+  margin: 40px auto;
   padding: 20px;
-  /* background-color: #fff; */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow */
-  /* border-radius: 8px; Optional: Rounds the corners */
-}
-
-/* Flexbox for responsive grid layout */
-.castList {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
   display: flex;
-  flex-wrap: wrap; /* Allows items to wrap onto new lines */
-  gap: 20px; /* Space between items */
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  color: #333;
 }
 
-/* Individual cast item */
-.castItem {
-  flex: 1 1 250px; /* Flex-grow, flex-shrink, base width */
-  /* background-color: #f9f9f9; */
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  min-width: 200px; /* Ensures items don’t get too small */
+/* Back button */
+.backButton {
+  align-self: flex-start;
+  margin-bottom: 20px;
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
 }
 
-.Deceased {
-  opacity: 0.5;
-  filter: grayscale(100%);
+.backButton:hover {
+  background-color: #0056b3;
 }
 
-.castList {
+/* Movie header section */
+.movieHeader {
   display: flex;
-  flex-wrap: wrap;
   gap: 20px;
-  list-style-type: none;
-  padding: 0;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
-.castItem {
-  flex: 1 1 200px;
-  /* background-color: #f9f9f9; */
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 15px;
-  text-align: center;
-  min-width: 200px;
-}
-
-.actorImage {
+.moviePoster {
+  width: 150px;
   height: auto;
-  margin-bottom: 10px;
-  transition: opacity 0.3s ease;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.placeholderImage {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background-color: #ccc;
+.movieInfo {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
+}
+
+.movieTitle {
+  font-size: 28px;
+  font-weight: bold;
+  color: #213547;
+  margin-bottom: 8px;
+}
+
+.movieReleaseDate {
+  font-size: 16px;
   color: #666;
   margin-bottom: 10px;
 }
 
+.movieOverview {
+  font-size: 16px;
+  color: #555;
+  line-height: 1.6;
+}
+
+/* Filter and Sort Controls */
 .filterSortContainer {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* Two equal-width columns */
-  gap: 10px; /* Space between the columns */
+  display: flex;
+  gap: 10px;
   margin-bottom: 20px;
+  align-items: center;
 }
 
 .statusFilter,
 .sortOrder {
-  width: 100%; /* Full width within the grid column */
-  padding: 10px;
-  font-size: 1rem;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 8px;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  background-color: #ffffff;
+  color: #333;
+  outline: none;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.statusFilter:hover,
+.sortOrder:hover {
+  border-color: #bbb;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.statusFilter:focus,
+.sortOrder:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.25);
+}
+
+.statusFilter::after,
+.sortOrder::after {
+  content: "▼";
+  font-size: 12px;
+  color: #666;
+  margin-left: 8px;
+}
+
+/* Cast grid for actor cards */
+.castGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+/* Cast item card styling */
+.castItem {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #f0f4f8;
+  border: 1px solid #e0e4e8;
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.castItem:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Actor image styling */
+.actorImage {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+}
+
+/* Actor details section */
+.actorDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Actor name */
+.actorName {
+  font-size: 20px;
+  font-weight: bold;
+  color: #213547;
+}
+
+/* Character name */
+.characterName {
+  font-size: 16px;
+  color: #555;
+}
+
+/* Metrics container */
+.metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Metric row for ledger-style alignment */
+.metricRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #666;
+}
+
+/* Left-align for metric labels */
+.metricLabel {
+  text-align: left;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Right-align for metric values */
+.metricValue {
+  text-align: right;
+  color: #555;
 }
