@@ -9,8 +9,8 @@
 body {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.6;
-  background-color: #f8f9fa; /* Light background for contrast with component cards */
-  color: #333; /* Darker color for readability */
+  background-color: #f8f9fa;
+  color: #333;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -21,26 +21,26 @@ body {
   font-weight: 400;
   font-synthesis: none;
   color-scheme: light dark;
+  font-size: 16px; /* Base font size */
 }
 
 /* Anchor tags */
 a {
   font-weight: 500;
-  color: #007bff; /* Modern blue for links */
+  color: #007bff;
   text-decoration: none;
   transition: color 0.2s ease;
 }
 a:hover {
-  color: #0056b3; /* Darker blue on hover */
+  color: #0056b3;
 }
 
-/* Container styling for pages */
+/* Body and Container styling */
 body {
-  margin: 0;
-  display: flex;
+  /* display: flex; */
   justify-content: center;
   align-items: center;
-  min-width: 320px;
+  min-width: 300px;
   min-height: 100vh;
   padding: 20px;
 }
@@ -77,6 +77,19 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* Responsive font sizes */
+@media (max-width: 600px) {
+  :root {
+    font-size: 15px; /* Slightly smaller font on narrow screens */
+  }
+}
+
+@media (max-width: 400px) {
+  :root {
+    font-size: 14px; /* Further scale down font size for ultra-small screens */
+  }
 }
 
 /* Dark mode */

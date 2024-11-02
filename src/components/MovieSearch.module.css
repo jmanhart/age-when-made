@@ -1,42 +1,121 @@
-/* MovieSearch Component Styles */
-
-/* Container for search bar */
-.searchContainer {
-  display: flex;
-  justify-content: center;
+/* Container for MovieSearch component */
+.movieSearchContainer {
+  max-width: 900px;
   margin: 20px auto;
-  max-width: 600px;
-  padding: 0 20px;
+  padding: 0 5%;
 }
 
-/* Input field styling */
+/* Search form styling */
+.searchForm {
+  display: flex;
+  gap: 2%;
+  margin-bottom: 20px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Search input styling */
 .searchInput {
   flex: 1;
-  padding: 12px 16px;
+  padding: 10px;
   font-size: 16px;
+  border-radius: 8px;
   border: 1px solid #ddd;
-  border-radius: 8px 0 0 8px;
   outline: none;
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: border-color 0.3s ease;
+  width: 100%;
 }
 
 .searchInput:focus {
   border-color: #007bff;
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
 }
 
 /* Search button styling */
 .searchButton {
-  padding: 12px 20px;
+  padding: 10px;
   font-size: 16px;
+  font-weight: 500;
   color: white;
   background-color: #007bff;
   border: none;
-  border-radius: 0 8px 8px 0;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.3s ease;
+  width: auto;
 }
 
 .searchButton:hover {
   background-color: #0056b3;
+}
+
+/* Responsive styling for tablets and larger mobile devices */
+@media (max-width: 900px) {
+  .movieSearchContainer {
+    max-width: 100%;
+  }
+
+  .searchForm {
+    gap: 4%;
+  }
+
+  .searchInput {
+    padding: 10px;
+    font-size: 15px;
+  }
+
+  .searchButton {
+    padding: 10px;
+    font-size: 15px;
+  }
+}
+
+/* Responsive styling for mobile screens */
+@media (max-width: 600px) {
+  .searchForm {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .searchInput {
+    width: 100%;
+  }
+
+  .searchButton {
+    width: 100%;
+  }
+}
+
+/* Small mobile screens (up to 400px) */
+@media (max-width: 400px) {
+  .searchInput {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .searchButton {
+    padding: 8px;
+    font-size: 14px;
+  }
+}
+
+/* Very small screens (up to 300px) */
+@media (max-width: 300px) {
+  .movieSearchContainer {
+    padding: 0 3%;
+  }
+
+  .searchForm {
+    gap: 6px;
+  }
+
+  .searchInput {
+    padding: 6px;
+    font-size: 13px;
+  }
+
+  .searchButton {
+    padding: 6px;
+    font-size: 13px;
+  }
 }

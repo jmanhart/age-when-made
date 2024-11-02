@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import MovieList from "./MovieList";
 import { fetchMovies } from "../utils/api";
-import styles from "./MovieSearch.module.css"; // Ensure this imports as a module
+import styles from "./MovieSearch.module.css";
 import { Movie } from "../types/types";
 
 const MovieSearch: React.FC = () => {
@@ -15,14 +15,14 @@ const MovieSearch: React.FC = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSearch} className={styles.searchContainer}>
+    <div className={styles.movieSearchContainer}>
+      <form onSubmit={handleSearch} className={styles.searchForm}>
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for a movie..."
-          className={styles.searchInput} // Apply searchInput style
+          className={styles.searchInput}
         />
         <button type="submit" className={styles.searchButton}>
           Search

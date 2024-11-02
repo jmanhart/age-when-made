@@ -10,6 +10,7 @@ const MovieDetails: React.FC = () => {
   const [cast, setCast] = useState<Actor[]>([]);
   const [statusFilter, setStatusFilter] = useState("All");
   const [sortOrder, setSortOrder] = useState("none");
+  const [hideNoImage, setHideNoImage] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,14 +33,27 @@ const MovieDetails: React.FC = () => {
 
   if (!movie) return <p>Loading movie details...</p>;
 
-  // Filter and sort the cast list
+  // Calculate the movie's age
+  const calculateMovieAge = (releaseDate: string) => {
+    const releaseYear = new Date(releaseDate).getFullYear();
+    const currentYear = new Date().getFullYear();
+    return currentYear - releaseYear;
+  };
+
+  // Calculate actor metrics
+  const totalActors = cast.length;
+  const actorsAlive = cast.filter((actor) => !actor.deathday).length;
+  const actorsDeceased = totalActors - actorsAlive;
+
+  // Filter and sort the cast list based on the selected filters
   const filteredCast = cast
     .filter((actor) => {
-      return (
+      const statusCondition =
         statusFilter === "All" ||
         (statusFilter === "Deceased" && actor.deathday) ||
-        (statusFilter === "Alive" && !actor.deathday)
-      );
+        (statusFilter === "Alive" && !actor.deathday);
+      const imageCondition = !hideNoImage || actor.profile_path;
+      return statusCondition && imageCondition;
     })
     .sort((a, b) => {
       if (sortOrder === "oldest")
@@ -67,7 +81,17 @@ const MovieDetails: React.FC = () => {
           <p className={styles.movieReleaseDate}>
             Release Date: {movie.release_date}
           </p>
+          <p className={styles.movieAge}>
+            Movie Age: {calculateMovieAge(movie.release_date)} years
+          </p>
           <p className={styles.movieOverview}>{movie.overview}</p>
+
+          {/* Actor Metrics */}
+          <div className={styles.actorMetrics}>
+            <p>Total Actors: {totalActors}</p>
+            <p>Actors Alive: {actorsAlive}</p>
+            <p>Actors Deceased: {actorsDeceased}</p>
+          </div>
         </div>
       </div>
 
@@ -92,6 +116,20 @@ const MovieDetails: React.FC = () => {
           <option value="oldest">Oldest</option>
           <option value="youngest">Youngest</option>
         </select>
+
+        <div className={styles.imageFilter}>
+          <label className={styles.customCheckbox}>
+            <input
+              type="checkbox"
+              checked={hideNoImage}
+              onChange={(e) => setHideNoImage(e.target.checked)}
+              className={styles.checkboxInput}
+            />
+            <span className={styles.checkboxLabel}>
+              Hide Actors Without Images
+            </span>
+          </label>
+        </div>
       </div>
 
       {/* Cast List Grid */}
@@ -102,11 +140,19 @@ const MovieDetails: React.FC = () => {
             key={actor.id}
             className={styles.castItem}
           >
-            <img
-              src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}
-              alt={`${actor.name}'s profile`}
-              className={styles.actorImage}
-            />
+            {actor.profile_path ? (
+              <img
+                src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}
+                alt={`${actor.name}'s profile`}
+                className={`${styles.actorImage} ${
+                  actor.deathday ? styles.deceased : ""
+                }`}
+              />
+            ) : (
+              <div className={`${styles.actorImage} ${styles.noImage}`}>
+                No Image
+              </div>
+            )}
             <div className={styles.actorDetails}>
               <h2 className={styles.actorName}>{actor.name}</h2>
               <h3 className={styles.characterName}>{actor.character}</h3>
@@ -118,12 +164,20 @@ const MovieDetails: React.FC = () => {
                   </span>
                 </div>
                 {actor.deathday ? (
-                  <div className={styles.metricRow}>
-                    <span className={styles.metricLabel}>Age at Death:</span>
-                    <span className={styles.metricValue}>
-                      {actor.ageAtDeath ?? "N/A"}
-                    </span>
-                  </div>
+                  <>
+                    <div className={styles.metricRow}>
+                      <span className={styles.metricLabel}>Date of Death:</span>
+                      <span className={styles.metricValue}>
+                        {actor.deathday}
+                      </span>
+                    </div>
+                    <div className={styles.metricRow}>
+                      <span className={styles.metricLabel}>Age at Death:</span>
+                      <span className={styles.metricValue}>
+                        {actor.ageAtDeath ?? "N/A"}
+                      </span>
+                    </div>
+                  </>
                 ) : (
                   <div className={styles.metricRow}>
                     <span className={styles.metricLabel}>Current Age:</span>
