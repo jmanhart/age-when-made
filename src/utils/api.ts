@@ -26,6 +26,25 @@ export const fetchMovies = async (query: string): Promise<Movie[]> => {
 };
 
 /**
+ * Fetches a list of movie suggestions for autocomplete based on a search query.
+ * @param query - The partial search query
+ * @returns A list of suggested movies that match the query
+ */
+const fetchSuggestions = async (query: string): Promise<Movie[]> => {
+  try {
+    const response = await axios.get<{ results: Movie[] }>(
+      `${API_BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(
+        query
+      )}`
+    );
+    return response.data.results;
+  } catch (error) {
+    console.error("Error fetching movie suggestions:", error);
+    return [];
+  }
+};
+
+/**
  * Fetches detailed information for a specific movie by ID.
  * @param movieId - The unique ID of the movie
  * @returns The detailed movie information or null if not found
@@ -153,4 +172,4 @@ const fetchActorFilmography = async (actorId: number): Promise<Movie[]> => {
   }
 };
 
-export { fetchActorDetails, fetchActorFilmography };
+export { fetchActorDetails, fetchActorFilmography, fetchSuggestions };

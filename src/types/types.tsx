@@ -30,3 +30,4 @@ export interface Actor extends Cast {
   currentAge: number | null; // Actor's current age if still alive
   ageAtDeath: number | null; // Age at the time of death if deceased
 }
+

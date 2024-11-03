@@ -1,18 +1,19 @@
 /* Container for MovieSearch component */
 .movieSearchContainer {
   max-width: 900px;
-  margin: 20px auto;
-  padding: 0 5%;
+  margin: 0 auto;
+  /* padding: 0 5%; */
+  position: relative;
 }
 
 /* Search form styling */
 .searchForm {
   display: flex;
   gap: 2%;
-  margin-bottom: 20px;
-  justify-content: center;
+  /* margin-bottom: 20px; */
   align-items: center;
   width: 100%;
+  position: relative;
 }
 
 /* Search input styling */
@@ -49,8 +50,67 @@
   background-color: #0056b3;
 }
 
-/* Responsive styling for tablets and larger mobile devices */
-@media (max-width: 900px) {
+/* Autocomplete Suggestions List */
+.suggestionsList {
+  position: absolute;
+  top: 60;
+  left: 0;
+  right: 0;
+  color: black;
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #007bff;
+  border-radius: 8px 8px 8px 8px;
+  max-height: 500px;
+  overflow-y: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  margin-top: 10px;
+  z-index: 10;
+  padding: 0;
+  list-style: none;
+}
+
+.suggestionItem:focus {
+  border-color: #007bff;
+}
+
+.suggestionItem {
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.suggestionItem:hover,
+.activeSuggestion {
+  background-color: #f0f0f0;
+}
+
+.activeSuggestion {
+  background-color: #007bff;
+  color: black;
+}
+
+/* Zebra striping: Light background for even items */
+.suggestionItem:nth-child(even) {
+  background-color: #f7f7f7;
+}
+
+/* Zebra striping: Darker background for odd items */
+.suggestionItem:nth-child(odd) {
+  background-color: #e6e6e6;
+}
+
+/* Hover and active suggestion styling */
+.suggestionItem:hover,
+.activeSuggestion {
+  background-color: #e0e0e0;
+}
+
+.activeSuggestion {
+  background-color: #007bff;
+  color: #ffffff;
+}
+/* @media (max-width: 900px) {
   .movieSearchContainer {
     max-width: 100%;
   }
@@ -68,10 +128,10 @@
     padding: 10px;
     font-size: 15px;
   }
-}
+} */
 
 /* Responsive styling for mobile screens */
-@media (max-width: 600px) {
+/* @media (max-width: 600px) {
   .searchForm {
     flex-direction: column;
     gap: 8px;
@@ -84,10 +144,19 @@
   .searchButton {
     width: 100%;
   }
-}
+
+  .suggestionsList {
+    max-height: 150px;
+    font-size: 14px;
+  }
+
+  .suggestionItem {
+    padding: 8px 12px;
+  }
+} */
 
 /* Small mobile screens (up to 400px) */
-@media (max-width: 400px) {
+/* @media (max-width: 400px) {
   .searchInput {
     padding: 8px;
     font-size: 14px;
@@ -97,10 +166,10 @@
     padding: 8px;
     font-size: 14px;
   }
-}
+} */
 
 /* Very small screens (up to 300px) */
-@media (max-width: 300px) {
+/* @media (max-width: 300px) {
   .movieSearchContainer {
     padding: 0 3%;
   }
@@ -118,4 +187,4 @@
     padding: 6px;
     font-size: 13px;
   }
-}
+} */
