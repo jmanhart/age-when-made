@@ -29,5 +29,6 @@ dist-ssr
 # Build directories
 dist/
 build/
+coverage/
 # Sentry Config File
 .env.sentry-build-plugin

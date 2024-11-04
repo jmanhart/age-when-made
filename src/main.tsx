@@ -5,6 +5,7 @@ import * as Sentry from "@sentry/react";
 
 import App from "./App.tsx";
 import "./styles/global.css";
+import { Analytics } from "@vercel/analytics/react";
 
 Sentry.init({
   dsn: import.meta.env.VITE_SENTRY_DSN, // Replace with your actual Sentry DSN
@@ -20,5 +21,6 @@ Sentry.init({
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <App />
+    <Analytics />
   </StrictMode>
 );

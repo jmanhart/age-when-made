@@ -1,0 +1,35 @@
+# codecov.yml
+coverage:
+  status:
+    project:
+      default:
+        threshold: 2% # Allowable drop in coverage before marking it as a failure
+    patch:
+      default:
+        threshold: 1% # Allowable drop in coverage for individual patches
+
+comment:
+  layout: "header, diff, files" # Display header, diff, and files in comments on pull requests
+  behavior: default
+  require_changes: false
+
+parsers:
+  javascript:
+    enable_partials: yes
+
+flags:
+  frontend: # Optional: Flag to specify coverage groups
+    paths:
+      - "src/components" # Path to include in the "frontend" flag
+  backend:
+    paths:
+      - "src/utils" # Path to include in the "backend" flag
+
+ignore:
+  - "src/tests/" # Ignore test files from coverage reports
+  - "**/__mocks__/*" # Ignore mock files in coverage
+
+# Adjust report thresholds
+report:
+  range: "80...100" # Set green coverage range (e.g., between 80% to 100%)
+
