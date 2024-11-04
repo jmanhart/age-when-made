@@ -28,16 +28,17 @@ const MovieSearch: React.FC = () => {
     fetchAutocomplete();
   }, [query]);
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSearch = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     const results = await fetchMovies(query);
     setMovies(results);
     setShowSuggestions(false);
   };
 
   const handleSuggestionClick = (movie: Movie) => {
-    navigate(`/movie/${movie.id}`); // Navigate to the movie details page
-    setShowSuggestions(false); // Hide suggestions
+    setQuery(movie.title);
+    setShowSuggestions(false);
+    navigate(`/movie/${movie.id}`); // Navigate to the movie page directly
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -50,9 +51,8 @@ const MovieSearch: React.FC = () => {
         prevIndex > 0 ? prevIndex - 1 : suggestions.length - 1
       );
     } else if (e.key === "Enter" && activeSuggestionIndex >= 0) {
-      navigate(`/movie/${suggestions[activeSuggestionIndex].id}`);
-      setShowSuggestions(false);
       e.preventDefault();
+      handleSuggestionClick(suggestions[activeSuggestionIndex]);
     }
   };
 
@@ -84,7 +84,24 @@ const MovieSearch: React.FC = () => {
                 index === activeSuggestionIndex ? styles.activeSuggestion : ""
               }`}
             >
-              {suggestion.title}
+              <img
+                src={`https://image.tmdb.org/t/p/w92${suggestion.poster_path}`}
+                alt={suggestion.title}
+                className={styles.posterImage}
+              />
+              <div className={styles.movieInfo}>
+                <h4 className={styles.movieTitle}>{suggestion.title}</h4>
+                <p className={styles.movieReleaseYear}>
+                  {suggestion.release_date
+                    ? new Date(suggestion.release_date).getFullYear()
+                    : "N/A"}
+                </p>
+                <p className={styles.movieOverview}>
+                  {suggestion.overview
+                    ? `${suggestion.overview.substring(0, 60)}...`
+                    : "No description available"}
+                </p>
+              </div>
             </li>
           ))}
         </ul>

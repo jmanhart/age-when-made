@@ -11,6 +11,7 @@ const MovieDetails: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState("All");
   const [sortOrder, setSortOrder] = useState("none");
   const [hideNoImage, setHideNoImage] = useState(true);
+  const [loadingCast, setLoadingCast] = useState<boolean>(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,11 +21,13 @@ const MovieDetails: React.FC = () => {
         setMovie(movieData);
 
         if (movieData?.release_date) {
+          setLoadingCast(true);
           const castData = await fetchMovieCast(
             Number(movieId),
             movieData.release_date
           );
           setCast(castData);
+          setLoadingCast(false);
         }
       }
     };
@@ -132,70 +135,88 @@ const MovieDetails: React.FC = () => {
         </div>
       </div>
 
-      {/* Cast List Grid */}
+      {/* Cast List Grid with Loading */}
       <div className={styles.castGrid}>
-        {filteredCast.map((actor) => (
-          <Link
-            to={`/actor/${actor.id}`}
-            key={actor.id}
-            className={styles.castItem}
-          >
-            {actor.profile_path ? (
-              <img
-                src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}
-                alt={`${actor.name}'s profile`}
-                className={`${styles.actorImage} ${
-                  actor.deathday ? styles.deceased : ""
-                }`}
-              />
-            ) : (
-              <div className={`${styles.actorImage} ${styles.noImage}`}>
-                No Image
-              </div>
-            )}
-            <div className={styles.actorDetails}>
-              <h2 className={styles.actorName}>{actor.name}</h2>
-              <h3 className={styles.characterName}>{actor.character}</h3>
-              <div className={styles.metrics}>
-                <div className={styles.metricRow}>
-                  <span className={styles.metricLabel}>Birthday:</span>
-                  <span className={styles.metricValue}>
-                    {actor.birthday || "N/A"}
-                  </span>
+        {loadingCast
+          ? Array(8) // Number of placeholder cards to render
+              .fill(0)
+              .map((_, index) => (
+                <div key={index} className={styles.placeholderCastItem}>
+                  <div className={styles.placeholderImage}></div>
+                  <div className={styles.placeholderText}></div>
+                  <div className={styles.placeholderText}></div>
+                  <div className={styles.placeholderText}></div>
+                  <div className={styles.placeholderText}></div>
                 </div>
-                {actor.deathday ? (
-                  <>
-                    <div className={styles.metricRow}>
-                      <span className={styles.metricLabel}>Date of Death:</span>
-                      <span className={styles.metricValue}>
-                        {actor.deathday}
-                      </span>
-                    </div>
-                    <div className={styles.metricRow}>
-                      <span className={styles.metricLabel}>Age at Death:</span>
-                      <span className={styles.metricValue}>
-                        {actor.ageAtDeath ?? "N/A"}
-                      </span>
-                    </div>
-                  </>
+              ))
+          : filteredCast.map((actor) => (
+              <Link
+                to={`/actor/${actor.id}`}
+                key={actor.id}
+                className={styles.castItem}
+              >
+                {actor.profile_path ? (
+                  <img
+                    src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}
+                    alt={`${actor.name}'s profile`}
+                    className={`${styles.actorImage} ${
+                      actor.deathday ? styles.deceased : ""
+                    }`}
+                  />
                 ) : (
-                  <div className={styles.metricRow}>
-                    <span className={styles.metricLabel}>Current Age:</span>
-                    <span className={styles.metricValue}>
-                      {actor.currentAge ?? "N/A"}
-                    </span>
+                  <div className={`${styles.actorImage} ${styles.noImage}`}>
+                    No Image
                   </div>
                 )}
-                <div className={styles.metricRow}>
-                  <span className={styles.metricLabel}>Age at Release:</span>
-                  <span className={styles.metricValue}>
-                    {actor.ageAtRelease ?? "N/A"}
-                  </span>
+                <div className={styles.actorDetails}>
+                  <h2 className={styles.actorName}>{actor.name}</h2>
+                  <h3 className={styles.characterName}>{actor.character}</h3>
+                  <div className={styles.metrics}>
+                    <div className={styles.metricRow}>
+                      <span className={styles.metricLabel}>Birthday:</span>
+                      <span className={styles.metricValue}>
+                        {actor.birthday || "N/A"}
+                      </span>
+                    </div>
+                    {actor.deathday ? (
+                      <>
+                        <div className={styles.metricRow}>
+                          <span className={styles.metricLabel}>
+                            Date of Death:
+                          </span>
+                          <span className={styles.metricValue}>
+                            {actor.deathday}
+                          </span>
+                        </div>
+                        <div className={styles.metricRow}>
+                          <span className={styles.metricLabel}>
+                            Age at Death:
+                          </span>
+                          <span className={styles.metricValue}>
+                            {actor.ageAtDeath ?? "N/A"}
+                          </span>
+                        </div>
+                      </>
+                    ) : (
+                      <div className={styles.metricRow}>
+                        <span className={styles.metricLabel}>Current Age:</span>
+                        <span className={styles.metricValue}>
+                          {actor.currentAge ?? "N/A"}
+                        </span>
+                      </div>
+                    )}
+                    <div className={styles.metricRow}>
+                      <span className={styles.metricLabel}>
+                        Age at Release:
+                      </span>
+                      <span className={styles.metricValue}>
+                        {actor.ageAtRelease ?? "N/A"}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </Link>
-        ))}
+              </Link>
+            ))}
       </div>
     </div>
   );
