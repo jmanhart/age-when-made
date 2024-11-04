@@ -1,6 +1,6 @@
-# Movie Search App
+# Movie Search App!
 
-This is a Movie Search App built with Vite, React, and TypeScript. It allows users to search for movies, view detailed cast information, and displays each cast member's birthday, current age, age at release, and death information (if applicable).
+This is a Movie Search App built with Vite, React, and TypeScript. It allows users to search for movies, view detailed cast information, and displays each cast member's birthday, current age, age at release, and death information (if applicable)! This is so cool eh?
 
 Added in Vercel
 
