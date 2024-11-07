@@ -1,11 +1,13 @@
 export const calculateAgeAtDate = (
   birthDate: string | null,
-  targetDate: string
+  targetDate: string | null
 ): number | null => {
   console.log("calculateAgeAtDate called with:", { birthDate, targetDate });
 
+  // Check for valid dates and handle null or invalid inputs
   if (
     !birthDate ||
+    !targetDate ||
     isNaN(Date.parse(birthDate)) ||
     isNaN(Date.parse(targetDate))
   ) {

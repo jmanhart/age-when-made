@@ -6,6 +6,7 @@ export interface Movie {
   release_date: string;
   overview: string;
   poster_path: string | null;
+  type?: "movie"; // Add this line
 }
 
 // Response format for movie search results
@@ -29,5 +30,5 @@ export interface Actor extends Cast {
   ageAtRelease: number | null; // Age at the time of the movie's release
   currentAge: number | null; // Actor's current age if still alive
   ageAtDeath: number | null; // Age at the time of death if deceased
+  type?: "actor"; // Add this line
 }
-

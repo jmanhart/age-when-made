@@ -1,34 +1,57 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import MovieList from "./MovieList";
-import { fetchMovies, fetchSuggestions, fetchActors } from "../utils/api";
+import { fetchMovies, fetchActors } from "../utils/api";
 import styles from "./MovieSearch.module.css";
 import { Movie, Actor } from "../types/types";
-import SearchIcon from "../assets/icons/SearchIcon"; // Import as a React component
+import SearchIcon from "../assets/icons/searchIcon";
+
+// Define a combined type for suggestions that includes both Movie and Actor properties
+interface MovieSuggestion extends Movie {
+  type: "movie";
+}
+
+interface ActorSuggestion extends Actor {
+  type: "actor";
+}
+
+type Suggestion = MovieSuggestion | ActorSuggestion;
 
 const MovieSearch: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [actors, setActors] = useState<Actor[]>([]);
-  const [suggestions, setSuggestions] = useState<(Movie | Actor)[]>([]);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
-  const [activeSuggestionIndex, setActiveSuggestionIndex] =
-    useState<number>(-1);
+  const [activeSuggestionIndex] = useState<number>(-1);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAutocomplete = async () => {
       if (query.trim().length > 1) {
-        const movieResults = await fetchSuggestions(query);
-        const actorResults = await fetchActors(query);
+        const movieResults: Movie[] = await fetchMovies(query);
+        const actorResults: Actor[] = await fetchActors(query);
 
-        // Create a combined array and ensure unique IDs by using type prefixes
-        const combinedSuggestions = [
-          ...movieResults.map((item) => ({ ...item, type: "movie" })),
-          ...actorResults.map((item) => ({ ...item, type: "actor" })),
+        // Add a type field to distinguish between movies and actors
+        const movieSuggestions: MovieSuggestion[] = movieResults.map(
+          (item) => ({
+            ...item,
+            type: "movie",
+          })
+        );
+
+        const actorSuggestions: ActorSuggestion[] = actorResults.map(
+          (item) => ({
+            ...item,
+            type: "actor",
+          })
+        );
+
+        const combinedSuggestions: Suggestion[] = [
+          ...movieSuggestions,
+          ...actorSuggestions,
         ];
 
-        // Remove duplicates based on `type` and `id`
+        // Remove duplicates based on `id` and `type`
         const uniqueSuggestions = combinedSuggestions.filter(
           (item, index, self) =>
             index ===
@@ -47,16 +70,14 @@ const MovieSearch: React.FC = () => {
   const handleSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const movieResults = await fetchMovies(query);
-    const actorResults = await fetchActors(query);
     setMovies(movieResults);
-    setActors(actorResults);
     setShowSuggestions(false);
   };
 
-  const handleSuggestionClick = (item: Movie | Actor) => {
-    setQuery("title" in item ? item.title : item.name);
+  const handleSuggestionClick = (item: Suggestion) => {
+    setQuery(item.type === "movie" ? item.title : item.name);
     setShowSuggestions(false);
-    if ("title" in item) {
+    if (item.type === "movie") {
       navigate(`/movie/${item.id}`); // Navigate to the movie details
     } else {
       navigate(`/actor/${item.id}`); // Navigate to the actor's filmography
@@ -96,7 +117,7 @@ const MovieSearch: React.FC = () => {
                 index === activeSuggestionIndex ? styles.activeSuggestion : ""
               }`}
             >
-              {"title" in item ? (
+              {item.type === "movie" ? (
                 <>
                   <img
                     src={`https://image.tmdb.org/t/p/w92${item.poster_path}`}
