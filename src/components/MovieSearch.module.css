@@ -1,6 +1,6 @@
 /* Container for MovieSearch component */
 .movieSearchContainer {
-  max-width: 900px;
+  max-width: 750px;
   margin: 0 auto;
   position: relative;
 }
@@ -8,18 +8,25 @@
 /* Search form styling */
 .searchForm {
   display: flex;
-  gap: 2%;
   align-items: center;
   width: 100%;
   position: relative;
 }
 
-/* Search input styling */
+/* Wrapper for input and icon */
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Search input styling with padding for the icon */
 .searchInput {
   flex: 1;
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 8px;
+  padding: 10px 10px 10px 40px; /* Space for icon */
+  font-size: 18px;
+  border-radius: 32px;
   border: 1px solid #ddd;
   outline: none;
   transition: border-color 0.3s ease;
@@ -30,22 +37,14 @@
   border-color: #007bff;
 }
 
-/* Search button styling */
-.searchButton {
-  padding: 10px;
-  font-size: 16px;
-  font-weight: 500;
-  color: white;
-  background-color: #007bff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  width: auto;
-}
-
-.searchButton:hover {
-  background-color: #0056b3;
+/* Search icon inside the input */
+.searchIcon {
+  position: absolute;
+  left: 15px; /* Adjust to position icon within the input */
+  width: 20px; /* Icon size */
+  height: 20px;
+  color: #aaa; /* Icon color */
+  pointer-events: none; /* Prevent blocking input interactions */
 }
 
 /* Autocomplete Suggestions List */
@@ -56,11 +55,11 @@
   right: 0;
   background-color: #ffffff;
   border: 1px solid #007bff;
-  border-radius: 0 0 8px 8px;
+  border-radius: 8px;
   max-height: 500px;
   overflow-y: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  margin-top: 10px;
+  margin-top: -20px;
   z-index: 10;
   padding: 0;
   list-style: none;
@@ -69,11 +68,11 @@
 /* Each suggestion item */
 .suggestionItem {
   display: flex;
-  height: 130px;
-  cursor: pointer;
+  align-items: center;
   padding: 10px;
-  transition: background-color 0.2s;
+  cursor: pointer;
   border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
 }
 
 .suggestionItem:hover,
@@ -116,24 +115,21 @@
 
 /* Title and year in one row */
 .movieTitle {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   color: #333;
-  display: inline-block;
-  margin-right: 6px;
+  margin-bottom: 4px;
 }
 
 .movieReleaseYear {
   font-size: 14px;
   color: #666;
-  display: inline-block;
 }
 
 /* Movie overview below title and year */
 .movieOverview {
   font-size: 12px;
   color: #888;
-  margin-top: 4px;
   line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -148,21 +144,25 @@
     max-height: 300px;
   }
 
-  .suggestionItem {
-    height: auto;
-    padding: 8px;
-  }
-
   .posterImage {
     width: 70px;
   }
 
-  .movieTitle,
-  .movieReleaseYear {
-    font-size: 14px;
+  .movieTitle {
+    font-size: 16px;
   }
 
   .movieOverview {
-    font-size: 12px;
+    font-size: 10px;
   }
+}
+
+.actorInfo {
+  display: flex;
+  align-items: center;
+}
+
+.actorName {
+  font-size: 18px;
+  margin-left: 10px;
 }

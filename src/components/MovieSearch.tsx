@@ -1,25 +1,41 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import MovieList from "./MovieList";
-import { fetchMovies, fetchSuggestions } from "../utils/api";
+import { fetchMovies, fetchSuggestions, fetchActors } from "../utils/api";
 import styles from "./MovieSearch.module.css";
-import { Movie } from "../types/types";
+import { Movie, Actor } from "../types/types";
+import SearchIcon from "../assets/icons/SearchIcon"; // Import as a React component
 
 const MovieSearch: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [suggestions, setSuggestions] = useState<Movie[]>([]);
+  const [actors, setActors] = useState<Actor[]>([]);
+  const [suggestions, setSuggestions] = useState<(Movie | Actor)[]>([]);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] =
     useState<number>(-1);
   const navigate = useNavigate();
 
-  // Fetch autocomplete suggestions as user types
   useEffect(() => {
     const fetchAutocomplete = async () => {
       if (query.trim().length > 1) {
-        const results = await fetchSuggestions(query);
-        setSuggestions(results);
+        const movieResults = await fetchSuggestions(query);
+        const actorResults = await fetchActors(query);
+
+        // Create a combined array and ensure unique IDs by using type prefixes
+        const combinedSuggestions = [
+          ...movieResults.map((item) => ({ ...item, type: "movie" })),
+          ...actorResults.map((item) => ({ ...item, type: "actor" })),
+        ];
+
+        // Remove duplicates based on `type` and `id`
+        const uniqueSuggestions = combinedSuggestions.filter(
+          (item, index, self) =>
+            index ===
+            self.findIndex((t) => t.id === item.id && t.type === item.type)
+        );
+
+        setSuggestions(uniqueSuggestions);
         setShowSuggestions(true);
       } else {
         setShowSuggestions(false);
@@ -30,78 +46,82 @@ const MovieSearch: React.FC = () => {
 
   const handleSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    const results = await fetchMovies(query);
-    setMovies(results);
+    const movieResults = await fetchMovies(query);
+    const actorResults = await fetchActors(query);
+    setMovies(movieResults);
+    setActors(actorResults);
     setShowSuggestions(false);
   };
 
-  const handleSuggestionClick = (movie: Movie) => {
-    setQuery(movie.title);
+  const handleSuggestionClick = (item: Movie | Actor) => {
+    setQuery("title" in item ? item.title : item.name);
     setShowSuggestions(false);
-    navigate(`/movie/${movie.id}`); // Navigate to the movie page directly
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "ArrowDown") {
-      setActiveSuggestionIndex((prevIndex) =>
-        prevIndex < suggestions.length - 1 ? prevIndex + 1 : 0
-      );
-    } else if (e.key === "ArrowUp") {
-      setActiveSuggestionIndex((prevIndex) =>
-        prevIndex > 0 ? prevIndex - 1 : suggestions.length - 1
-      );
-    } else if (e.key === "Enter" && activeSuggestionIndex >= 0) {
-      e.preventDefault();
-      handleSuggestionClick(suggestions[activeSuggestionIndex]);
+    if ("title" in item) {
+      navigate(`/movie/${item.id}`); // Navigate to the movie details
+    } else {
+      navigate(`/actor/${item.id}`); // Navigate to the actor's filmography
     }
   };
 
   return (
     <div className={styles.movieSearchContainer}>
       <form onSubmit={handleSearch} className={styles.searchForm}>
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search for a movie..."
-          className={styles.searchInput}
-          onKeyDown={handleKeyDown}
-          onFocus={() => query.length > 1 && setShowSuggestions(true)}
-          onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
-        />
-        <button type="submit" className={styles.searchButton}>
-          Search
-        </button>
+        <div className={styles.inputWrapper}>
+          <SearchIcon className={styles.searchIcon} />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search for a movie or actor..."
+            className={styles.searchInput}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && activeSuggestionIndex >= 0) {
+                e.preventDefault();
+                handleSuggestionClick(suggestions[activeSuggestionIndex]);
+              }
+            }}
+            onFocus={() => query.length > 1 && setShowSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
+          />
+        </div>
       </form>
 
       {showSuggestions && (
         <ul className={styles.suggestionsList}>
-          {suggestions.map((suggestion, index) => (
+          {suggestions.map((item, index) => (
             <li
-              key={suggestion.id}
-              onClick={() => handleSuggestionClick(suggestion)}
+              key={`${item.type}-${item.id}`} // Use a unique key with type prefix
+              onClick={() => handleSuggestionClick(item)}
               className={`${styles.suggestionItem} ${
                 index === activeSuggestionIndex ? styles.activeSuggestion : ""
               }`}
             >
-              <img
-                src={`https://image.tmdb.org/t/p/w92${suggestion.poster_path}`}
-                alt={suggestion.title}
-                className={styles.posterImage}
-              />
-              <div className={styles.movieInfo}>
-                <h4 className={styles.movieTitle}>{suggestion.title}</h4>
-                <p className={styles.movieReleaseYear}>
-                  {suggestion.release_date
-                    ? new Date(suggestion.release_date).getFullYear()
-                    : "N/A"}
-                </p>
-                <p className={styles.movieOverview}>
-                  {suggestion.overview
-                    ? `${suggestion.overview.substring(0, 60)}...`
-                    : "No description available"}
-                </p>
-              </div>
+              {"title" in item ? (
+                <>
+                  <img
+                    src={`https://image.tmdb.org/t/p/w92${item.poster_path}`}
+                    alt={item.title}
+                    className={styles.posterImage}
+                  />
+                  <div className={styles.movieInfo}>
+                    <h4 className={styles.movieTitle}>{item.title}</h4>
+                    <p className={styles.movieReleaseYear}>
+                      {item.release_date
+                        ? new Date(item.release_date).getFullYear()
+                        : "N/A"}
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <div className={styles.actorInfo}>
+                  <img
+                    src={`https://image.tmdb.org/t/p/w92${item.profile_path}`}
+                    alt={item.name}
+                    className={styles.posterImage}
+                  />
+                  <h4 className={styles.actorName}>{item.name}</h4>
+                </div>
+              )}
             </li>
           ))}
         </ul>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { fetchActorFilmography, fetchActorDetails } from "../utils/api";
 import { Movie, Actor } from "../types/types";
 import styles from "./ActorFilmography.module.css";
@@ -13,13 +13,18 @@ const ActorFilmography: React.FC = () => {
   useEffect(() => {
     const getActorData = async () => {
       if (actorId) {
-        // Ensure fetchActorDetails returns an object conforming to the Actor type
         const actorDetails = (await fetchActorDetails(
           Number(actorId)
         )) as Actor;
         setActor(actorDetails);
 
-        const filmographyData = await fetchActorFilmography(Number(actorId));
+        let filmographyData = await fetchActorFilmography(Number(actorId));
+        // Sort the filmography by release date in descending order
+        filmographyData = filmographyData.sort(
+          (a, b) =>
+            new Date(b.release_date).getTime() -
+            new Date(a.release_date).getTime()
+        );
         setFilmography(filmographyData);
       }
     };
@@ -48,20 +53,22 @@ const ActorFilmography: React.FC = () => {
       <ul className={styles.filmographyList}>
         {filmography.map((movie) => (
           <li key={movie.id} className={styles.filmographyItem}>
-            <img
-              src={`https://image.tmdb.org/t/p/w185${movie.poster_path}`}
-              alt={`${movie.title} poster`}
-              className={styles.moviePoster}
-            />
-            <div className={styles.movieDetails}>
-              <h4 className={styles.movieTitle}>{movie.title}</h4>
-              <p className={styles.movieReleaseDate}>
-                Release Date: {movie.release_date}
-              </p>
-              <p className={styles.ageAtRelease}>
-                Age during filming: {movie.ageAtRelease ?? "N/A"}
-              </p>
-            </div>
+            <Link to={`/movie/${movie.id}`} className={styles.movieLink}>
+              <img
+                src={`https://image.tmdb.org/t/p/w185${movie.poster_path}`}
+                alt={`${movie.title} poster`}
+                className={styles.moviePoster}
+              />
+              <div className={styles.movieDetails}>
+                <h4 className={styles.movieTitle}>{movie.title}</h4>
+                <p className={styles.movieReleaseDate}>
+                  Release Date: {movie.release_date}
+                </p>
+                <p className={styles.ageAtRelease}>
+                  Age during filming: {movie.ageAtRelease ?? "N/A"}
+                </p>
+              </div>
+            </Link>
           </li>
         ))}
       </ul>

@@ -11,7 +11,7 @@ const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
  * @param query - The search query
  * @returns A list of movies that match the query
  */
-export const fetchMovies = async (query: string): Promise<Movie[]> => {
+const fetchMovies = async (query: string): Promise<Movie[]> => {
   try {
     const response = await axios.get<{ results: Movie[] }>(
       `${API_BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(
@@ -26,20 +26,36 @@ export const fetchMovies = async (query: string): Promise<Movie[]> => {
 };
 
 /**
- * Fetches a list of movie suggestions for autocomplete based on a search query.
- * @param query - The partial search query
- * @returns A list of suggested movies that match the query
+ * Fetches a list of actors based on a search query.
+ * @param query - The search query
+ * @returns A list of actors that match the query
  */
-const fetchSuggestions = async (query: string): Promise<Movie[]> => {
+const fetchActors = async (query: string): Promise<Actor[]> => {
   try {
-    const response = await axios.get<{ results: Movie[] }>(
-      `${API_BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(
+    const response = await axios.get<{ results: Actor[] }>(
+      `${API_BASE_URL}/search/person?api_key=${API_KEY}&query=${encodeURIComponent(
         query
       )}`
     );
     return response.data.results;
   } catch (error) {
-    console.error("Error fetching movie suggestions:", error);
+    console.error("Error fetching actors:", error);
+    return [];
+  }
+};
+
+/**
+ * Fetches a combined list of movie and actor suggestions for autocomplete.
+ * @param query - The partial search query
+ * @returns A list of suggested movies and actors that match the query
+ */
+const fetchSuggestions = async (query: string): Promise<(Movie | Actor)[]> => {
+  try {
+    const movieResults = await fetchMovies(query);
+    const actorResults = await fetchActors(query);
+    return [...movieResults, ...actorResults];
+  } catch (error) {
+    console.error("Error fetching suggestions:", error);
     return [];
   }
 };
@@ -49,9 +65,7 @@ const fetchSuggestions = async (query: string): Promise<Movie[]> => {
  * @param movieId - The unique ID of the movie
  * @returns The detailed movie information or null if not found
  */
-export const fetchMovieById = async (
-  movieId: number
-): Promise<Movie | null> => {
+const fetchMovieById = async (movieId: number): Promise<Movie | null> => {
   try {
     const response = await axios.get<Movie>(
       `${API_BASE_URL}/movie/${movieId}?api_key=${API_KEY}`
@@ -69,7 +83,7 @@ export const fetchMovieById = async (
  * @param releaseDate - The release date of the movie in "YYYY-MM-DD" format
  * @returns A list of cast members with detailed information
  */
-export const fetchMovieCast = async (
+const fetchMovieCast = async (
   movieId: number,
   releaseDate: string
 ): Promise<Actor[]> => {
@@ -116,7 +130,7 @@ export const fetchMovieCast = async (
             : null;
         const ageAtDeath =
           formattedBirthday && formattedDeathday
-            ? calculateAgeAtDate(formattedBirthday, formattedDeathday)
+            ? calculateAgeAtDate(actorDetails.birthday, actorDetails.deathday)
             : null;
 
         return {
@@ -172,4 +186,12 @@ const fetchActorFilmography = async (actorId: number): Promise<Movie[]> => {
   }
 };
 
-export { fetchActorDetails, fetchActorFilmography, fetchSuggestions };
+export {
+  fetchActorDetails,
+  fetchActorFilmography,
+  fetchMovies,
+  fetchMovieById, // Only export once here
+  fetchActors,
+  fetchSuggestions,
+  fetchMovieCast,
+};
