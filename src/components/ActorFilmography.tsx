@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { fetchActorFilmography, fetchActorDetails } from "../utils/api";
 import { Movie, Actor } from "../types/types";
 import styles from "./ActorFilmography.module.css";
@@ -8,7 +8,7 @@ const ActorFilmography: React.FC = () => {
   const { actorId } = useParams<{ actorId: string }>();
   const [filmography, setFilmography] = useState<Movie[]>([]);
   const [actor, setActor] = useState<Actor | null>(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     const getActorData = async () => {

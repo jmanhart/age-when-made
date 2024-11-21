@@ -1,14 +1,10 @@
 import React from "react";
 import styles from "./HomePage.module.css";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import MovieSearch from "../components/MovieSearch";
 
 const HomePage: React.FC = () => {
-  const navigate = useNavigate();
-
-  const handleSearchClick = () => {
-    navigate("/search");
-  };
+  //   const navigate = useNavigate();
 
   return (
     <div className={styles.homePage}>

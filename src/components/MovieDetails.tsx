@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { fetchMovieById, fetchMovieCast } from "../utils/api";
 import { Movie, Actor } from "../types/types";
 import styles from "./MovieDetails.module.css";
@@ -12,7 +12,7 @@ const MovieDetails: React.FC = () => {
   const [sortOrder, setSortOrder] = useState("none");
   const [hideNoImage, setHideNoImage] = useState(true);
   const [loadingCast, setLoadingCast] = useState<boolean>(true);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     const getMovieDetails = async () => {
