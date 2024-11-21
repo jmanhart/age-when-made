@@ -17,7 +17,13 @@ interface ActorSuggestion extends Actor {
 
 type Suggestion = MovieSuggestion | ActorSuggestion;
 
-const MovieSearch: React.FC = () => {
+interface MovieSearchProps {
+  isHeaderSearch?: boolean; // Optional prop to distinguish header usage
+}
+
+const MovieSearch: React.FC<MovieSearchProps> = ({
+  isHeaderSearch = false,
+}) => {
   const [query, setQuery] = useState<string>("");
   const [movies, setMovies] = useState<Movie[]>([]);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
@@ -85,7 +91,11 @@ const MovieSearch: React.FC = () => {
   };
 
   return (
-    <div className={styles.movieSearchContainer}>
+    <div
+      className={`${styles.movieSearchContainer} ${
+        isHeaderSearch ? styles.headerSearchContainer : ""
+      }`}
+    >
       <form onSubmit={handleSearch} className={styles.searchForm}>
         <div className={styles.inputWrapper}>
           <SearchIcon className={styles.searchIcon} />
@@ -93,8 +103,14 @@ const MovieSearch: React.FC = () => {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search for a movie or actor..."
-            className={styles.searchInput}
+            placeholder={
+              isHeaderSearch
+                ? "Search movies or actors..."
+                : "Search for a movie or actor..."
+            }
+            className={`${styles.searchInput} ${
+              isHeaderSearch ? styles.headerSearchInput : ""
+            }`}
             onKeyDown={(e) => {
               if (e.key === "Enter" && activeSuggestionIndex >= 0) {
                 e.preventDefault();
@@ -148,7 +164,7 @@ const MovieSearch: React.FC = () => {
         </ul>
       )}
 
-      <MovieList movies={movies} />
+      {!isHeaderSearch && <MovieList movies={movies} />}
     </div>
   );
 };

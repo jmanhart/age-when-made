@@ -1,7 +1,10 @@
 /* Container for MovieSearch component */
 .movieSearchContainer {
-  max-width: 750px;
+  max-width: 100%; /* Adjusts to the screen size */
+  width: 50%; /* Ensure it takes full width of its container */
   margin: 0 auto;
+  padding: 0 1rem; /* Adds some padding for smaller screens */
+  box-sizing: border-box;
   position: relative;
 }
 
@@ -24,13 +27,14 @@
 /* Search input styling with padding for the icon */
 .searchInput {
   flex: 1;
-  padding: 10px 10px 10px 40px; /* Space for icon */
-  font-size: 18px;
+  padding: 12px 12px 12px 40px; /* Space for icon */
+  font-size: 16px; /* Slightly smaller font for better scaling */
   border-radius: 32px;
   border: 1px solid #ddd;
   outline: none;
   transition: border-color 0.3s ease;
   width: 100%;
+  box-sizing: border-box; /* Prevent overflow */
 }
 
 .searchInput:focus {
@@ -40,11 +44,11 @@
 /* Search icon inside the input */
 .searchIcon {
   position: absolute;
-  left: 15px; /* Adjust to position icon within the input */
-  width: 20px; /* Icon size */
+  left: 15px; /* Position icon within the input */
+  width: 20px;
   height: 20px;
-  color: #aaa; /* Icon color */
-  pointer-events: none; /* Prevent blocking input interactions */
+  color: #aaa;
+  pointer-events: none;
 }
 
 /* Autocomplete Suggestions List */
@@ -56,10 +60,10 @@
   background-color: #ffffff;
   border: 1px solid #007bff;
   border-radius: 8px;
-  max-height: 500px;
+  max-height: 300px; /* Reduced height for mobile screens */
   overflow-y: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  margin-top: -20px;
+  margin-top: 10px;
   z-index: 10;
   padding: 0;
   list-style: none;
@@ -80,53 +84,27 @@
   background-color: #f0f0f0;
 }
 
-/* Active suggestion styling */
 .activeSuggestion {
   background-color: #007bff;
   color: #ffffff;
   font-weight: bold;
 }
 
-/* Zebra striping for list items */
-.suggestionItem:nth-child(even) {
-  background-color: #f7f7f7;
-}
-
-.suggestionItem:nth-child(odd) {
-  background-color: #e6e6e6;
-}
-
-/* Poster image styling */
 .posterImage {
-  width: 90px;
+  width: 80px; /* Adjust for responsive scaling */
   height: 100%;
   border-radius: 4px;
   margin-right: 12px;
   object-fit: cover;
 }
 
-/* Movie information container */
-.movieInfo {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  flex: 1;
-}
-
-/* Title and year in one row */
 .movieTitle {
-  font-size: 18px;
+  font-size: 16px; /* Slightly smaller font */
   font-weight: bold;
   color: #333;
   margin-bottom: 4px;
 }
 
-.movieReleaseYear {
-  font-size: 14px;
-  color: #666;
-}
-
-/* Movie overview below title and year */
 .movieOverview {
   font-size: 12px;
   color: #888;
@@ -134,35 +112,64 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Limit overview to 2 lines */
+  -webkit-line-clamp: 2; /* Limit to 2 lines */
   -webkit-box-orient: vertical;
 }
 
 /* Responsive styling for mobile screens */
-@media (max-width: 600px) {
-  .suggestionsList {
-    max-height: 300px;
+@media (max-width: 768px) {
+  .movieSearchContainer {
+    max-width: 90%; /* Constrain width on medium screens */
+    width: 100%;
+    padding: 0 1rem;
+  }
+
+  .searchInput {
+    font-size: 14px; /* Adjust font size for smaller screens */
+    padding: 10px 10px 10px 35px;
   }
 
   .posterImage {
-    width: 70px;
+    width: 70px; /* Adjust poster size */
   }
 
   .movieTitle {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .movieOverview {
     font-size: 10px;
   }
+
+  .suggestionsList {
+    max-height: 250px; /* Further constrain height */
+  }
 }
 
-.actorInfo {
-  display: flex;
-  align-items: center;
-}
+@media (max-width: 480px) {
+  .movieSearchContainer {
+    max-width: 100%; /* Full width on very small screens */
+    padding: 0.5rem; /* Smaller padding */
+  }
 
-.actorName {
-  font-size: 18px;
-  margin-left: 10px;
+  .searchInput {
+    font-size: 12px;
+    padding: 8px 8px 8px 30px;
+  }
+
+  .posterImage {
+    width: 60px; /* Smallest poster size */
+  }
+
+  .movieTitle {
+    font-size: 12px;
+  }
+
+  .movieOverview {
+    font-size: 9px;
+  }
+
+  .suggestionsList {
+    max-height: 200px; /* Compact suggestion list */
+  }
 }

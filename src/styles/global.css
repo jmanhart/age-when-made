@@ -42,14 +42,14 @@ body {
   align-items: center;
   min-width: 300px;
   min-height: 100vh;
-  padding: 20px;
+  /* padding: 20px; */
 }
 
 /* Headings */
 h1 {
   font-size: 2.4em;
   font-weight: bold;
-  color: #213547;
+  color: white;
   line-height: 1.2;
 }
 h2,
@@ -112,4 +112,8 @@ button:focus-visible {
     background-color: #333;
     color: #fff;
   }
+}
+
+#root {
+  height: 100vh;
 }

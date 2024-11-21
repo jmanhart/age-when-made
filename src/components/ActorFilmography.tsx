@@ -36,10 +36,6 @@ const ActorFilmography: React.FC = () => {
 
   return (
     <div className={styles.actorFilmographyContainer}>
-      <button onClick={() => navigate(-1)} className={styles.backButton}>
-        Back
-      </button>
-
       <div className={styles.actorHeader}>
         <img
           src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}

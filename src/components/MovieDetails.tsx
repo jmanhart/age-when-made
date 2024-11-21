@@ -68,10 +68,6 @@ const MovieDetails: React.FC = () => {
 
   return (
     <div className={styles.movieDetailsContainer}>
-      <button onClick={() => navigate(-1)} className={styles.backButton}>
-        Back
-      </button>
-
       {/* Movie Header */}
       <div className={styles.movieHeader}>
         <img

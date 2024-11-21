@@ -1,0 +1,115 @@
+.homePage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+  text-align: center;
+  padding: 2em; /* Adjusted for better spacing on smaller screens */
+  margin: 0 auto; /* Removed default margins */
+  max-width: 90%; /* Prevent overflow on small screens */
+  box-sizing: border-box;
+  /* background-color: #f8f9fa; Uncommented for visual structure */
+}
+
+h1 {
+  font-size: 2rem; /* Reduced size for better readability on small screens */
+  margin-bottom: 1rem;
+  color: white;
+  word-wrap: break-word; /* Ensures no overflow if long text */
+}
+
+p {
+  font-size: 1rem; /* Slightly reduced size for smaller screens */
+  margin-bottom: 1.5rem;
+  word-wrap: break-word; /* Prevents overflow */
+}
+
+.searchButton {
+  padding: 10px 20px; /* Slightly smaller padding for compact buttons */
+  font-size: 1rem;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.searchButton:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+  .homePage {
+    padding: 1em; /* Smaller padding for smaller devices */
+  }
+
+  h1 {
+    font-size: 1.75rem; /* Further reduce for compact screens */
+  }
+
+  p {
+    font-size: 0.875rem; /* Optimize for readability on small screens */
+  }
+
+  .searchButton {
+    padding: 8px 16px; /* Compact buttons on small devices */
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .homePage {
+    padding: 1em; /* Ensure proper spacing for very small screens */
+  }
+
+  h1 {
+    font-size: 1.5rem; /* Optimized for very small screens */
+  }
+
+  p {
+    font-size: 0.75rem;
+  }
+
+  .searchButton {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+}
+
+/* .homePage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+  text-align: center;
+  margin: ;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.searchButton {
+  padding: 12px 24px;
+  font-size: 1rem;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.searchButton:hover {
+  background-color: #0056b3;
+} */
