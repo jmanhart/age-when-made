@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { fetchMovieById, fetchMovieCast } from "../utils/api";
 import { Movie, Actor } from "../types/types";
+import SliderIcon from "../assets/icons/sliderIcon";
 import styles from "./MovieDetails.module.css";
 
 const MovieDetails: React.FC = () => {
@@ -11,8 +12,9 @@ const MovieDetails: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState("All");
   const [sortOrder, setSortOrder] = useState("none");
   const [hideNoImage, setHideNoImage] = useState(true);
+  const [hideNoBirthDate, setHideNoBirthDate] = useState(false); // New state for hiding actors with no birth date
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // State to toggle settings menu
   const [loadingCast, setLoadingCast] = useState<boolean>(true);
-  // const navigate = useNavigate();
 
   useEffect(() => {
     const getMovieDetails = async () => {
@@ -44,11 +46,11 @@ const MovieDetails: React.FC = () => {
   };
 
   // Calculate actor metrics
-  const totalActors = cast.length;
-  const actorsAlive = cast.filter((actor) => !actor.deathday).length;
-  const actorsDeceased = totalActors - actorsAlive;
+  // const totalActors = cast.length;
+  // const actorsAlive = cast.filter((actor) => !actor.deathday).length;
+  // const actorsDeceased = totalActors - actorsAlive;
 
-  // Filter and sort the cast list based on the selected filters
+  // Filtered Cast Calculation
   const filteredCast = cast
     .filter((actor) => {
       const statusCondition =
@@ -56,7 +58,8 @@ const MovieDetails: React.FC = () => {
         (statusFilter === "Deceased" && actor.deathday) ||
         (statusFilter === "Alive" && !actor.deathday);
       const imageCondition = !hideNoImage || actor.profile_path;
-      return statusCondition && imageCondition;
+      const birthDateCondition = !hideNoBirthDate || actor.birthday; // New filter condition
+      return statusCondition && imageCondition && birthDateCondition;
     })
     .sort((a, b) => {
       if (sortOrder === "oldest")
@@ -65,6 +68,11 @@ const MovieDetails: React.FC = () => {
         return (a.currentAge || 0) - (b.currentAge || 0);
       return 0;
     });
+
+  // Calculate Metrics Based on Filtered List
+  const totalActors = filteredCast.length;
+  const actorsAlive = filteredCast.filter((actor) => !actor.deathday).length;
+  const actorsDeceased = totalActors - actorsAlive;
 
   return (
     <div className={styles.movieDetailsContainer}>
@@ -96,52 +104,71 @@ const MovieDetails: React.FC = () => {
 
       {/* Filter and Sort Controls */}
       <div className={styles.filterSortContainer}>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className={styles.statusFilter}
-        >
-          <option value="All">All</option>
-          <option value="Alive">Alive</option>
-          <option value="Deceased">Deceased</option>
-        </select>
+        <div className={styles.filterSortWrapper}>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className={styles.statusFilter}
+          >
+            <option value="All">All</option>
+            <option value="Alive">Alive</option>
+            <option value="Deceased">Deceased</option>
+          </select>
 
-        <select
-          value={sortOrder}
-          onChange={(e) => setSortOrder(e.target.value)}
-          className={styles.sortOrder}
-        >
-          <option value="none">No Sort</option>
-          <option value="oldest">Oldest</option>
-          <option value="youngest">Youngest</option>
-        </select>
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            className={styles.sortOrder}
+          >
+            <option value="none">No Sort</option>
+            <option value="oldest">Oldest</option>
+            <option value="youngest">Youngest</option>
+          </select>
+        </div>
 
-        <div className={styles.imageFilter}>
-          <label className={styles.customCheckbox}>
-            <input
-              type="checkbox"
-              checked={hideNoImage}
-              onChange={(e) => setHideNoImage(e.target.checked)}
-              className={styles.checkboxInput}
-            />
-            <span className={styles.checkboxLabel}>
-              Hide Actors Without Images
-            </span>
-          </label>
+        <div>
+          <div className={styles.settingsContainer}>
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className={styles.menuButton}
+              aria-label="Settings"
+            >
+              {/* SVG icon for a gear */}
+              <SliderIcon className={styles.sliderIcon} />
+            </button>
+
+            {isMenuOpen && (
+              <div className={styles.menu}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={hideNoImage}
+                    onChange={(e) => setHideNoImage(e.target.checked)}
+                  />
+                  Hide Actors Without Images
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={hideNoBirthDate}
+                    onChange={(e) => setHideNoBirthDate(e.target.checked)}
+                  />
+                  Hide Actors Without Birth Dates
+                </label>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Cast List Grid with Loading */}
+      {/* Cast List Grid */}
       <div className={styles.castGrid}>
         {loadingCast
-          ? Array(8) // Number of placeholder cards to render
+          ? Array(8)
               .fill(0)
               .map((_, index) => (
                 <div key={index} className={styles.placeholderCastItem}>
                   <div className={styles.placeholderImage}></div>
-                  <div className={styles.placeholderText}></div>
-                  <div className={styles.placeholderText}></div>
-                  <div className={styles.placeholderText}></div>
                   <div className={styles.placeholderText}></div>
                 </div>
               ))

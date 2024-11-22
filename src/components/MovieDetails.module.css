@@ -24,9 +24,9 @@
   font-size: 14px;
 }
 
-.backButton:hover {
+/* .backButton:hover {
   background-color: #0056b3;
-}
+} */
 
 /* Movie header */
 .movieHeader {
@@ -86,6 +86,7 @@
   gap: 10px;
   margin-bottom: 20px;
   align-items: center;
+  justify-content: space-between;
 }
 
 .statusFilter,
@@ -293,4 +294,61 @@
   background-color: #e0e0e0;
   border-radius: 4px;
   margin-top: 10px;
+}
+
+.settingsContainer {
+  position: relative; /* Ensure the button and menu are positioned relative to this container */
+  display: inline-block; /* Prevent layout impact */
+}
+
+.menuButton {
+  background-color: white;
+  color: white;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s ease;
+}
+
+.menu {
+  position: absolute; /* Position the menu relative to the container */
+  top: 100%; /* Place it directly below the button */
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  z-index: 1000; /* Ensure it appears above other content */
+  padding: 10px;
+  min-width: 200px; /* Optional: Set a minimum width */
+}
+
+.menu label {
+  display: block;
+  margin: 8px 0;
+}
+
+.menu input[type="checkbox"] {
+  margin-right: 8px;
+}
+.sliderIcon {
+  color: #aaa;
+  pointer-events: none;
+  /* padding: 8px 12px;
+  font-size: 14px; */
+  /* border-radius: 8px; */
+  /* border: 1px solid #ddd; */
+  /* background-color: #ffffff; */
+  /* color: #333;
+  outline: none;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease; */
+}
+
+.filterSortWrapper {
+  display: flex;
+  gap: 16px;
 }
