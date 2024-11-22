@@ -5,7 +5,7 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
   className?: string;
 }
 
-const SliderIcon: React.FC<IconProps> = ({ className, ...props }) => (
+const SliderIcon: React.FC<IconProps> = ({ className }) => (
   <svg
     className={className}
     width="16"
