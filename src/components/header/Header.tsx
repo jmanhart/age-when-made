@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import MovieSearch from "../MovieSearch";
+import MovieSearch from "../MovieSearch/MovieSearch";
 import styles from "./Header.module.css";
 
 const Header: React.FC = () => {

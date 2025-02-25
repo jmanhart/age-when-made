@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Header from "./components/header/Header.tsx";
-import MovieDetails from "./components/MovieDetails"; // New details component
-import ActorFilmography from "./components/ActorFilmography";
+import MovieDetails from "./components/MovieDetails/MovieDetails.tsx"; // New details component
+import ActorFilmography from "./components/ActorFilmography/ActorFilmography.tsx";
 
 import HomePage from "./pages/HomePage";
 const App = () => {

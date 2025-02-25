@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { fetchActorFilmography, fetchActorDetails } from "../utils/api";
-import { Movie, Actor } from "../types/types";
+import { fetchActorFilmography, fetchActorDetails } from "../../utils/api";
+import { Movie, Actor } from "../../types/types";
 import styles from "./ActorFilmography.module.css";
 
 const ActorFilmography: React.FC = () => {

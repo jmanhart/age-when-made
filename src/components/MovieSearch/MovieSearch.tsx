@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import MovieList from "./MovieList";
-import { fetchMovies, fetchActors } from "../utils/api";
+import MovieList from "../MovieList/MovieList";
+import { fetchMovies, fetchActors } from "../../utils/api";
 import styles from "./MovieSearch.module.css";
-import { Movie, Actor } from "../types/types";
-import SearchIcon from "../assets/icons/searchIcon";
+import { Movie, Actor } from "../../types/types";
+import SearchIcon from "../../assets/icons/searchIcon";
 
 // Define a combined type for suggestions that includes both Movie and Actor properties
 interface MovieSuggestion extends Movie {

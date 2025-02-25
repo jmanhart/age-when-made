@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { fetchMovieById, fetchMovieCast } from "../utils/api";
-import { Movie, Actor } from "../types/types";
-import SliderIcon from "../assets/icons/sliderIcon";
+import { fetchMovieById, fetchMovieCast } from "../../utils/api";
+import { Movie, Actor } from "../../types/types";
+import SliderIcon from "../../assets/icons/sliderIcon";
 import styles from "./MovieDetails.module.css";
 
 const MovieDetails: React.FC = () => {

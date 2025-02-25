@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./HomePage.module.css";
 // import { useNavigate } from "react-router-dom";
-import MovieSearch from "../components/MovieSearch";
+import MovieSearch from "../components/MovieSearch/MovieSearch";
 
 const HomePage: React.FC = () => {
   //   const navigate = useNavigate();

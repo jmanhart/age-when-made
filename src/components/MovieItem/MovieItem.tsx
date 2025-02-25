@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Movie } from "../types/types";
-import styles from "./MovieList.module.css";
+import { Movie } from "../../types/types";
 
 interface MovieItemProps {
   movie: Movie;

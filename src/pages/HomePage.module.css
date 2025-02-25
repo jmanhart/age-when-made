@@ -15,7 +15,6 @@
 h1 {
   font-size: 2rem; /* Reduced size for better readability on small screens */
   margin-bottom: 1rem;
-
   word-wrap: break-word; /* Ensures no overflow if long text */
 }
 
