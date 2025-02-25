@@ -1,119 +1,177 @@
-/* CSS Reset */
+/* ==============================
+   CSS Reset
+============================== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Global Typography */
+/* ==============================
+   Root Variables
+============================== */
+:root {
+  /* Light Mode */
+  --color-bg: #f8f9fa;
+  --color-text: #333;
+  --color-primary: #007bff;
+  --color-primary-hover: #0056b3;
+  --color-link: #007bff;
+  --color-link-hover: #0056b3;
+  --color-button-bg: #007bff;
+  --color-button-text: white;
+
+  /* Typography */
+  --font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-size-base: 16px;
+  --font-weight-normal: 400;
+  --font-weight-bold: 700;
+
+  /* Border Radius */
+  --border-radius: 8px;
+
+  /* Transitions */
+  --transition: 0.2s ease;
+
+  /* Enable both light and dark mode */
+  color-scheme: light dark;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #121212;
+    --color-text: rgba(255, 255, 255, 0.87);
+    --color-primary: #9ecbff;
+    --color-primary-hover: #82b3e0;
+    --color-link: #9ecbff;
+    --color-link-hover: #82b3e0;
+    --color-button-bg: #333;
+    --color-button-text: #fff;
+  }
+}
+
+/* ==============================
+   Global Styles
+============================== */
 body {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
   line-height: 1.6;
-  background-color: #f8f9fa;
-  color: #333;
+  background-color: var(--color-bg);
+  color: var(--color-text);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Root styles */
-:root {
-  font-weight: 400;
-  font-synthesis: none;
-  color-scheme: light dark;
-  font-size: 16px; /* Base font size */
-}
-
-/* Anchor tags */
-a {
-  font-weight: 500;
-  color: #007bff;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-a:hover {
-  color: #0056b3;
-}
-
-/* Body and Container styling */
-body {
-  /* display: flex; */
-  justify-content: center;
-  align-items: center;
-  min-width: 300px;
-  min-height: 100vh;
-  /* padding: 20px; */
-}
-
-/* Headings */
-h1 {
-  font-size: 2.4em;
-  font-weight: bold;
-  color: white;
-  line-height: 1.2;
-}
+h1,
 h2,
 h3,
 h4 {
-  color: #333;
+  font-weight: var(--font-weight-bold);
 }
 
-/* Button styling */
+/* Links */
+a {
+  color: var(--color-link);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+a:hover {
+  color: var(--color-link-hover);
+}
+
+/* Buttons */
 button {
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
-  font-weight: 500;
+  font-weight: var(--font-weight-bold);
   font-family: inherit;
-  background-color: #007bff;
-  color: white;
+  background-color: var(--color-button-bg);
+  color: var(--color-button-text);
   cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.25s;
+  transition: background-color var(--transition), border-color 0.25s;
 }
+
 button:hover {
-  background-color: #0056b3;
+  background-color: var(--color-primary-hover);
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-/* Responsive font sizes */
+/* ==============================
+   Responsive Design
+============================== */
 @media (max-width: 600px) {
   :root {
-    font-size: 15px; /* Slightly smaller font on narrow screens */
+    --font-size-base: 15px;
   }
 }
 
 @media (max-width: 400px) {
   :root {
-    font-size: 14px; /* Further scale down font size for ultra-small screens */
+    --font-size-base: 14px;
   }
 }
 
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #121212;
-  }
-  body {
-    background-color: #121212;
-    color: rgba(255, 255, 255, 0.87);
-  }
-  a {
-    color: #9ecbff;
-  }
-  a:hover {
-    color: #82b3e0;
-  }
-  button {
-    background-color: #333;
-    color: #fff;
-  }
+/* ==============================
+   Utility Classes
+============================== */
+.hidden {
+  display: none;
 }
 
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* ==============================
+   Theme Toggle (Optional)
+============================== */
+:root[data-theme="light"] {
+  --color-bg: #f8f9fa;
+  --color-text: #333;
+  --color-primary: #007bff;
+  --color-primary-hover: #0056b3;
+  --color-link: #007bff;
+  --color-link-hover: #0056b3;
+  --color-button-bg: #007bff;
+  --color-button-text: white;
+}
+
+:root[data-theme="dark"] {
+  --color-bg: #121212;
+  --color-text: rgba(255, 255, 255, 0.87);
+  --color-primary: #9ecbff;
+  --color-primary-hover: #82b3e0;
+  --color-link: #9ecbff;
+  --color-link-hover: #82b3e0;
+  --color-button-bg: #333;
+  --color-button-text: #fff;
+}
+
+/* ==============================
+   Root Element
+============================== */
 #root {
   height: 100vh;
+  display: flex;
+  flex-direction: column;
 }

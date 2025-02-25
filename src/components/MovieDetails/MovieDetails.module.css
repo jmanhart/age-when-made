@@ -1,34 +1,83 @@
-/* Main movie details container */
+/* ==============================
+   Variables - Light Mode
+============================== */
+:root {
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f0f4f8;
+  --color-text: #333;
+  --color-text-secondary: #555;
+  --color-border: #ddd;
+  --color-border-light: #eee;
+  --color-primary: #007bff;
+  --color-primary-hover: #0056b3;
+  --color-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  --color-shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.15);
+  --color-icon: #aaa;
+  --color-placeholder: #e0e0e0;
+  --color-hover: #f0f0f0;
+  --color-text-inverse: #ffffff;
+}
+
+/* ==============================
+   Variables - Dark Mode
+============================== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg-primary: #333333;
+    --color-bg-secondary: #444444;
+    --color-text: rgba(255, 255, 255, 0.87);
+    --color-text-secondary: #bbbbbb;
+    --color-border: #555555;
+    --color-border-light: #444444;
+    --color-primary: #9ecbff;
+    --color-primary-hover: #82b3e0;
+    --color-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+    --color-shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.6);
+    --color-icon: #bbbbbb;
+    --color-placeholder: #555555;
+    --color-hover: #555555;
+    --color-text-inverse: #000000;
+  }
+}
+
+/* ==============================
+   Movie Details Container
+============================== */
 .movieDetailsContainer {
   max-width: 900px;
   margin: 20px auto;
   padding: 20px;
-  background-color: #ffffff;
+  background-color: var(--color-bg-primary);
   border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--color-shadow);
   display: flex;
   flex-direction: column;
-  color: #333;
+  color: var(--color-text);
 }
 
-/* Back button */
+/* ==============================
+   Back Button
+============================== */
 .backButton {
   align-self: flex-start;
   margin-bottom: 20px;
   padding: 8px 16px;
-  background-color: #007bff;
-  color: white;
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
+  transition: background-color 0.2s ease;
 }
 
-/* .backButton:hover {
-  background-color: #0056b3;
-} */
+.backButton:hover {
+  background-color: var(--color-primary-hover);
+}
 
-/* Movie header */
+/* ==============================
+   Movie Header
+============================== */
 .movieHeader {
   display: flex;
   gap: 20px;
@@ -36,51 +85,52 @@
   align-items: flex-start;
 }
 
-/* Movie poster image */
 .moviePoster {
   width: 150px;
   height: auto;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--color-shadow-hover);
 }
 
-/* Movie information */
 .movieInfo {
   display: flex;
   flex-direction: column;
 }
 
-/* Movie title and details */
 .movieTitle {
   font-size: 24px;
   font-weight: bold;
-  color: #213547;
+  color: var(--color-text);
   margin-bottom: 8px;
 }
 
 .movieReleaseDate,
 .movieAge {
   font-size: 16px;
-  color: #666;
+  color: var(--color-text-secondary);
   margin-bottom: 10px;
 }
 
 .movieOverview {
   font-size: 16px;
-  color: #555;
+  color: var(--color-text-secondary);
   line-height: 1.6;
 }
 
-/* Actor metrics */
+/* ==============================
+   Actor Metrics
+============================== */
 .actorMetrics {
   margin-top: 16px;
   font-size: 14px;
-  color: #555;
+  color: var(--color-text-secondary);
   display: flex;
   gap: 1em;
 }
 
-/* Filter and Sort Controls */
+/* ==============================
+   Filter and Sort Controls
+============================== */
 .filterSortContainer {
   display: flex;
   gap: 10px;
@@ -94,28 +144,30 @@
   padding: 8px 12px;
   font-size: 14px;
   border-radius: 8px;
-  border: 1px solid #ddd;
-  background-color: #ffffff;
-  color: #333;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text);
   outline: none;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--color-shadow);
   transition: all 0.2s ease;
 }
 
 .statusFilter:hover,
 .sortOrder:hover {
-  border-color: #bbb;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  border-color: var(--color-border-light);
+  box-shadow: var(--color-shadow-hover);
 }
 
 .statusFilter:focus,
 .sortOrder:focus {
-  border-color: #007bff;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.25);
 }
 
-/* Image filter toggle */
+/* ==============================
+   Image Filter Toggle
+============================== */
 .imageFilter {
   display: flex;
   align-items: center;
@@ -125,18 +177,18 @@
 .customCheckbox {
   display: flex;
   align-items: center;
-  background-color: #ffffff;
+  background-color: var(--color-bg-primary);
   padding: 8px 12px;
   border-radius: 8px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--color-shadow);
   transition: all 0.2s ease;
 }
 
 .customCheckbox:hover {
-  border-color: #bbb;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  border-color: var(--color-border-light);
+  box-shadow: var(--color-shadow-hover);
 }
 
 .checkboxInput {
@@ -148,10 +200,12 @@
 
 .checkboxLabel {
   font-size: 14px;
-  color: #333;
+  color: var(--color-text);
 }
 
-/* Responsive layout for stacking image on small screens */
+/* ==============================
+   Responsive Layout
+============================== */
 @media (max-width: 600px) {
   .movieHeader {
     flex-direction: column;
@@ -165,7 +219,9 @@
   }
 }
 
-/* Cast grid for actor cards */
+/* ==============================
+   Cast Grid
+============================== */
 .castGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -173,32 +229,30 @@
   width: 100%;
 }
 
-/* Cast item card styling */
 .castItem {
   display: flex;
   flex-direction: column;
   padding: 20px;
-  background-color: #f0f4f8;
-  border: 1px solid #e0e4e8;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--color-shadow);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   text-decoration: none;
-  color: inherit;
+  color: var(--color-text);
 }
 
 .castItem:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--color-shadow-hover);
 }
 
-/* Actor image styling */
 .actorImage {
   width: 100%;
   height: 185px;
   border-radius: 8px;
   object-fit: cover;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--color-shadow);
   margin-bottom: 10px;
   display: flex;
   align-items: center;
@@ -209,10 +263,12 @@
   filter: grayscale(100%);
 }
 
-/* Placeholder for missing images */
+/* ==============================
+   Placeholder for Missing Images
+============================== */
 .noImage {
-  background-color: #e0e0e0;
-  color: #666;
+  background-color: var(--color-placeholder);
+  color: var(--color-text-secondary);
   font-size: 14px;
   font-weight: bold;
   display: flex;
@@ -221,91 +277,95 @@
   text-align: center;
 }
 
-/* Actor details section */
+/* ==============================
+   Actor Details
+============================== */
 .actorDetails {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-/* Actor name */
 .actorName {
   font-size: 20px;
   font-weight: bold;
-  color: #213547;
+  color: var(--color-text);
 }
 
-/* Character name */
 .characterName {
   font-size: 16px;
-  color: #555;
+  color: var(--color-text-secondary);
 }
 
-/* Metrics container */
+/* ==============================
+   Metrics
+============================== */
 .metrics {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-/* Metric row for ledger-style alignment */
 .metricRow {
   display: flex;
   justify-content: space-between;
   font-size: 14px;
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
-/* Left-align for metric labels */
 .metricLabel {
   text-align: left;
   font-weight: 500;
-  color: #333;
+  color: var(--color-text);
 }
 
-/* Right-align for metric values */
 .metricValue {
   text-align: right;
-  color: #555;
+  color: var(--color-text-secondary);
 }
 
-/* Placeholder Cast Item Styling */
+/* ==============================
+   Placeholder Cast Item
+============================== */
 .placeholderCastItem {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #f0f0f0;
+  background-color: var(--color-hover);
   border-radius: 10px;
   padding: 20px;
   height: 250px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--color-shadow);
 }
 
 .placeholderImage {
   width: 100%;
   height: 185px;
-  background-color: #ddd;
+  background-color: var(--color-placeholder);
   border-radius: 8px;
 }
 
 .placeholderText {
   width: 70%;
   height: 15px;
-  background-color: #e0e0e0;
+  background-color: var(--color-placeholder);
   border-radius: 4px;
   margin-top: 10px;
 }
 
+/* ==============================
+   Settings Menu
+============================== */
 .settingsContainer {
-  position: relative; /* Ensure the button and menu are positioned relative to this container */
-  display: inline-block; /* Prevent layout impact */
+  position: relative;
+  display: inline-block;
 }
 
 .menuButton {
-  background-color: white;
-  color: white;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text);
   padding: 8px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
@@ -313,16 +373,16 @@
 }
 
 .menu {
-  position: absolute; /* Position the menu relative to the container */
-  top: 100%; /* Place it directly below the button */
+  position: absolute;
+  top: 100%;
   right: 0;
-  background: white;
-  border: 1px solid #ddd;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--color-shadow);
   border-radius: 4px;
-  z-index: 1000; /* Ensure it appears above other content */
+  z-index: 1000;
   padding: 10px;
-  min-width: 200px; /* Optional: Set a minimum width */
+  min-width: 200px;
 }
 
 .menu label {
@@ -333,19 +393,10 @@
 .menu input[type="checkbox"] {
   margin-right: 8px;
 }
+
 .sliderIcon {
-  color: #aaa;
+  color: var(--color-icon);
   pointer-events: none;
-  /* padding: 8px 12px;
-  font-size: 14px; */
-  /* border-radius: 8px; */
-  /* border: 1px solid #ddd; */
-  /* background-color: #ffffff; */
-  /* color: #333;
-  outline: none;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease; */
 }
 
 .filterSortWrapper {
