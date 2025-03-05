@@ -11,7 +11,7 @@
 }
 
 /* Movie item card */
-.movieItem {
+/* .movieItem {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,7 +26,7 @@
 .movieItem:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
+} */
 
 /* Movie poster image */
 .moviePoster {

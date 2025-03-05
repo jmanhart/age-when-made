@@ -105,7 +105,7 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
             onChange={(e) => setQuery(e.target.value)}
             placeholder={
               isHeaderSearch
-                ? "Search movies or actors..."
+                ? "Search for a movie or actor..."
                 : "Search for a movie or actor..."
             }
             className={`${styles.searchInput} ${

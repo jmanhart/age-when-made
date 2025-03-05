@@ -8,8 +8,13 @@ const HomePage: React.FC = () => {
 
   return (
     <div className={styles.homePage}>
-      <h1>Age When Made</h1>
-      <p>Search for movies, explore actors, and discover filmographies.</p>
+      <h1>age-when-made.com</h1>
+      <p>
+        Have you ever wondered how old an actor was when they made a certain
+        movie? <br />
+        Well this app will help! <br />
+        (This is still a work in progress so be kind :D )
+      </p>
       <MovieSearch isHeaderSearch={true} />
     </div>
   );
