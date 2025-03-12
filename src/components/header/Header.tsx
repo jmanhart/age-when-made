@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import MovieSearch from "../MovieSearch/MovieSearch";
+import Button from "../Button/Button";
 import styles from "./Header.module.css";
 
 const Header: React.FC = () => {
@@ -18,14 +19,9 @@ const Header: React.FC = () => {
   };
   return (
     <header className={styles.header}>
-      <button
-        className={styles.backButton}
-        onClick={handleBack}
-        aria-label="Go Back"
-      >
+      <Button variant="secondary" onClick={handleBack}>
         &#8592; Back
-      </button>
-
+      </Button>
       <MovieSearch isHeaderSearch={true} />
     </header>
   );

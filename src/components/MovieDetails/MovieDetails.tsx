@@ -5,6 +5,8 @@ import { Movie, Actor } from "../../types/types";
 import SliderIcon from "../../assets/icons/sliderIcon";
 import styles from "./MovieDetails.module.css";
 
+import ActorCard from "../ActorCard/ActorCard.tsx";
+
 const MovieDetails: React.FC = () => {
   const { movieId } = useParams<{ movieId: string }>();
   const [movie, setMovie] = useState<Movie | null>(null);
@@ -173,72 +175,20 @@ const MovieDetails: React.FC = () => {
                 </div>
               ))
           : filteredCast.map((actor) => (
-              <Link
-                to={`/actor/${actor.id}`}
+              <ActorCard
                 key={actor.id}
-                className={styles.castItem}
-              >
-                {actor.profile_path ? (
-                  <img
-                    src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}
-                    alt={`${actor.name}'s profile`}
-                    className={`${styles.actorImage} ${
-                      actor.deathday ? styles.deceased : ""
-                    }`}
-                  />
-                ) : (
-                  <div className={`${styles.actorImage} ${styles.noImage}`}>
-                    No Image
-                  </div>
-                )}
-                <div className={styles.actorDetails}>
-                  <h2 className={styles.actorName}>{actor.name}</h2>
-                  <h3 className={styles.characterName}>{actor.character}</h3>
-                  <div className={styles.metrics}>
-                    <div className={styles.metricRow}>
-                      <span className={styles.metricLabel}>Birthday:</span>
-                      <span className={styles.metricValue}>
-                        {actor.birthday || "N/A"}
-                      </span>
-                    </div>
-                    {actor.deathday ? (
-                      <>
-                        <div className={styles.metricRow}>
-                          <span className={styles.metricLabel}>
-                            Date of Death:
-                          </span>
-                          <span className={styles.metricValue}>
-                            {actor.deathday}
-                          </span>
-                        </div>
-                        <div className={styles.metricRow}>
-                          <span className={styles.metricLabel}>
-                            Age at Death:
-                          </span>
-                          <span className={styles.metricValue}>
-                            {actor.ageAtDeath ?? "N/A"}
-                          </span>
-                        </div>
-                      </>
-                    ) : (
-                      <div className={styles.metricRow}>
-                        <span className={styles.metricLabel}>Current Age:</span>
-                        <span className={styles.metricValue}>
-                          {actor.currentAge ?? "N/A"}
-                        </span>
-                      </div>
-                    )}
-                    <div className={styles.metricRow}>
-                      <span className={styles.metricLabel}>
-                        Age at Release:
-                      </span>
-                      <span className={styles.metricValue}>
-                        {actor.ageAtRelease ?? "N/A"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
+                actor={{
+                  id: actor.id,
+                  name: actor.name,
+                  character: actor.character,
+                  profilePath: actor.profile_path, // ✅ Fix: Ensuring correct prop name
+                  birthday: actor.birthday,
+                  deathday: actor.deathday,
+                  currentAge: actor.currentAge,
+                  ageAtDeath: actor.ageAtDeath,
+                  ageAtRelease: actor.ageAtRelease,
+                }}
+              />
             ))}
       </div>
     </div>

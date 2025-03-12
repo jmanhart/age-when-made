@@ -34,7 +34,12 @@ coverage/
 # Sentry Config File
 .env.sentry-build-plugin
 
-# Codcov stuff
+# Codecov files
 codecov
 codecov.SHA256SUM
 codecov.SHA256SUM.sig
+
+# Storybook-related ignores
+*storybook.log
+.storybook/cache/   # ✅ Ignore Storybook cache
+.storybook/node_modules/  # ✅ Ignore local Storybook dependencies
