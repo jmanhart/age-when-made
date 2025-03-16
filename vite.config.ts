@@ -10,18 +10,20 @@ export default defineConfig({
   plugins: [
     react(),
     svgr(),
-    sentryVitePlugin({
-      org: "movieapp",
-      project: "javascript-react",
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-      release: {
-        name: `movieapp@${version}`,
-      },
-      sourcemaps: {
-        assets: ["./dist/**"],
-      },
-    }),
-  ],
+    // Only include Sentry plugin if auth token is available
+    process.env.SENTRY_AUTH_TOKEN &&
+      sentryVitePlugin({
+        org: "movieapp",
+        project: "javascript-react",
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+        release: {
+          name: `movieapp@${version}`,
+        },
+        sourcemaps: {
+          assets: ["./dist/**"],
+        },
+      }),
+  ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
