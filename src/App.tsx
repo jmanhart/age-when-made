@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import "./styles/theme.css";
 import { SentryErrorBoundary } from "./components/ErrorBoundary";
 
-import Header from "./components/Header";
+import Header from "./components/header";
 import MovieDetails from "./components/MovieDetails";
 import ActorFilmography from "./components/ActorFilmography";
 import HomePage from "./pages/HomePage";
