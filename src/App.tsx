@@ -1,11 +1,24 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import "./styles/theme.css";
 
-import Header from "./components/header/Header.tsx";
+import Header from "./components/Header/Header.tsx";
 import MovieDetails from "./components/MovieDetails/MovieDetails.tsx"; // New details component
 import ActorFilmography from "./components/ActorFilmography/ActorFilmography.tsx";
 
 import HomePage from "./pages/HomePage";
 const App = () => {
+  // Set initial theme based on user preference
+  useEffect(() => {
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    document.documentElement.setAttribute(
+      "data-theme",
+      prefersDark ? "dark" : "light"
+    );
+  }, []);
+
   return (
     <Router>
       <Header />

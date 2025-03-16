@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import MovieList from "../MovieList/MovieList";
 import { fetchMovies, fetchActors } from "../../utils/api";
@@ -28,12 +28,17 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
   const [movies, setMovies] = useState<Movie[]>([]);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
-  const [activeSuggestionIndex] = useState<number>(-1);
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
+  const [preventReopen, setPreventReopen] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  // Add ref for the suggestions list
+  const suggestionsRef = useRef<HTMLUListElement>(null);
+  const selectedItemRef = useRef<HTMLLIElement>(null);
 
   useEffect(() => {
     const fetchAutocomplete = async () => {
-      if (query.trim().length > 1) {
+      if (query.trim().length > 1 && !preventReopen) {
         const movieResults: Movie[] = await fetchMovies(query);
         const actorResults: Actor[] = await fetchActors(query);
 
@@ -71,22 +76,82 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
       }
     };
     fetchAutocomplete();
-  }, [query]);
+  }, [query, preventReopen]);
+
+  // Add this useEffect to handle scrolling
+  useEffect(() => {
+    if (
+      selectedIndex >= 0 &&
+      suggestionsRef.current &&
+      selectedItemRef.current
+    ) {
+      const container = suggestionsRef.current;
+      const selectedItem = selectedItemRef.current;
+
+      const containerHeight = container.clientHeight;
+      const itemHeight = selectedItem.clientHeight;
+      const itemTop = itemHeight * selectedIndex;
+      const scrollTop = container.scrollTop;
+
+      // Scroll down if item is below visible area
+      if (itemTop + itemHeight > scrollTop + containerHeight) {
+        container.scrollTop = itemTop + itemHeight - containerHeight;
+      }
+      // Scroll up if item is above visible area
+      else if (itemTop < scrollTop) {
+        container.scrollTop = itemTop;
+      }
+    }
+  }, [selectedIndex]);
 
   const handleSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const movieResults = await fetchMovies(query);
     setMovies(movieResults);
     setShowSuggestions(false);
+    setPreventReopen(true);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Handle arrow keys
+    if (e.key === "ArrowDown") {
+      e.preventDefault(); // Prevent cursor from moving
+      setSelectedIndex((prev) =>
+        prev < suggestions.length - 1 ? prev + 1 : prev
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault(); // Prevent cursor from moving
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : -1));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (selectedIndex >= 0 && suggestions[selectedIndex]) {
+        handleSuggestionClick(suggestions[selectedIndex]);
+      } else {
+        handleSearch();
+      }
+      setShowSuggestions(false);
+      setSelectedIndex(-1);
+    } else if (e.key === "Escape") {
+      setShowSuggestions(false);
+      setSelectedIndex(-1);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+    setSelectedIndex(-1); // Reset selection when input changes
+    setPreventReopen(false); // Reset preventReopen only when input changes
   };
 
   const handleSuggestionClick = (item: Suggestion) => {
     setQuery(item.type === "movie" ? item.title : item.name);
     setShowSuggestions(false);
+    setSelectedIndex(-1);
+    setPreventReopen(true);
     if (item.type === "movie") {
-      navigate(`/movie/${item.id}`); // Navigate to the movie details
+      navigate(`/movie/${item.id}`);
     } else {
-      navigate(`/actor/${item.id}`); // Navigate to the actor's filmography
+      navigate(`/actor/${item.id}`);
     }
   };
 
@@ -96,13 +161,23 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
         isHeaderSearch ? styles.headerSearchContainer : ""
       }`}
     >
-      <form onSubmit={handleSearch} className={styles.searchForm}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSearch();
+          setShowSuggestions(false);
+          setSelectedIndex(-1);
+          setPreventReopen(true);
+        }}
+        className={styles.searchForm}
+      >
         <div className={styles.inputWrapper}>
           <SearchIcon className={styles.searchIcon} />
           <input
             type="text"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
             placeholder={
               isHeaderSearch
                 ? "Search for a movie or actor..."
@@ -111,27 +186,32 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
             className={`${styles.searchInput} ${
               isHeaderSearch ? styles.headerSearchInput : ""
             }`}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && activeSuggestionIndex >= 0) {
-                e.preventDefault();
-                handleSuggestionClick(suggestions[activeSuggestionIndex]);
+            onFocus={() => {
+              if (!preventReopen && query.length > 1) {
+                setShowSuggestions(true);
               }
             }}
-            onFocus={() => query.length > 1 && setShowSuggestions(true)}
-            onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
+            onBlur={() =>
+              setTimeout(() => {
+                setShowSuggestions(false);
+                setSelectedIndex(-1);
+              }, 100)
+            }
           />
         </div>
       </form>
 
       {showSuggestions && (
-        <ul className={styles.suggestionsList}>
+        <ul ref={suggestionsRef} className={styles.suggestionsList}>
           {suggestions.map((item, index) => (
             <li
-              key={`${item.type}-${item.id}`} // Use a unique key with type prefix
+              key={`${item.type}-${item.id}`}
+              ref={index === selectedIndex ? selectedItemRef : null}
               onClick={() => handleSuggestionClick(item)}
               className={`${styles.suggestionItem} ${
-                index === activeSuggestionIndex ? styles.activeSuggestion : ""
+                index === selectedIndex ? styles.activeSuggestion : ""
               }`}
+              onMouseEnter={() => setSelectedIndex(index)}
             >
               {item.type === "movie" ? (
                 <>

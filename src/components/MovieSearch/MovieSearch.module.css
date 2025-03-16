@@ -100,15 +100,33 @@
   z-index: 10;
   padding: 0;
   list-style: none;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary) transparent;
+}
+
+/* Customize scrollbar for webkit browsers */
+.suggestionsList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.suggestionsList::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.suggestionsList::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+  border-radius: 3px;
 }
 
 .suggestionItem {
+  padding: 8px;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  padding: 10px;
-  cursor: pointer;
-  border-bottom: 1px solid var(--color-border-light);
-  transition: background-color 0.2s;
+  gap: 12px;
+  transition: background-color 0.2s ease;
+  height: 100px;
 }
 
 .suggestionItem:hover,

@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchMovieById, fetchMovieCast } from "../../utils/api";
 import { Movie, Actor } from "../../types/types";
-import SliderIcon from "../../assets/icons/sliderIcon";
 import styles from "./MovieDetails.module.css";
-
 import ActorCard from "../ActorCard/ActorCard.tsx";
+import Select from "../Select/Select";
+import SettingsMenu from "../SettingsMenu/SettingsMenu";
 
 const MovieDetails: React.FC = () => {
   const { movieId } = useParams<{ movieId: string }>();
@@ -14,8 +14,7 @@ const MovieDetails: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState("All");
   const [sortOrder, setSortOrder] = useState("none");
   const [hideNoImage, setHideNoImage] = useState(true);
-  const [hideNoBirthDate, setHideNoBirthDate] = useState(false); // New state for hiding actors with no birth date
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // State to toggle settings menu
+  const [hideNoBirthDate, setHideNoBirthDate] = useState(false);
   const [loadingCast, setLoadingCast] = useState<boolean>(true);
 
   useEffect(() => {
@@ -76,6 +75,33 @@ const MovieDetails: React.FC = () => {
   const actorsAlive = filteredCast.filter((actor) => !actor.deathday).length;
   const actorsDeceased = totalActors - actorsAlive;
 
+  const statusOptions = [
+    { value: "All", label: "All" },
+    { value: "Alive", label: "Alive" },
+    { value: "Deceased", label: "Deceased" },
+  ];
+
+  const sortOptions = [
+    { value: "none", label: "No Sort" },
+    { value: "oldest", label: "Oldest" },
+    { value: "youngest", label: "Youngest" },
+  ];
+
+  const settingsOptions = [
+    {
+      id: "hideNoImage",
+      label: "Hide Actors Without Images",
+      checked: hideNoImage,
+      onChange: setHideNoImage,
+    },
+    {
+      id: "hideNoBirthDate",
+      label: "Hide Actors Without Birth Dates",
+      checked: hideNoBirthDate,
+      onChange: setHideNoBirthDate,
+    },
+  ];
+
   return (
     <div className={styles.movieDetailsContainer}>
       {/* Movie Header */}
@@ -107,59 +133,23 @@ const MovieDetails: React.FC = () => {
       {/* Filter and Sort Controls */}
       <div className={styles.filterSortContainer}>
         <div className={styles.filterSortWrapper}>
-          <select
+          <Select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            onChange={setStatusFilter}
+            options={statusOptions}
             className={styles.statusFilter}
-          >
-            <option value="All">All</option>
-            <option value="Alive">Alive</option>
-            <option value="Deceased">Deceased</option>
-          </select>
+          />
 
-          <select
+          <Select
             value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
+            onChange={setSortOrder}
+            options={sortOptions}
             className={styles.sortOrder}
-          >
-            <option value="none">No Sort</option>
-            <option value="oldest">Oldest</option>
-            <option value="youngest">Youngest</option>
-          </select>
+          />
         </div>
 
         <div>
-          <div className={styles.settingsContainer}>
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={styles.menuButton}
-              aria-label="Settings"
-            >
-              {/* SVG icon for a gear */}
-              <SliderIcon className={styles.sliderIcon} />
-            </button>
-
-            {isMenuOpen && (
-              <div className={styles.menu}>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={hideNoImage}
-                    onChange={(e) => setHideNoImage(e.target.checked)}
-                  />
-                  Hide Actors Without Images
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={hideNoBirthDate}
-                    onChange={(e) => setHideNoBirthDate(e.target.checked)}
-                  />
-                  Hide Actors Without Birth Dates
-                </label>
-              </div>
-            )}
-          </div>
+          <SettingsMenu options={settingsOptions} />
         </div>
       </div>
 

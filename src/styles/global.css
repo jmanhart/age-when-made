@@ -1,59 +1,19 @@
-/* ==============================
-   CSS Reset
-============================== */
+/* CSS Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* ==============================
-   Root Variables
-============================== */
+/* Base Typography */
 :root {
-  /* Light Mode */
-  --color-bg: #f8f9fa;
-  --color-text: #333;
-  --color-primary: #007bff;
-  --color-primary-hover: #0056b3;
-  --color-link: #007bff;
-  --color-link-hover: #0056b3;
-  --color-button-bg: #007bff;
-  --color-button-text: white;
-
-  /* Typography */
   --font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   --font-size-base: 16px;
   --font-weight-normal: 400;
   --font-weight-bold: 700;
-
-  /* Border Radius */
-  --border-radius: 8px;
-
-  /* Transitions */
-  --transition: 0.2s ease;
-
-  /* Enable both light and dark mode */
-  color-scheme: light dark;
 }
 
-/* Dark Mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #121212;
-    --color-text: rgba(255, 255, 255, 0.87);
-    --color-primary: #9ecbff;
-    --color-primary-hover: #82b3e0;
-    --color-link: #9ecbff;
-    --color-link-hover: #82b3e0;
-    --color-button-bg: #333;
-    --color-button-text: #fff;
-  }
-}
-
-/* ==============================
-   Global Styles
-============================== */
+/* Global Styles */
 body {
   font-family: var(--font-family);
   font-size: var(--font-size-base);
@@ -66,6 +26,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Typography */
 h1,
 h2,
 h3,
@@ -95,36 +56,17 @@ button {
   background-color: var(--color-button-bg);
   color: var(--color-button-text);
   cursor: pointer;
-  transition: background-color var(--transition), border-color 0.25s;
+  transition: var(--transition);
 }
 
-button:hover {
-  background-color: var(--color-primary-hover);
+/* Layout */
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-/* ==============================
-   Responsive Design
-============================== */
-@media (max-width: 600px) {
-  :root {
-    --font-size-base: 15px;
-  }
-}
-
-@media (max-width: 400px) {
-  :root {
-    --font-size-base: 14px;
-  }
-}
-
-/* ==============================
-   Utility Classes
-============================== */
+/* Utility Classes */
 .hidden {
   display: none;
 }
@@ -140,6 +82,57 @@ button:focus-visible {
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  :root {
+    --font-size-base: 15px;
+  }
+}
+
+@media (max-width: 400px) {
+  :root {
+    --font-size-base: 14px;
+  }
+}
+
+/* ==============================
+   Root Variables
+============================== */
+:root {
+  /* Light Mode */
+  --color-bg: #f8f9fa;
+  --color-text: #333;
+  --color-primary: #007bff;
+  --color-primary-hover: #0056b3;
+  --color-link: #007bff;
+  --color-link-hover: #0056b3;
+  --color-button-bg: #007bff;
+  --color-button-text: white;
+
+  /* Border Radius */
+  --border-radius: 8px;
+
+  /* Transitions */
+  --transition: 0.2s ease;
+
+  /* Enable both light and dark mode */
+  color-scheme: light dark;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #121212;
+    --color-text: rgba(255, 255, 255, 0.87);
+    --color-primary: #9ecbff;
+    --color-primary-hover: #82b3e0;
+    --color-link: #9ecbff;
+    --color-link-hover: #82b3e0;
+    --color-button-bg: #333;
+    --color-button-text: #fff;
+  }
 }
 
 /* ==============================
@@ -170,8 +163,32 @@ button:focus-visible {
 /* ==============================
    Root Element
 ============================== */
-#root {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+html {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+/* utility classes */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* theme.css */
+:root {
+  --color-primary: #0066cc;
+  --color-text: #333333;
+  --spacing-unit: 8px;
+  --border-radius: 4px;
+}
+
+[data-theme="dark"] {
+  --color-primary: #3b82f6;
+  --color-text: #e5e5e5;
 }

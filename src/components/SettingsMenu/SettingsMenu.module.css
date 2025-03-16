@@ -1,0 +1,81 @@
+.container {
+  position: relative;
+  display: inline-block;
+}
+
+.button {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button:hover {
+  border-color: var(--color-text-secondary);
+  background-color: var(--color-hover);
+}
+
+.button:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-focus-ring);
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  fill: var(--color-text);
+}
+
+.menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 4px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 8px 0;
+  min-width: 200px;
+  box-shadow: var(--menu-shadow);
+  z-index: 1000;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.menuItem:hover {
+  background-color: var(--color-hover);
+}
+
+.checkbox {
+  margin-right: 8px;
+  accent-color: var(--color-primary);
+}
+
+.label {
+  font-size: 14px;
+  color: var(--color-text);
+  user-select: none;
+}
+
+/* Ensure checkbox has proper contrast in dark mode */
+[data-theme="dark"] .checkbox {
+  accent-color: var(--color-primary);
+  background-color: var(--color-surface);
+}
+
+/* Ensure icon color changes in dark mode */
+[data-theme="dark"] .icon {
+  fill: var(--color-text);
+}

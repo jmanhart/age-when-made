@@ -1,5 +1,6 @@
 import type { Preview } from "@storybook/react";
-import "../src/styles/global.css"; // ✅ Adjust path if necessary
+import { ThemeDecorator } from "../src/stories/decorators/ThemeDecorator";
+import "../src/styles/theme.css";
 import { initialize, mswLoader } from "msw-storybook-addon";
 import { handlers } from "../src/__mocks__/handlers";
 
@@ -23,6 +24,7 @@ const preview: Preview = {
     },
   },
   loaders: [mswLoader],
+  decorators: [ThemeDecorator],
 };
 
 export default preview;

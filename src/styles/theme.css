@@ -1,0 +1,85 @@
+:root {
+  /* Theme Variables */
+  --color-bg: #f8f9fa;
+  --color-text: #333;
+  --color-primary: #007bff;
+  --color-primary-hover: #0056b3;
+  --color-link: #007bff;
+  --color-link-hover: #0056b3;
+  --color-button-bg: #007bff;
+  --color-button-text: white;
+
+  /* Component-specific variables */
+  --border-radius: 8px;
+  --transition: 0.2s ease;
+  --spacing-unit: 8px;
+
+  /* Enable both light and dark mode */
+  color-scheme: light dark;
+
+  /* Neutral colors */
+  --color-background: #ffffff;
+  --color-surface: #ffffff;
+  --color-border: #cccccc;
+  --color-text-secondary: #666666;
+
+  /* Interactive states */
+  --color-hover: #f5f5f5;
+  --color-focus-ring: rgba(0, 102, 204, 0.2);
+
+  /* Component-specific */
+  --select-background: var(--color-surface);
+  --select-border: var(--color-border);
+  --select-text: var(--color-text);
+  --select-arrow-color: var(--color-text);
+
+  --menu-background: var(--color-surface);
+  --menu-border: var(--color-border);
+  --menu-text: var(--color-text);
+  --menu-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --menu-hover: var(--color-hover);
+
+  /* Checkbox specific */
+  --checkbox-accent: var(--color-primary);
+  --checkbox-border: var(--color-border);
+}
+
+/* Dark Theme */
+:root[data-theme="dark"] {
+  --color-bg: #121212;
+  --color-text: rgba(255, 255, 255, 0.87);
+  --color-primary: #9ecbff;
+  --color-primary-hover: #82b3e0;
+  --color-link: #9ecbff;
+  --color-link-hover: #82b3e0;
+  --color-button-bg: #333;
+  --color-button-text: #fff;
+
+  --color-background: #1a1a1a;
+  --color-surface: #2d2d2d;
+  --color-border: #404040;
+  --color-text-secondary: #a3a3a3;
+
+  --color-hover: #363636;
+  --color-focus-ring: rgba(59, 130, 246, 0.2);
+
+  --menu-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  /* Component-specific dark mode */
+  --select-arrow-color: var(--color-text);
+  --checkbox-border: var(--color-border);
+}
+
+/* System Preference Override */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #121212;
+    --color-text: rgba(255, 255, 255, 0.87);
+    --color-primary: #9ecbff;
+    --color-primary-hover: #82b3e0;
+    --color-link: #9ecbff;
+    --color-link-hover: #82b3e0;
+    --color-button-bg: #333;
+    --color-button-text: #fff;
+  }
+}

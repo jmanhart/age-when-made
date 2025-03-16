@@ -1,0 +1,89 @@
+import { Meta, ColorPalette, ColorItem } from "@storybook/blocks";
+
+<Meta title="Theme/Colors" />
+
+# Theme Documentation
+
+## Color Palette
+
+### Base Colors
+
+<ColorPalette>
+  <ColorItem
+    title="Primary Colors"
+    colors={{
+      "color-primary": "#0066cc",
+      "color-primary-hover": "#0052a3",
+    }}
+  />
+  <ColorItem
+    title="Background Colors"
+    colors={{
+      "color-background": "#ffffff",
+      "color-surface": "#ffffff",
+      "color-border": "#cccccc",
+    }}
+  />
+  <ColorItem
+    title="Text Colors"
+    colors={{
+      "color-text": "#333333",
+      "color-text-secondary": "#666666",
+    }}
+  />
+</ColorPalette>
+
+### Dark Mode Colors
+
+<ColorPalette>
+  <ColorItem
+    title="Primary Colors (Dark)"
+    colors={{
+      "color-primary": "#3b82f6",
+      "color-primary-hover": "#60a5fa",
+    }}
+  />
+  <ColorItem
+    title="Background Colors (Dark)"
+    colors={{
+      "color-background": "#1a1a1a",
+      "color-surface": "#2d2d2d",
+      "color-border": "#404040",
+    }}
+  />
+  <ColorItem
+    title="Text Colors (Dark)"
+    colors={{
+      "color-text": "#e5e5e5",
+      "color-text-secondary": "#a3a3a3",
+    }}
+  />
+</ColorPalette>{" "}
+
+### Accessibility
+
+<ColorPalette>
+  <ColorItem
+    title="Text Contrast Ratios"
+    subtitle="WCAG 2.1 Requirements: AA Large Text (3:1), AA Small Text (4.5:1), AAA (7:1)"
+    colors={{
+      "Primary Text / Background": "#333333 on #ffffff - Ratio: 12.63:1 ✅",
+      "Secondary Text / Background": "#666666 on #ffffff - Ratio: 5.74:1 ⚠️",
+    }}
+  />
+</ColorPalette>
+
+### Color Blindness Safe Combinations
+
+<ColorPalette>
+  <ColorItem
+    title="State Indicators"
+    subtitle="Include patterns or icons alongside these colors"
+    colors={{
+      success: "#2e7d32",
+      warning: "#ed6c02",
+      error: "#d32f2f",
+      info: "#0288d1",
+    }}
+  />
+</ColorPalette>

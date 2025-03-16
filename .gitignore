@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+coverage/
 
 # Editor directories and files
 .vscode/*
@@ -34,10 +35,7 @@ coverage/
 # Sentry Config File
 .env.sentry-build-plugin
 
-# Codecov files
-codecov
-codecov.SHA256SUM
-codecov.SHA256SUM.sig
+
 
 # Storybook-related ignores
 *storybook.log
