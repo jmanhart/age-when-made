@@ -23,9 +23,10 @@ export default defineConfig({
     }),
   ],
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
+    alias: [
+      { find: "@", replacement: path.resolve(__dirname, "src") },
+      { find: /^~/, replacement: path.resolve(__dirname, "src") },
+    ],
     extensions: [".mjs", ".js", ".mts", ".ts", ".jsx", ".tsx", ".json"],
   },
   build: {
@@ -37,7 +38,12 @@ export default defineConfig({
       input: {
         main: path.resolve(__dirname, "index.html"),
       },
+      output: {
+        manualChunks: undefined,
+      },
     },
+    target: "esnext",
+    minify: "terser",
   },
   define: {
     __SENTRY_RELEASE__: JSON.stringify(`movieapp@${version}`),
