@@ -48,4 +48,13 @@ export default defineConfig({
   define: {
     __SENTRY_RELEASE__: JSON.stringify(`movieapp@${version}`),
   },
+  base: "/",
+  server: {
+    port: 3000,
+    strictPort: true,
+  },
+  preview: {
+    port: 3000,
+    strictPort: true,
+  },
 });
