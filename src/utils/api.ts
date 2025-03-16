@@ -2,6 +2,8 @@ import axios from "axios";
 import { Movie, Cast, Actor } from "../types/types";
 import fetchActorDetails from "./fetchActorDetails";
 import { calculateAgeAtDate } from "./calculateAge";
+import * as Sentry from "@sentry/react";
+import { addBreadcrumb, withSentryTracking } from "./sentry";
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -12,17 +14,38 @@ const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
  * @returns A list of movies that match the query
  */
 const fetchMovies = async (query: string): Promise<Movie[]> => {
-  try {
-    const response = await axios.get<{ results: Movie[] }>(
-      `${API_BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(
-        query
-      )}`
-    );
-    return response.data.results;
-  } catch (error) {
-    console.error("Error fetching movies:", error);
-    return [];
-  }
+  return withSentryTracking("fetchMovies", async () => {
+    addBreadcrumb("api", "Fetching movies", "info", { query });
+
+    try {
+      const response = await axios.get<{ results: Movie[] }>(
+        `${API_BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(
+          query
+        )}`
+      );
+
+      addBreadcrumb("api", "Movies fetched successfully", "info", {
+        query,
+        resultCount: response.data.results.length,
+      });
+
+      return response.data.results;
+    } catch (error) {
+      addBreadcrumb("api", "Error fetching movies", "error", {
+        query,
+        error: error instanceof Error ? error.message : String(error),
+      });
+
+      Sentry.captureException(error, {
+        tags: {
+          operation: "fetchMovies",
+          query,
+        },
+      });
+      console.error("Error fetching movies:", error);
+      return [];
+    }
+  });
 };
 
 /**
@@ -31,17 +54,19 @@ const fetchMovies = async (query: string): Promise<Movie[]> => {
  * @returns A list of actors that match the query
  */
 const fetchActors = async (query: string): Promise<Actor[]> => {
-  try {
-    const response = await axios.get<{ results: Actor[] }>(
-      `${API_BASE_URL}/search/person?api_key=${API_KEY}&query=${encodeURIComponent(
-        query
-      )}`
-    );
-    return response.data.results;
-  } catch (error) {
-    console.error("Error fetching actors:", error);
-    return [];
-  }
+  return withSentryTracking("fetchActors", async () => {
+    try {
+      const response = await axios.get<{ results: Actor[] }>(
+        `${API_BASE_URL}/search/person?api_key=${API_KEY}&query=${encodeURIComponent(
+          query
+        )}`
+      );
+      return response.data.results;
+    } catch (error) {
+      console.error("Error fetching actors:", error);
+      return [];
+    }
+  });
 };
 
 /**
@@ -87,6 +112,8 @@ const fetchMovieCast = async (
   movieId: number,
   releaseDate: string
 ): Promise<Actor[]> => {
+  addBreadcrumb("api", "Fetching movie cast", "info", { movieId, releaseDate });
+
   console.log("fetchMovieCast called with:", { movieId, releaseDate });
 
   try {
@@ -145,8 +172,17 @@ const fetchMovieCast = async (
       })
     );
 
+    addBreadcrumb("api", "Cast fetched successfully", "info", {
+      movieId,
+      castCount: response.data.cast.length,
+    });
+
     return castWithDetails;
   } catch (error) {
+    addBreadcrumb("api", "Error fetching cast", "error", {
+      movieId,
+      error: error instanceof Error ? error.message : String(error),
+    });
     console.error("Error fetching cast details:", error);
     return [];
   }
@@ -159,7 +195,7 @@ const fetchMovieCast = async (
  */
 const fetchActorFilmography = async (actorId: number): Promise<Movie[]> => {
   try {
-    const actorDetails = await fetchActorDetails(actorId); // Fetch actor’s birth details
+    const actorDetails = await fetchActorDetails(actorId); // Fetch actor's birth details
     const response = await axios.get<{ cast: Movie[] }>(
       `${API_BASE_URL}/person/${actorId}/movie_credits?api_key=${API_KEY}`
     );
@@ -189,9 +225,9 @@ const fetchActorFilmography = async (actorId: number): Promise<Movie[]> => {
 export {
   fetchActorDetails,
   fetchActorFilmography,
-  fetchMovies,
-  fetchMovieById, // Only export once here
-  fetchActors,
+  fetchMovieById,
   fetchSuggestions,
   fetchMovieCast,
+  fetchMovies,
+  fetchActors,
 };

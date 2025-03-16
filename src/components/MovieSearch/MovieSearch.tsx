@@ -5,6 +5,8 @@ import { fetchMovies, fetchActors } from "../../utils/api";
 import styles from "./MovieSearch.module.css";
 import { Movie, Actor } from "../../types/types";
 import SearchIcon from "../../assets/icons/searchIcon";
+import { withErrorBoundary } from "../ErrorBoundary.tsx";
+import { addBreadcrumb } from "../../utils/sentry";
 
 // Define a combined type for suggestions that includes both Movie and Actor properties
 interface MovieSuggestion extends Movie {
@@ -106,6 +108,11 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
 
   const handleSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    addBreadcrumb("search", "User initiated search", "info", {
+      query,
+      isHeaderSearch,
+    });
+
     const movieResults = await fetchMovies(query);
     setMovies(movieResults);
     setShowSuggestions(false);
@@ -113,9 +120,11 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Handle arrow keys
     if (e.key === "ArrowDown") {
-      e.preventDefault(); // Prevent cursor from moving
+      addBreadcrumb("navigation", "User pressed arrow down", "info", {
+        selectedIndex: selectedIndex + 1,
+      });
+      e.preventDefault();
       setSelectedIndex((prev) =>
         prev < suggestions.length - 1 ? prev + 1 : prev
       );
@@ -123,6 +132,10 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
       e.preventDefault(); // Prevent cursor from moving
       setSelectedIndex((prev) => (prev > 0 ? prev - 1 : -1));
     } else if (e.key === "Enter") {
+      addBreadcrumb("selection", "User pressed enter", "info", {
+        selectedIndex,
+        hasSelection: selectedIndex >= 0 && !!suggestions[selectedIndex],
+      });
       e.preventDefault();
       if (selectedIndex >= 0 && suggestions[selectedIndex]) {
         handleSuggestionClick(suggestions[selectedIndex]);
@@ -144,6 +157,12 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
   };
 
   const handleSuggestionClick = (item: Suggestion) => {
+    addBreadcrumb("selection", "User clicked suggestion", "info", {
+      itemType: item.type,
+      itemId: item.id,
+      itemTitle: item.type === "movie" ? item.title : item.name,
+    });
+
     setQuery(item.type === "movie" ? item.title : item.name);
     setShowSuggestions(false);
     setSelectedIndex(-1);
@@ -249,4 +268,4 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
   );
 };
 
-export default MovieSearch;
+export default withErrorBoundary(MovieSearch, "MovieSearch");
