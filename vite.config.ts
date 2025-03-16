@@ -26,7 +26,7 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-    extensions: [".js", ".jsx", ".ts", ".tsx"],
+    extensions: [".mjs", ".js", ".mts", ".ts", ".jsx", ".tsx", ".json"],
   },
   build: {
     sourcemap: true, // Generate source maps for easier debugging

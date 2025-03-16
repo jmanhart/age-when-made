@@ -3,10 +3,10 @@ import { useEffect } from "react";
 import "@/styles/theme.css";
 import { SentryErrorBoundary } from "@/components/ErrorBoundary";
 
-import Header from "@/components/Header/Header";
-import MovieDetails from "@/components/MovieDetails/MovieDetails";
-import ActorFilmography from "@/components/ActorFilmography/ActorFilmography";
-import HomePage from "@/pages/HomePage";
+import Header from "@/components/Header/Header.tsx";
+import MovieDetails from "@/components/MovieDetails/MovieDetails.tsx";
+import ActorFilmography from "@/components/ActorFilmography/ActorFilmography.tsx";
+import HomePage from "@/pages/HomePage.tsx";
 
 const App = () => {
   // Set initial theme based on user preference
