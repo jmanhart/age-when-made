@@ -38,12 +38,12 @@ export default defineConfig({
       input: {
         main: path.resolve(__dirname, "index.html"),
       },
-      output: {
-        manualChunks: undefined,
-      },
     },
-    target: "esnext",
-    minify: "terser",
+    modulePreload: {
+      polyfill: true,
+    },
+    cssCodeSplit: true,
+    chunkSizeWarningLimit: 1000,
   },
   define: {
     __SENTRY_RELEASE__: JSON.stringify(`movieapp@${version}`),

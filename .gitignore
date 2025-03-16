@@ -26,6 +26,8 @@ coverage/
 
 # Environment variables
 .env
+.env.*
+!.env.example
 
 # Build directories
 dist/
