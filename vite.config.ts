@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react-swc";
 import svgr from "vite-plugin-svgr"; // Import the SVGR plugin
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 import { version } from "./package.json";
+import path from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -13,14 +14,30 @@ export default defineConfig({
       org: "movieapp",
       project: "javascript-react",
       authToken: process.env.SENTRY_AUTH_TOKEN,
-      release: `movieapp@${version}`,
+      release: {
+        name: `movieapp@${version}`,
+      },
       sourcemaps: {
-        include: ["./dist"],
+        assets: ["./dist/**"],
       },
     }),
   ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+    extensions: [".js", ".jsx", ".ts", ".tsx"],
+  },
   build: {
     sourcemap: true, // Generate source maps for easier debugging
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, "index.html"),
+      },
+      output: {
+        manualChunks: undefined,
+      },
+    },
   },
   define: {
     __SENTRY_RELEASE__: JSON.stringify(`movieapp@${version}`),
