@@ -27,6 +27,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      util: "rollup-plugin-node-polyfills/polyfills/util",
+      stream: "rollup-plugin-node-polyfills/polyfills/stream",
+      events: "rollup-plugin-node-polyfills/polyfills/events",
     },
     extensions: [".mjs", ".js", ".mts", ".ts", ".jsx", ".tsx", ".json"],
     mainFields: ["module", "jsnext:main", "jsnext", "main"],
@@ -63,6 +66,7 @@ export default defineConfig({
   },
   define: {
     __SENTRY_RELEASE__: JSON.stringify(`movieapp@${version}`),
+    global: "globalThis",
   },
   base: "/",
   server: {
@@ -72,5 +76,12 @@ export default defineConfig({
   preview: {
     port: 3000,
     strictPort: true,
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      define: {
+        global: "globalThis",
+      },
+    },
   },
 });
