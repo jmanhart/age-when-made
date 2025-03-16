@@ -6,7 +6,8 @@ export interface Movie {
   release_date: string;
   overview: string;
   poster_path: string | null;
-  type?: "movie"; // Add this line
+  vote_average?: number;
+  type?: "movie";
 }
 
 // Response format for movie search results
