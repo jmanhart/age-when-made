@@ -29,6 +29,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
     extensions: [".mjs", ".js", ".mts", ".ts", ".jsx", ".tsx", ".json"],
+    mainFields: ["module", "jsnext:main", "jsnext", "main"],
   },
   build: {
     sourcemap: true,
