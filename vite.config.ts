@@ -29,13 +29,13 @@ export default defineConfig({
     extensions: [".mjs", ".js", ".mts", ".ts", ".jsx", ".tsx", ".json"],
   },
   build: {
-    sourcemap: true, // Generate source maps for easier debugging
+    sourcemap: true,
+    outDir: "dist",
+    assetsDir: "assets",
+    emptyOutDir: true,
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, "index.html"),
-      },
-      output: {
-        manualChunks: undefined,
       },
     },
   },
