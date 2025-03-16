@@ -23,10 +23,9 @@ export default defineConfig({
     }),
   ],
   resolve: {
-    alias: [
-      { find: "@", replacement: path.resolve(__dirname, "src") },
-      { find: /^~/, replacement: path.resolve(__dirname, "src") },
-    ],
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
     extensions: [".mjs", ".js", ".mts", ".ts", ".jsx", ".tsx", ".json"],
   },
   build: {
