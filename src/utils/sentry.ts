@@ -1,5 +1,4 @@
 import * as Sentry from "@sentry/react";
-import { BrowserTracing } from "@sentry/tracing";
 import React from "react";
 import {
   useLocation,
@@ -29,13 +28,8 @@ export const initSentry = () => {
     environment: import.meta.env.MODE,
     enabled: import.meta.env.PROD,
     debug: import.meta.env.DEV,
+    release: import.meta.env.VITE_APP_VERSION || "development",
   });
-
-  // Add some default tags
-  Sentry.setTag(
-    "app_version",
-    import.meta.env.VITE_APP_VERSION || "development"
-  );
 };
 
 export const startTransaction = (name: string, op: string) => {
@@ -65,7 +59,6 @@ export const addBreadcrumb = (
     message,
     level,
     data,
-    timestamp: Date.now(),
   });
 };
 

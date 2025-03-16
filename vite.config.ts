@@ -40,6 +40,20 @@ export default defineConfig({
       input: {
         main: path.resolve(__dirname, "index.html"),
       },
+      external: [
+        "http",
+        "https",
+        "url",
+        "assert",
+        "stream",
+        "tty",
+        "util",
+        "os",
+        "zlib",
+        "path",
+        "fs",
+        "events",
+      ],
     },
     modulePreload: {
       polyfill: true,
