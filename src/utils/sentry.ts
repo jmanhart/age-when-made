@@ -2,31 +2,13 @@ declare const __SENTRY_RELEASE__: string;
 
 import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/react";
-import React from "react";
-import {
-  useLocation,
-  useNavigationType,
-  createRoutesFromChildren,
-  matchRoutes,
-} from "react-router-dom";
 
 export const initSentry = () => {
   Sentry.init({
     dsn:
       import.meta.env.VITE_SENTRY_DSN ||
       "https://cda3683d91776dea04de4020bf07a802@o4508215900766208.ingest.us.sentry.io/4508215907713024",
-    integrations: [
-      new BrowserTracing({
-        tracingOrigins: ["localhost", /^\//],
-        routingInstrumentation: Sentry.reactRouterV6Instrumentation(
-          React.useEffect,
-          useLocation,
-          useNavigationType,
-          createRoutesFromChildren,
-          matchRoutes
-        ),
-      }),
-    ],
+    integrations: [new BrowserTracing()],
     tracesSampleRate: 1.0,
     environment: import.meta.env.MODE,
     enabled: import.meta.env.PROD,
