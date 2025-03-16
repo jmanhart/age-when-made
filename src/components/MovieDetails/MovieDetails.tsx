@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { fetchMovieById, fetchMovieCast } from "../../utils/api";
 import { Movie, Actor } from "../../types/types";
 import SliderIcon from "../../assets/icons/sliderIcon";
