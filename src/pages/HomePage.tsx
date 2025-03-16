@@ -5,7 +5,7 @@ import MovieSearch from "../components/MovieSearch/MovieSearch";
 const HomePage: React.FC = () => {
   return (
     <div className={styles.homePage}>
-      <h1>age-when-made.com</h1>
+      <h1>age-when-made</h1>
       <p>
         Have you ever wondered how old an actor was when they made a certain
         movie? <br />
