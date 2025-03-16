@@ -1,6 +1,5 @@
-import React from "react";
-import { MemoryRouter } from "react-router-dom";
 import type { Meta, StoryObj } from "@storybook/react";
+import { MemoryRouter } from "react-router-dom";
 import MovieSearch from "./MovieSearch";
 import { within, userEvent, expect } from "@storybook/test";
 import { getMockSuggestions } from "../../__mocks__/movieData";
@@ -9,12 +8,6 @@ import { getMockSuggestions } from "../../__mocks__/movieData";
  * The MovieSearch component provides a search interface for movies and actors.
  * It supports both header and standalone modes, with autocomplete suggestions.
  */
-
-interface MovieSearchProps {
-  isHeaderSearch?: boolean;
-  searchQuery?: string;
-  onSearch?: (query: string) => void;
-}
 
 const meta = {
   title: "Components/MovieSearch",
@@ -62,14 +55,16 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default = (args: MovieSearchProps) => <MovieSearch {...args} />;
-Default.args = {
-  isHeaderSearch: false,
+export const Default: Story = {
+  args: {
+    isHeaderSearch: false,
+  },
 };
 
-export const InHeader = (args: MovieSearchProps) => <MovieSearch {...args} />;
-InHeader.args = {
-  isHeaderSearch: true,
+export const InHeader: Story = {
+  args: {
+    isHeaderSearch: true,
+  },
 };
 
 export const Empty: Story = {
@@ -127,6 +122,5 @@ export const SearchInteraction: Story = {
 
     // Test suggestion click
     await userEvent.click(canvas.getByText("Inception"));
-    // Add assertions for navigation
   },
 };

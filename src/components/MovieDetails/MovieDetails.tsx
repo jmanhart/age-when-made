@@ -181,12 +181,12 @@ const MovieDetails: React.FC = () => {
                   id: actor.id,
                   name: actor.name,
                   character: actor.character,
-                  profilePath: actor.profile_path, // ✅ Fix: Ensuring correct prop name
-                  birthday: actor.birthday,
-                  deathday: actor.deathday,
-                  currentAge: actor.currentAge,
-                  ageAtDeath: actor.ageAtDeath,
-                  ageAtRelease: actor.ageAtRelease,
+                  profilePath: actor.profile_path || undefined,
+                  birthday: actor.birthday || undefined,
+                  deathday: actor.deathday || undefined,
+                  currentAge: actor.currentAge || undefined,
+                  ageAtDeath: actor.ageAtDeath || undefined,
+                  ageAtRelease: actor.ageAtRelease || undefined,
                 }}
               />
             ))}
