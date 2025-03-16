@@ -67,6 +67,9 @@ export default defineConfig({
   define: {
     __SENTRY_RELEASE__: JSON.stringify(`movieapp@${version}`),
     global: "globalThis",
+    "process.env": {
+      NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+    },
   },
   base: "/",
   server: {
@@ -83,5 +86,6 @@ export default defineConfig({
         global: "globalThis",
       },
     },
+    include: ["@sentry/react"],
   },
 });
