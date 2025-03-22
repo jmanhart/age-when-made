@@ -1,115 +1,154 @@
-/* ActorCard Styles */
+/* Base Styles */
 .castItem {
   display: flex;
   flex-direction: column;
-  background-color: var(--color-bg-primary);
+  padding: var(--spacing-5);
+  background-color: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
-  border-radius: 12px;
-  overflow: hidden;
-  transition: all 0.2s ease;
-  text-decoration: none;
-  color: var(--text-primary);
-  width: 100%;
-  max-width: 300px;
+  border-radius: var(--border-radius);
   box-shadow: var(--color-shadow);
+  transition: var(--transition);
+  color: var(--text-primary);
 }
 
 .castItem:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   box-shadow: var(--color-shadow-hover);
 }
 
+/* Variants */
+.castItem--compact {
+  padding: var(--spacing-3);
+  gap: var(--spacing-2);
+}
+
+.castItem--detailed {
+  padding: var(--spacing-6);
+  gap: var(--spacing-4);
+}
+
+.castItem--grid {
+  aspect-ratio: 2/3;
+}
+
+.castItem--list {
+  flex-direction: row;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+}
+
+/* Orientations */
+.castItem--horizontal {
+  flex-direction: row;
+  gap: var(--spacing-4);
+}
+
+/* Actor Image */
 .actorImage {
   width: 100%;
-  height: 300px;
+  height: 185px;
+  border-radius: var(--border-radius);
   object-fit: cover;
-  background-color: var(--color-bg-secondary);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.deceased {
-  filter: grayscale(100%);
-  opacity: 0.8;
-}
-
-.noImage {
+  box-shadow: var(--color-shadow);
+  margin-bottom: var(--spacing-3);
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: var(--color-bg-secondary);
+}
+
+.image--small {
+  height: 120px;
+}
+
+.image--large {
+  height: 250px;
+}
+
+.deceased {
+  filter: grayscale(100%);
+}
+
+.noImage {
+  background-color: var(--color-placeholder);
   color: var(--text-secondary);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
+  text-align: center;
 }
 
+/* Actor Details */
 .actorDetails {
-  padding: var(--spacing-6);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-4);
-  background-color: var(--color-bg-primary);
-}
-
-.actorName {
-  font-size: var(--font-size-2xl);
-  line-height: var(--line-height-tight);
-  font-weight: var(--font-weight-semibold);
-  color: var(--text-primary);
-  margin: 0;
-  letter-spacing: var(--letter-spacing-tight);
-}
-
-.characterName {
-  font-size: var(--font-size-lg);
-  line-height: var(--line-height-normal);
-  color: var(--text-secondary);
-  margin: 0;
-  font-weight: var(--font-weight-medium);
-  letter-spacing: var(--letter-spacing-normal);
-}
-
-.metrics {
-  margin-top: var(--spacing-3);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-2);
-  font-size: var(--font-size-sm);
+  flex: 1;
+}
+
+.actorName {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  line-height: var(--line-height-tight);
+  margin: 0;
+}
+
+.characterName {
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
   line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-medium);
+  margin: 0;
+}
+
+.deceasedIcon {
+  display: inline-block;
+  margin-right: var(--spacing-1);
+  line-height: 1;
+}
+
+/* Metrics */
+.metrics {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-2);
 }
 
 .metricRow {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-1) 0;
-  border-bottom: 1px solid var(--color-border-light);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: var(--line-height-snug);
 }
 
 .metricLabel {
-  color: var(--text-secondary);
+  text-align: left;
   font-weight: var(--font-weight-medium);
-  letter-spacing: var(--letter-spacing-wide);
+  color: var(--text-primary);
 }
 
 .metricValue {
-  color: var(--text-primary);
-  font-weight: var(--font-weight-semibold);
+  text-align: right;
+  color: var(--text-secondary);
 }
 
+/* Responsive Adjustments */
 @media (max-width: 768px) {
   .castItem {
-    max-width: 100%;
+    padding: var(--spacing-4);
+  }
+
+  .castItem--horizontal {
+    flex-direction: column;
   }
 
   .actorImage {
-    height: 250px;
+    height: 150px;
   }
 
-  .actorName {
-    font-size: var(--font-size-xl);
-  }
-
-  .characterName {
-    font-size: var(--font-size-base);
+  .image--large {
+    height: 200px;
   }
 }

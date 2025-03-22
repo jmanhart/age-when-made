@@ -29,7 +29,7 @@
 .icon {
   width: 20px;
   height: 20px;
-  fill: var(--color-text);
+  fill: var(--color-icon);
 }
 
 .menu {
@@ -65,7 +65,7 @@
 
 .label {
   font-size: 14px;
-  color: var(--color-text);
+  color: var(--text-primary);
   user-select: none;
 }
 
@@ -73,9 +73,4 @@
 [data-theme="dark"] .checkbox {
   accent-color: var(--color-primary);
   background-color: var(--color-surface);
-}
-
-/* Ensure icon color changes in dark mode */
-[data-theme="dark"] .icon {
-  fill: var(--color-text);
 }
