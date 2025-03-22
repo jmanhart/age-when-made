@@ -1,13 +1,64 @@
 :root {
+  /* Typography Scale */
+  --font-size-xs: 0.75rem; /* 12px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-base: 1rem; /* 16px */
+  --font-size-lg: 1.125rem; /* 18px */
+  --font-size-xl: 1.25rem; /* 20px */
+  --font-size-2xl: 1.5rem; /* 24px */
+  --font-size-3xl: 1.875rem; /* 30px */
+  --font-size-4xl: 2.25rem; /* 36px */
+
+  /* Line Heights */
+  --line-height-tight: 1.2;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
+
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Letter Spacing */
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+
   /* Theme Variables */
   --color-bg: #f8f9fa;
-  --color-text: #333;
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f0f4f8;
+
+  /* Typography Colors */
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-muted: #888888;
+
+  /* Interactive Colors */
   --color-primary: #007bff;
   --color-primary-hover: #0056b3;
   --color-link: #007bff;
   --color-link-hover: #0056b3;
-  --color-button-bg: #007bff;
+
+  /* Borders and Shadows */
+  --color-border: #e0e0e0;
+  --color-border-light: #f0f0f0;
+  --color-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --color-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.15);
+
+  /* Component-specific */
+  --color-button-bg: var(--color-primary);
   --color-button-text: white;
+  --color-placeholder: #e0e0e0;
+
+  /* Typography Variables */
+  --link-color: var(--color-link);
+  --link-hover-color: var(--color-link-hover);
+  --link-active-color: var(--color-primary-hover);
 
   /* Component-specific variables */
   --border-radius: 8px;
@@ -20,7 +71,6 @@
   /* Neutral colors */
   --color-background: #ffffff;
   --color-surface: #ffffff;
-  --color-border: #cccccc;
   --color-text-secondary: #666666;
 
   /* Interactive states */
@@ -42,22 +92,55 @@
   /* Checkbox specific */
   --checkbox-accent: var(--color-primary);
   --checkbox-border: var(--color-border);
+
+  /* Spacing Scale */
+  --spacing-1: 0.25rem; /* 4px */
+  --spacing-2: 0.5rem; /* 8px */
+  --spacing-3: 0.75rem; /* 12px */
+  --spacing-4: 1rem; /* 16px */
+  --spacing-5: 1.25rem; /* 20px */
+  --spacing-6: 1.5rem; /* 24px */
+  --spacing-8: 2rem; /* 32px */
+  --spacing-10: 2.5rem; /* 40px */
+  --spacing-12: 3rem; /* 48px */
 }
 
 /* Dark Theme */
 :root[data-theme="dark"] {
+  /* Theme Variables */
   --color-bg: #121212;
-  --color-text: rgba(255, 255, 255, 0.87);
+  --color-bg-primary: #1a1a1a;
+  --color-bg-secondary: #242424;
+
+  /* Typography Colors */
+  --text-primary: rgba(255, 255, 255, 0.87);
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --text-muted: rgba(255, 255, 255, 0.38);
+
+  /* Interactive Colors */
   --color-primary: #9ecbff;
   --color-primary-hover: #82b3e0;
   --color-link: #9ecbff;
   --color-link-hover: #82b3e0;
-  --color-button-bg: #333;
-  --color-button-text: #fff;
+
+  /* Borders and Shadows */
+  --color-border: #333333;
+  --color-border-light: #2a2a2a;
+  --color-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --color-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+  /* Component-specific */
+  --color-button-bg: #333333;
+  --color-button-text: #ffffff;
+  --color-placeholder: #333333;
+
+  /* Typography Variables */
+  --link-color: var(--color-link);
+  --link-hover-color: var(--color-link-hover);
+  --link-active-color: var(--color-primary-hover);
 
   --color-background: #1a1a1a;
   --color-surface: #2d2d2d;
-  --color-border: #404040;
   --color-text-secondary: #a3a3a3;
 
   --color-hover: #363636;
@@ -73,13 +156,31 @@
 /* System Preference Override */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
+    /* Theme Variables */
     --color-bg: #121212;
-    --color-text: rgba(255, 255, 255, 0.87);
+    --color-bg-primary: #1a1a1a;
+    --color-bg-secondary: #242424;
+
+    /* Typography Colors */
+    --text-primary: rgba(255, 255, 255, 0.87);
+    --text-secondary: rgba(255, 255, 255, 0.6);
+    --text-muted: rgba(255, 255, 255, 0.38);
+
+    /* Interactive Colors */
     --color-primary: #9ecbff;
     --color-primary-hover: #82b3e0;
     --color-link: #9ecbff;
     --color-link-hover: #82b3e0;
-    --color-button-bg: #333;
-    --color-button-text: #fff;
+
+    /* Borders and Shadows */
+    --color-border: #333333;
+    --color-border-light: #2a2a2a;
+    --color-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    --color-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+    /* Component-specific */
+    --color-button-bg: #333333;
+    --color-button-text: #ffffff;
+    --color-placeholder: #333333;
   }
 }
