@@ -33,6 +33,7 @@
     "@sentry/vite-plugin": "^3.2.2",
     "@storybook/addon-essentials": "^8.6.4",
     "@storybook/addon-onboarding": "^8.6.4",
+    "@storybook/addon-themes": "^8.6.7",
     "@storybook/blocks": "^8.6.4",
     "@storybook/experimental-addon-test": "^8.6.4",
     "@storybook/jest": "^0.2.2",

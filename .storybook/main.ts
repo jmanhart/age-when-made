@@ -8,6 +8,7 @@ const config: StorybookConfig = {
     "@chromatic-com/storybook",
     "@storybook/experimental-addon-test",
     "msw-storybook-addon",
+    "@storybook/addon-themes",
   ],
   framework: {
     name: "@storybook/react-vite",
