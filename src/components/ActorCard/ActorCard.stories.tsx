@@ -236,10 +236,11 @@ export const GridDisplay: Story = {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-          gap: "1rem",
+          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+          gap: "var(--spacing-4)",
+          padding: "var(--spacing-4)",
+          width: "100%",
           maxWidth: "1200px",
-          padding: "1rem",
         }}
       >
         <Story args={{ actor: sampleActor, variant: "grid" }} />

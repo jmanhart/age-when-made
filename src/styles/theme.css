@@ -9,6 +9,12 @@
   --font-size-3xl: 1.875rem; /* 30px */
   --font-size-4xl: 2.25rem; /* 36px */
 
+  /* Actor Image Variables */
+  --actor-image-ratio: 2/3;
+  --actor-image-width-small: 120px;
+  --actor-image-width-medium: 200px;
+  --actor-image-width-large: 300px;
+
   /* Line Heights */
   --line-height-tight: 1.2;
   --line-height-snug: 1.375;

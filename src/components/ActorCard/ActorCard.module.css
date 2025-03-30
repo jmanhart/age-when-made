@@ -9,6 +9,7 @@
   box-shadow: var(--color-shadow);
   transition: var(--transition);
   color: var(--text-primary);
+  width: 100%;
 }
 
 .castItem:hover {
@@ -28,25 +29,27 @@
 }
 
 .castItem--grid {
-  aspect-ratio: 2/3;
+  aspect-ratio: var(--actor-image-ratio);
 }
 
 .castItem--list {
   flex-direction: row;
   gap: var(--spacing-4);
   padding: var(--spacing-4);
+  width: 100%;
 }
 
 /* Orientations */
 .castItem--horizontal {
   flex-direction: row;
   gap: var(--spacing-4);
+  width: fit-content;
 }
 
 /* Actor Image */
 .actorImage {
   width: 100%;
-  height: 185px;
+  aspect-ratio: var(--actor-image-ratio);
   border-radius: var(--border-radius);
   object-fit: cover;
   box-shadow: var(--color-shadow);
@@ -58,11 +61,15 @@
 }
 
 .image--small {
-  height: 120px;
+  width: var(--actor-image-width-small);
+}
+
+.image--medium {
+  width: var(--actor-image-width-medium);
 }
 
 .image--large {
-  height: 250px;
+  width: var(--actor-image-width-large);
 }
 
 .deceased {
@@ -82,7 +89,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-2);
-  flex: 1;
+  min-width: 0;
 }
 
 .actorName {
@@ -91,6 +98,9 @@
   color: var(--text-primary);
   line-height: var(--line-height-tight);
   margin: 0;
+  /* white-space: nowrap; */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .characterName {
@@ -99,6 +109,9 @@
   line-height: var(--line-height-normal);
   font-weight: var(--font-weight-medium);
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .deceasedIcon {
@@ -113,6 +126,7 @@
   flex-direction: column;
   gap: var(--spacing-2);
   margin-top: var(--spacing-2);
+  min-width: 0;
 }
 
 .metricRow {
@@ -121,17 +135,22 @@
   font-size: var(--font-size-sm);
   color: var(--text-secondary);
   line-height: var(--line-height-snug);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .metricLabel {
   text-align: left;
   font-weight: var(--font-weight-medium);
   color: var(--text-primary);
+  margin-right: var(--spacing-2);
 }
 
 .metricValue {
   text-align: right;
   color: var(--text-secondary);
+  flex-shrink: 0;
 }
 
 /* Responsive Adjustments */
@@ -144,11 +163,15 @@
     flex-direction: column;
   }
 
-  .actorImage {
-    height: 150px;
+  .image--small {
+    width: calc(var(--actor-image-width-small) * 0.8);
+  }
+
+  .image--medium {
+    width: calc(var(--actor-image-width-medium) * 0.8);
   }
 
   .image--large {
-    height: 200px;
+    width: calc(var(--actor-image-width-large) * 0.8);
   }
 }
