@@ -3,7 +3,7 @@ import { Movie, Cast, Actor } from "../types/types";
 import fetchActorDetails from "./fetchActorDetails";
 import { calculateAgeAtDate } from "./calculateAge";
 import * as Sentry from "@sentry/react";
-import { addBreadcrumb, withSentryTracking } from "./sentry";
+import { addBreadcrumb } from "./sentry";
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -14,7 +14,7 @@ const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
  * @returns A list of movies that match the query
  */
 const fetchMovies = async (query: string): Promise<Movie[]> => {
-  return withSentryTracking("fetchMovies", async () => {
+  try {
     addBreadcrumb("api", "Fetching movies", "info", { query });
 
     const response = await axios.get<{ results: Movie[] }>(
@@ -29,7 +29,10 @@ const fetchMovies = async (query: string): Promise<Movie[]> => {
     });
 
     return response.data.results;
-  });
+  } catch (error) {
+    Sentry.captureException(error);
+    throw error;
+  }
 };
 
 /**
@@ -38,19 +41,18 @@ const fetchMovies = async (query: string): Promise<Movie[]> => {
  * @returns A list of actors that match the query
  */
 const fetchActors = async (query: string): Promise<Actor[]> => {
-  return withSentryTracking("fetchActors", async () => {
-    try {
-      const response = await axios.get<{ results: Actor[] }>(
-        `${API_BASE_URL}/search/person?api_key=${API_KEY}&query=${encodeURIComponent(
-          query
-        )}`
-      );
-      return response.data.results;
-    } catch (error) {
-      console.error("Error fetching actors:", error);
-      return [];
-    }
-  });
+  try {
+    const response = await axios.get<{ results: Actor[] }>(
+      `${API_BASE_URL}/search/person?api_key=${API_KEY}&query=${encodeURIComponent(
+        query
+      )}`
+    );
+    return response.data.results;
+  } catch (error) {
+    console.error("Error fetching actors:", error);
+    Sentry.captureException(error);
+    return [];
+  }
 };
 
 /**
