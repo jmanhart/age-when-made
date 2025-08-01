@@ -32,6 +32,7 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [preventReopen, setPreventReopen] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   // Add ref for the suggestions list
@@ -41,38 +42,48 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
   useEffect(() => {
     const fetchAutocomplete = async () => {
       if (query.trim().length > 1 && !preventReopen) {
-        const movieResults: Movie[] = await fetchMovies(query);
-        const actorResults: Actor[] = await fetchActors(query);
+        setError(null);
+        try {
+          const movieResults: Movie[] = await fetchMovies(query);
+          const actorResults: Actor[] = await fetchActors(query);
 
-        // Add a type field to distinguish between movies and actors
-        const movieSuggestions: MovieSuggestion[] = movieResults.map(
-          (item) => ({
-            ...item,
-            type: "movie",
-          })
-        );
+          // Add a type field to distinguish between movies and actors
+          const movieSuggestions: MovieSuggestion[] = movieResults.map(
+            (item) => ({
+              ...item,
+              type: "movie",
+            })
+          );
 
-        const actorSuggestions: ActorSuggestion[] = actorResults.map(
-          (item) => ({
-            ...item,
-            type: "actor",
-          })
-        );
+          const actorSuggestions: ActorSuggestion[] = actorResults.map(
+            (item) => ({
+              ...item,
+              type: "actor",
+            })
+          );
 
-        const combinedSuggestions: Suggestion[] = [
-          ...movieSuggestions,
-          ...actorSuggestions,
-        ];
+          const combinedSuggestions: Suggestion[] = [
+            ...movieSuggestions,
+            ...actorSuggestions,
+          ];
 
-        // Remove duplicates based on `id` and `type`
-        const uniqueSuggestions = combinedSuggestions.filter(
-          (item, index, self) =>
-            index ===
-            self.findIndex((t) => t.id === item.id && t.type === item.type)
-        );
+          // Remove duplicates based on `id` and `type`
+          const uniqueSuggestions = combinedSuggestions.filter(
+            (item, index, self) =>
+              index ===
+              self.findIndex((t) => t.id === item.id && t.type === item.type)
+          );
 
-        setSuggestions(uniqueSuggestions);
-        setShowSuggestions(true);
+          setSuggestions(uniqueSuggestions);
+          setShowSuggestions(true);
+          if (uniqueSuggestions.length === 0) {
+            setError("No suggestions found.");
+          }
+        } catch (error) {
+          setError("An error occurred while fetching suggestions.");
+          setShowSuggestions(false);
+          console.error(error);
+        }
       } else {
         setShowSuggestions(false);
       }
@@ -113,8 +124,19 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
       isHeaderSearch,
     });
 
-    const movieResults = await fetchMovies(query);
-    setMovies(movieResults);
+    setError(null);
+    setMovies([]);
+
+    try {
+      const movieResults = await fetchMovies(query);
+      setMovies(movieResults);
+      if (movieResults.length === 0) {
+        setError("No movies found.");
+      }
+    } catch (error) {
+      setError("An error occurred while fetching movies. Please try again later.");
+      console.error(error);
+    }
     setShowSuggestions(false);
     setPreventReopen(true);
   };
@@ -219,6 +241,8 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
           />
         </div>
       </form>
+
+      {error && <div className={styles.errorContainer}>{error}</div>}
 
       {showSuggestions && (
         <ul ref={suggestionsRef} className={styles.suggestionsList}>

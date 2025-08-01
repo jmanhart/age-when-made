@@ -46,6 +46,16 @@
   position: relative;
 }
 
+.errorContainer {
+  color: #e53e3e;
+  background-color: #fff5f5;
+  border: 1px solid #e53e3e;
+  padding: 1rem;
+  border-radius: 0.25rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+
 .searchForm {
   display: flex;
   align-items: center;

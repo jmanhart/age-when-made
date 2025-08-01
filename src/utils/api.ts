@@ -17,34 +17,18 @@ const fetchMovies = async (query: string): Promise<Movie[]> => {
   return withSentryTracking("fetchMovies", async () => {
     addBreadcrumb("api", "Fetching movies", "info", { query });
 
-    try {
-      const response = await axios.get<{ results: Movie[] }>(
-        `${API_BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(
-          query
-        )}`
-      );
+    const response = await axios.get<{ results: Movie[] }>(
+      `${API_BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(
+        query
+      )}`
+    );
 
-      addBreadcrumb("api", "Movies fetched successfully", "info", {
-        query,
-        resultCount: response.data.results.length,
-      });
+    addBreadcrumb("api", "Movies fetched successfully", "info", {
+      query,
+      resultCount: response.data.results.length,
+    });
 
-      return response.data.results;
-    } catch (error) {
-      addBreadcrumb("api", "Error fetching movies", "error", {
-        query,
-        error: error instanceof Error ? error.message : String(error),
-      });
-
-      Sentry.captureException(error, {
-        tags: {
-          operation: "fetchMovies",
-          query,
-        },
-      });
-      console.error("Error fetching movies:", error);
-      return [];
-    }
+    return response.data.results;
   });
 };
 
