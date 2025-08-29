@@ -40,7 +40,7 @@ const ActorFilmography: React.FC = () => {
         <img
           src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}
           alt={`${actor.name}'s profile`}
-          className={styles.actorImage}
+          className={styles.actorFilmographyImage}
         />
         <h2 className={styles.actorName}>{actor.name}</h2>
       </div>

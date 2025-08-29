@@ -6,17 +6,17 @@ import styles from "./Header.module.css";
 
 const Header: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Do not render the header on the root `/` route
   if (location.pathname === "/") {
     return null;
   }
 
-  const navigate = useNavigate();
-
   const handleBack = () => {
-    navigate("/"); // Navigate to the home page
+    navigate(-1); // Always go back to previous page
   };
+
   return (
     <header className={styles.header}>
       <Button variant="secondary" onClick={handleBack}>

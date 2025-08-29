@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./ActorCard.module.css";
 import { ActorCardProps } from "./types";
 import { ActorImage } from "./components/ActorImage";
@@ -15,6 +16,8 @@ const ActorCard: React.FC<ActorCardProps> = ({
   imageSize = "medium",
   className,
 }) => {
+  const navigate = useNavigate();
+
   const cardClasses = classNames(
     styles.castItem,
     {
@@ -24,17 +27,24 @@ const ActorCard: React.FC<ActorCardProps> = ({
     className
   );
 
+  const handleCardClick = () => {
+    console.log("Card clicked, navigating to:", `/actor/${actor.id}`);
+    navigate(`/actor/${actor.id}`);
+  };
+
   return (
-    <div className={cardClasses}>
-      {showImage && <ActorImage actor={actor} size={imageSize} />}
-      <div className={styles.actorDetails}>
-        <ActorHeader actor={actor} />
-        {showMetrics && (
-          <ActorMetrics
-            actor={actor}
-            variant={variant === "detailed" ? "detailed" : "compact"}
-          />
-        )}
+    <div className={styles.actorCardLink} onClick={handleCardClick}>
+      <div className={cardClasses}>
+        {showImage && <ActorImage actor={actor} size={imageSize} />}
+        <div className={styles.actorDetails}>
+          <ActorHeader actor={actor} />
+          {showMetrics && (
+            <ActorMetrics
+              actor={actor}
+              variant={variant === "detailed" ? "detailed" : "compact"}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

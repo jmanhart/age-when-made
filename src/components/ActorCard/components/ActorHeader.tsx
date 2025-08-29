@@ -13,10 +13,7 @@ export const ActorHeader: React.FC<ActorHeaderProps> = ({
 }) => {
   return (
     <header className={className}>
-      <h3 className={styles.actorName}>
-        {actor.deathday && <span className={styles.deceasedIcon}>☠️ </span>}
-        {actor.name}
-      </h3>
+      <h3 className={styles.actorName}>{actor.name}</h3>
       <h4 className={styles.characterName}>{actor.character}</h4>
     </header>
   );

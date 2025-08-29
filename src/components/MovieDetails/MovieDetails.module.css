@@ -228,7 +228,8 @@
   box-shadow: var(--color-shadow-hover);
 }
 
-.actorImage {
+/* Change .actorImage to .movieDetailsActorImage */
+.movieDetailsActorImage {
   width: 100%;
   aspect-ratio: var(--actor-image-ratio);
   border-radius: var(--border-radius);

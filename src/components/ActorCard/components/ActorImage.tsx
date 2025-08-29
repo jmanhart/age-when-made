@@ -29,10 +29,17 @@ export const ActorImage: React.FC<ActorImageProps> = ({
   }
 
   return (
-    <img
-      src={`https://image.tmdb.org/t/p/w500${actor.profilePath}`}
-      alt={`${actor.name} as ${actor.character}`}
-      className={imageClasses}
-    />
+    <div className={styles.imageContainer}>
+      <img
+        src={`https://image.tmdb.org/t/p/w500${actor.profilePath}`}
+        alt={`${actor.name} as ${actor.character}`}
+        className={imageClasses}
+      />
+      {actor.deathday && (
+        <div className={styles.deceasedRibbon}>
+          <span>💀 RIP</span>
+        </div>
+      )}
+    </div>
   );
 };
