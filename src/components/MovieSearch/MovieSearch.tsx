@@ -188,8 +188,7 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
 
   // Handle keyboard navigation and shortcuts
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "ArrowDown") {
-      // Navigate down through suggestions
+    const handleArrowDown = () => {
       addBreadcrumb("navigation", "User pressed arrow down", "info", {
         selectedIndex: selectedIndex + 1,
       });
@@ -197,12 +196,14 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
       setSelectedIndex((prev) =>
         prev < suggestions.length - 1 ? prev + 1 : prev
       );
-    } else if (e.key === "ArrowUp") {
-      // Navigate up through suggestions
-      e.preventDefault(); // Prevent cursor from moving in input
+    };
+
+    const handleArrowUp = () => {
+      e.preventDefault();
       setSelectedIndex((prev) => (prev > 0 ? prev - 1 : -1));
-    } else if (e.key === "Enter") {
-      // Handle Enter key - either select suggestion or submit search
+    };
+
+    const handleEnter = () => {
       addBreadcrumb("selection", "User pressed enter", "info", {
         selectedIndex,
         hasSelection: selectedIndex >= 0 && !!suggestions[selectedIndex],
@@ -210,19 +211,34 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
       e.preventDefault();
 
       if (selectedIndex >= 0 && suggestions[selectedIndex]) {
-        // If suggestion is selected, navigate to it
         handleSuggestionClick(suggestions[selectedIndex]);
       } else {
-        // If no suggestion selected, perform search
         handleSearch();
       }
 
       setShowSuggestions(false);
       setSelectedIndex(-1);
-    } else if (e.key === "Escape") {
-      // Close suggestions on Escape
+    };
+
+    const handleEscape = () => {
       setShowSuggestions(false);
       setSelectedIndex(-1);
+    };
+
+    // Clean switch statement
+    switch (e.key) {
+      case "ArrowDown":
+        handleArrowDown();
+        break;
+      case "ArrowUp":
+        handleArrowUp();
+        break;
+      case "Enter":
+        handleEnter();
+        break;
+      case "Escape":
+        handleEscape();
+        break;
     }
   };
 
