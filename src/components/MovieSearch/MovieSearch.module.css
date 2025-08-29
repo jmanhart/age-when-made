@@ -113,7 +113,7 @@
 .activeSuggestion {
   background-color: var(--color-primary);
   color: var(--color-text-inverse);
-  font-weight: bold;
+  /* font-weight: bold; */
 }
 
 .posterImage {
