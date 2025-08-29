@@ -8,46 +8,72 @@ import SearchIcon from "../../assets/icons/searchIcon";
 import { withErrorBoundary } from "../ErrorBoundary.tsx";
 import { addBreadcrumb } from "../../utils/sentry";
 
-// Define a combined type for suggestions that includes both Movie and Actor properties
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+
+// Extend Movie type to include a type discriminator for suggestions
 interface MovieSuggestion extends Movie {
   type: "movie";
 }
 
+// Extend Actor type to include a type discriminator for suggestions
 interface ActorSuggestion extends Actor {
   type: "actor";
 }
 
+// Union type that can represent either a movie or actor suggestion
 type Suggestion = MovieSuggestion | ActorSuggestion;
 
+// Props interface - allows the component to be used in different contexts
 interface MovieSearchProps {
-  isHeaderSearch?: boolean; // Optional prop to distinguish header usage
+  isHeaderSearch?: boolean; // When true, renders as a compact header search
 }
+
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
 
 const MovieSearch: React.FC<MovieSearchProps> = ({
   isHeaderSearch = false,
 }) => {
-  const [query, setQuery] = useState<string>("");
-  const [movies, setMovies] = useState<Movie[]>([]);
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
-  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
-  const [preventReopen, setPreventReopen] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
+  // ============================================================================
+  // STATE MANAGEMENT
+  // ============================================================================
 
-  // Add ref for the suggestions list
-  const suggestionsRef = useRef<HTMLUListElement>(null);
-  const selectedItemRef = useRef<HTMLLIElement>(null);
+  const [query, setQuery] = useState<string>(""); // Current search input value
+  const [movies, setMovies] = useState<Movie[]>([]); // Search results for movies
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]); // Autocomplete suggestions
+  const [showSuggestions, setShowSuggestions] = useState<boolean>(false); // Controls suggestion visibility
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1); // Currently selected suggestion index (-1 = none)
+  const [preventReopen, setPreventReopen] = useState<boolean>(false); // Prevents suggestions from reopening after navigation
+  const [error, setError] = useState<string | null>(null); // Error message display
 
+  const navigate = useNavigate(); // React Router hook for navigation
+
+  // ============================================================================
+  // REFS FOR DOM MANIPULATION
+  // ============================================================================
+
+  const suggestionsRef = useRef<HTMLUListElement>(null); // Reference to suggestions list container
+  const selectedItemRef = useRef<HTMLLIElement>(null); // Reference to currently selected suggestion item
+
+  // ============================================================================
+  // EFFECTS
+  // ============================================================================
+
+  // Effect 1: Fetch autocomplete suggestions when query changes
   useEffect(() => {
     const fetchAutocomplete = async () => {
+      // Only fetch if query has 2+ characters and we're not preventing reopening
       if (query.trim().length > 1 && !preventReopen) {
         setError(null);
         try {
+          // Fetch both movies and actors simultaneously for better UX
           const movieResults: Movie[] = await fetchMovies(query);
           const actorResults: Actor[] = await fetchActors(query);
 
-          // Add a type field to distinguish between movies and actors
+          // Transform movies to include type discriminator
           const movieSuggestions: MovieSuggestion[] = movieResults.map(
             (item) => ({
               ...item,
@@ -55,6 +81,7 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
             })
           );
 
+          // Transform actors to include type discriminator
           const actorSuggestions: ActorSuggestion[] = actorResults.map(
             (item) => ({
               ...item,
@@ -62,12 +89,14 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
             })
           );
 
+          // Combine both types of suggestions
           const combinedSuggestions: Suggestion[] = [
             ...movieSuggestions,
             ...actorSuggestions,
           ];
 
-          // Remove duplicates based on `id` and `type`
+          // Remove duplicates based on unique combination of id and type
+          // This prevents the same movie/actor from appearing twice
           const uniqueSuggestions = combinedSuggestions.filter(
             (item, index, self) =>
               index ===
@@ -76,6 +105,8 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
 
           setSuggestions(uniqueSuggestions);
           setShowSuggestions(true);
+
+          // Show helpful message if no suggestions found
           if (uniqueSuggestions.length === 0) {
             setError("No suggestions found.");
           }
@@ -85,13 +116,15 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
           console.error(error);
         }
       } else {
+        // Hide suggestions if query is too short or reopening is prevented
         setShowSuggestions(false);
       }
     };
-    fetchAutocomplete();
-  }, [query, preventReopen]);
 
-  // Add this useEffect to handle scrolling
+    fetchAutocomplete();
+  }, [query, preventReopen]); // Re-run when query or preventReopen changes
+
+  // Effect 2: Handle auto-scrolling for keyboard navigation
   useEffect(() => {
     if (
       selectedIndex >= 0 &&
@@ -106,43 +139,57 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
       const itemTop = itemHeight * selectedIndex;
       const scrollTop = container.scrollTop;
 
-      // Scroll down if item is below visible area
+      // Auto-scroll down if selected item is below visible area
       if (itemTop + itemHeight > scrollTop + containerHeight) {
         container.scrollTop = itemTop + itemHeight - containerHeight;
       }
-      // Scroll up if item is above visible area
+      // Auto-scroll up if selected item is above visible area
       else if (itemTop < scrollTop) {
         container.scrollTop = itemTop;
       }
     }
-  }, [selectedIndex]);
+  }, [selectedIndex]); // Re-run when selectedIndex changes
 
+  // ============================================================================
+  // EVENT HANDLERS
+  // ============================================================================
+
+  // Handle form submission and search execution
   const handleSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+
+    // Log search action for analytics
     addBreadcrumb("search", "User initiated search", "info", {
       query,
       isHeaderSearch,
     });
 
     setError(null);
-    setMovies([]);
+    setMovies([]); // Clear previous results
 
     try {
       const movieResults = await fetchMovies(query);
       setMovies(movieResults);
+
       if (movieResults.length === 0) {
         setError("No movies found.");
       }
     } catch (error) {
-      setError("An error occurred while fetching movies. Please try again later.");
+      setError(
+        "An error occurred while fetching movies. Please try again later."
+      );
       console.error(error);
     }
+
+    // Hide suggestions and prevent them from reopening
     setShowSuggestions(false);
     setPreventReopen(true);
   };
 
+  // Handle keyboard navigation and shortcuts
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "ArrowDown") {
+      // Navigate down through suggestions
       addBreadcrumb("navigation", "User pressed arrow down", "info", {
         selectedIndex: selectedIndex + 1,
       });
@@ -151,44 +198,57 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
         prev < suggestions.length - 1 ? prev + 1 : prev
       );
     } else if (e.key === "ArrowUp") {
-      e.preventDefault(); // Prevent cursor from moving
+      // Navigate up through suggestions
+      e.preventDefault(); // Prevent cursor from moving in input
       setSelectedIndex((prev) => (prev > 0 ? prev - 1 : -1));
     } else if (e.key === "Enter") {
+      // Handle Enter key - either select suggestion or submit search
       addBreadcrumb("selection", "User pressed enter", "info", {
         selectedIndex,
         hasSelection: selectedIndex >= 0 && !!suggestions[selectedIndex],
       });
       e.preventDefault();
+
       if (selectedIndex >= 0 && suggestions[selectedIndex]) {
+        // If suggestion is selected, navigate to it
         handleSuggestionClick(suggestions[selectedIndex]);
       } else {
+        // If no suggestion selected, perform search
         handleSearch();
       }
+
       setShowSuggestions(false);
       setSelectedIndex(-1);
     } else if (e.key === "Escape") {
+      // Close suggestions on Escape
       setShowSuggestions(false);
       setSelectedIndex(-1);
     }
   };
 
+  // Handle input value changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
     setSelectedIndex(-1); // Reset selection when input changes
-    setPreventReopen(false); // Reset preventReopen only when input changes
+    setPreventReopen(false); // Allow suggestions to reopen when typing
   };
 
+  // Handle clicking on a suggestion item
   const handleSuggestionClick = (item: Suggestion) => {
+    // Log selection for analytics
     addBreadcrumb("selection", "User clicked suggestion", "info", {
       itemType: item.type,
       itemId: item.id,
       itemTitle: item.type === "movie" ? item.title : item.name,
     });
 
+    // Update input with selected item's name/title
     setQuery(item.type === "movie" ? item.title : item.name);
     setShowSuggestions(false);
     setSelectedIndex(-1);
-    setPreventReopen(true);
+    setPreventReopen(true); // Prevent suggestions from reopening
+
+    // Navigate to appropriate detail page
     if (item.type === "movie") {
       navigate(`/movie/${item.id}`);
     } else {
@@ -196,12 +256,17 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
     }
   };
 
+  // ============================================================================
+  // RENDER
+  // ============================================================================
+
   return (
     <div
       className={`${styles.movieSearchContainer} ${
         isHeaderSearch ? styles.headerSearchContainer : ""
       }`}
     >
+      {/* Search Form */}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -228,11 +293,13 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
               isHeaderSearch ? styles.headerSearchInput : ""
             }`}
             onFocus={() => {
+              // Show suggestions when focusing if conditions are met
               if (!preventReopen && query.length > 1) {
                 setShowSuggestions(true);
               }
             }}
             onBlur={() =>
+              // Hide suggestions after a small delay to allow clicks to register
               setTimeout(() => {
                 setShowSuggestions(false);
                 setSelectedIndex(-1);
@@ -242,21 +309,25 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
         </div>
       </form>
 
+      {/* Error Display */}
       {error && <div className={styles.errorContainer}>{error}</div>}
 
+      {/* Autocomplete Suggestions */}
       {showSuggestions && (
         <ul ref={suggestionsRef} className={styles.suggestionsList}>
           {suggestions.map((item, index) => (
             <li
-              key={`${item.type}-${item.id}`}
-              ref={index === selectedIndex ? selectedItemRef : null}
+              key={`${item.type}-${item.id}`} // Unique key combining type and id
+              ref={index === selectedIndex ? selectedItemRef : null} // Ref for scrolling
               onClick={() => handleSuggestionClick(item)}
               className={`${styles.suggestionItem} ${
                 index === selectedIndex ? styles.activeSuggestion : ""
               }`}
-              onMouseEnter={() => setSelectedIndex(index)}
+              onMouseEnter={() => setSelectedIndex(index)} // Update selection on hover
             >
+              {/* Render different content based on item type */}
               {item.type === "movie" ? (
+                // Movie suggestion layout
                 <>
                   <img
                     src={`https://image.tmdb.org/t/p/w92${item.poster_path}`}
@@ -264,7 +335,7 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
                     className={styles.posterImage}
                   />
                   <div className={styles.movieInfo}>
-                    <h4 className={styles.movieTitle}>{item.title}</h4>
+                    <h3 className={styles.movieTitle}>{item.title}</h3>
                     <p className={styles.movieReleaseYear}>
                       {item.release_date
                         ? new Date(item.release_date).getFullYear()
@@ -273,23 +344,28 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
                   </div>
                 </>
               ) : (
-                <div className={styles.actorInfo}>
+                // Actor suggestion layout
+                <>
                   <img
                     src={`https://image.tmdb.org/t/p/w92${item.profile_path}`}
                     alt={item.name}
                     className={styles.posterImage}
                   />
-                  <h4 className={styles.actorName}>{item.name}</h4>
-                </div>
+                  <div className={styles.actorInfo}>
+                    <h4 className={styles.actorName}>{item.name}</h4>
+                  </div>
+                </>
               )}
             </li>
           ))}
         </ul>
       )}
 
+      {/* Movie Results List - Only show when not in header mode */}
       {!isHeaderSearch && <MovieList movies={movies} />}
     </div>
   );
 };
 
+// Export component wrapped with error boundary for crash protection
 export default withErrorBoundary(MovieSearch, "MovieSearch");

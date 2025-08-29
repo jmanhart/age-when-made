@@ -1,40 +1,6 @@
 /* MovieSearch.module.css */
 
 /* ==============================
-   Variables - Light Mode
-============================== */
-:root {
-  --color-bg-secondary: #ffffff;
-  --color-text: #333;
-  --color-text-secondary: #888;
-  --color-primary: #007bff;
-  --color-primary-hover: #0056b3;
-  --color-border: #ddd;
-  --color-border-light: #eee;
-  --color-icon: #aaa;
-  --color-hover: #f0f0f0;
-  --color-text-inverse: #ffffff;
-}
-
-/* ==============================
-   Variables - Dark Mode
-============================== */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg-secondary: #333333;
-    --color-text: rgba(255, 255, 255, 0.87);
-    --color-text-secondary: #bbbbbb;
-    --color-primary: #9ecbff;
-    --color-primary-hover: #82b3e0;
-    --color-border: #555555;
-    --color-border-light: #444444;
-    --color-icon: #bbbbbb;
-    --color-hover: #555555;
-    --color-text-inverse: #000000;
-  }
-}
-
-/* ==============================
    Component Styles
 ============================== */
 .movieSearchContainer {
@@ -136,7 +102,7 @@
   align-items: center;
   gap: 12px;
   transition: background-color 0.2s ease;
-  height: 100px;
+  height: 100%;
 }
 
 .suggestionItem:hover,
@@ -152,17 +118,22 @@
 
 .posterImage {
   width: 80px;
-  height: 100%;
+  aspect-ratio: 2/3;
   border-radius: 4px;
   margin-right: 12px;
   object-fit: cover;
 }
 
 .movieTitle {
-  font-size: 16px;
+  /* font-size: 16px; */
+  text-align: left;
   font-weight: bold;
   color: var(--color-text);
   margin-bottom: 4px;
+}
+
+.movieReleaseYear {
+  text-align: left;
 }
 
 .movieOverview {
