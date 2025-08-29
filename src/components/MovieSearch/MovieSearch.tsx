@@ -349,7 +349,17 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
                     src={`https://image.tmdb.org/t/p/w92${item.poster_path}`}
                     alt={item.title}
                     className={styles.posterImage}
+                    onError={(e) => {
+                      // Hide broken image and show fallback
+                      e.currentTarget.style.display = "none";
+                      e.currentTarget.nextElementSibling?.classList.remove(
+                        styles.hidden
+                      );
+                    }}
                   />
+                  <div className={`${styles.imageFallback} ${styles.hidden}`}>
+                    <span>No Image</span>
+                  </div>
                   <div className={styles.movieInfo}>
                     <h3 className={styles.movieTitle}>{item.title}</h3>
                     <p className={styles.movieReleaseYear}>
@@ -366,7 +376,16 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
                     src={`https://image.tmdb.org/t/p/w92${item.profile_path}`}
                     alt={item.name}
                     className={styles.posterImage}
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                      e.currentTarget.nextElementSibling?.classList.remove(
+                        styles.hidden
+                      );
+                    }}
                   />
+                  <div className={`${styles.imageFallback} ${styles.hidden}`}>
+                    <span>No Image</span>
+                  </div>
                   <div className={styles.actorInfo}>
                     <h4 className={styles.actorName}>{item.name}</h4>
                   </div>
