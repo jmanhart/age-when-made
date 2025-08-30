@@ -113,23 +113,30 @@ const MovieDetails: React.FC = () => {
           className={styles.moviePoster}
         />
         <div className={styles.movieInfo}>
-          <h1 className={styles.movieTitle}>{movie.title}</h1>
-          <p className={styles.movieReleaseDate}>
-            <span className={styles.dateWithTooltip}>
-              {new Date(movie.release_date).getFullYear()}
-              <span className={styles.tooltipText}>
-                Released on{" "}
-                {new Date(movie.release_date).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+          <div className={styles.movieTitleContainer}>
+            <h1 className={styles.movieTitle}>{movie.title}</h1>
+            <p className={styles.movieReleaseDate}>
+              <span className={styles.dateWithTooltip}>
+                {new Date(movie.release_date).getFullYear()}
+                <span className={styles.tooltipText}>
+                  Released on{" "}
+                  {new Date(movie.release_date).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </span>
               </span>
-            </span>
-          </p>
-          <p className={styles.movieAge}>
-            Movie Age: {calculateMovieAge(movie.release_date)} years
-          </p>
+              {/* Show movie age as simple text */}
+              {calculateMovieAge(movie.release_date) > 0 && (
+                <span className={styles.movieAge}>
+                  {" "}
+                  {calculateMovieAge(movie.release_date)} years old
+                </span>
+              )}
+            </p>
+          </div>
+
           <div className={styles.mortalityTags}>
             {/* Show living actors tag if there are any living actors */}
             {actorsAlive > 0 && (

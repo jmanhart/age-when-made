@@ -10,8 +10,9 @@
   text-align: center;
   white-space: nowrap;
   vertical-align: baseline;
-  border-radius: 34px;
+  border-radius: var(--spacing-2);
   border: 1px solid transparent;
+
   transition: all var(--transition);
   cursor: default;
   user-select: none;
@@ -25,7 +26,7 @@
 }
 
 .size--medium {
-  padding: var(--spacing-2) var(--spacing-3);
+  padding: var(--spacing-1) var(--spacing-3);
   font-size: var(--font-size-sm);
   min-height: 28px;
 }
@@ -37,23 +38,30 @@
 }
 
 /* Cast mortality status variants */
-/* .status--all-deceased {
-  background-color: #dc3545;
-  color: white;
-  border-color: #dc3545;
+.status--all-deceased {
+  /* background-color: #dc3545; */
+  /* color: white; */
+  /* border-color: #dc3545; */
 }
 
 .status--partial-deceased {
-  background-color: #ffc107;
-  color: #212529;
-  border-color: #ffc107;
+  /* background-color: #ffc107; */
+  /* color: #212529; */
+  /* border-color: #ffc107; */
 }
 
 .status--all-living {
-  background-color: #28a745;
+  /* background-color: #28a745; */
+  /* color: white; */
+  /* border-color: #28a745; */
+}
+
+/* Age variant styling */
+.status--age {
+  /* background-color: #6f42c1;
   color: white;
-  border-color: #28a745;
-} */
+  border-color: #6f42c1; */
+}
 
 /* Rich content styling */
 .percentage {
@@ -65,7 +73,7 @@
 .statusLabel {
   font-weight: var(--font-weight-medium);
   color: inherit;
-  margin: 0 var(--spacing-1);
+  /* margin: 0 var(--spacing-1); */
 }
 
 .countBadge {
@@ -74,9 +82,9 @@
   color: inherit;
   opacity: 0.8;
   /* background: rgba(255, 255, 255, 0.2); */
-  padding: 2px 6px;
+  /* padding: 2px 6px; */
   border-radius: calc(var(--border-radius) - 2px);
-  margin-left: var(--spacing-1);
+  margin-right: var(--spacing-1);
 }
 
 /* Clickable state */
@@ -130,22 +138,25 @@
 
 /* Dark theme overrides */
 @media (prefers-color-scheme: dark) {
+  .statusTag {
+    border-color: var(--color-focus-ring);
+  }
   .status--all-deceased {
     /* background-color: #b02a37; */
-    color: white;
-    border-color: white;
+    /* color: white;
+    border-color: white; */
   }
 
   .status--partial-deceased {
     /* background-color: #b45309; */
-    color: white;
-    border-color: white;
+    /* color: white;
+    border-color: white; */
   }
 
   .status--all-living {
     /* background-color: #1e7e34; */
-    color: white;
-    border-color: white;
+    /* color: white;
+    border-color: white; */
   }
 }
 

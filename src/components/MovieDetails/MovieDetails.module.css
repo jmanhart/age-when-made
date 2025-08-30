@@ -398,7 +398,7 @@
 /* Mortality Tags Container */
 .mortalityTags {
   display: flex;
-  gap: var(--spacing-3);
+  gap: var(--spacing-2);
   margin-bottom: var(--spacing-4);
   flex-wrap: wrap;
 }
@@ -458,4 +458,11 @@
   border-width: 5px;
   border-style: solid;
   border-color: var(--color-border) transparent transparent transparent;
+}
+
+.movieTitleContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: var(--spacing-2);
 }

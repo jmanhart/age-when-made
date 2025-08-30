@@ -14,7 +14,7 @@ interface StatusTagProps {
 
   // Styling
   size?: "small" | "medium" | "large"; // Size of the tag
-  variant?: "living" | "deceased"; // Whether to display as living or deceased tag
+  variant?: "living" | "deceased" | "age"; // Whether to display as living, deceased, or age tag
 
   // Behavior
   clickable?: boolean; // Whether the tag is clickable
@@ -62,8 +62,8 @@ const StatusTag: React.FC<StatusTagProps> = ({
     if (variant === "living") {
       return (
         <>
-          <span className={styles.statusLabel}>Alive</span>
           <span className={styles.countBadge}>{totalCount}</span>
+          <span className={styles.statusLabel}> Alive</span>
         </>
       );
     }
@@ -71,9 +71,18 @@ const StatusTag: React.FC<StatusTagProps> = ({
     if (variant === "deceased") {
       return (
         <>
-          <span className={styles.percentage}>💀</span>
-          <span className={styles.statusLabel}>Dead</span>
           <span className={styles.countBadge}>{totalCount}</span>
+          <span className={styles.statusLabel}>Dead</span>
+        </>
+      );
+    }
+
+    if (variant === "age") {
+      return (
+        <>
+          <span className={styles.countBadge}>
+            {totalCount} years since release
+          </span>
         </>
       );
     }
@@ -82,11 +91,7 @@ const StatusTag: React.FC<StatusTagProps> = ({
     if (deceasedPercentage === 100) {
       return (
         <>
-          <span className={styles.percentage}>💀</span>
           <span className={styles.statusLabel}>All Dead</span>
-          <span className={styles.countBadge}>
-            ({deceasedCount}/{totalCount})
-          </span>
         </>
       );
     }
@@ -94,7 +99,6 @@ const StatusTag: React.FC<StatusTagProps> = ({
       return (
         <>
           <span className={styles.statusLabel}>All Alive</span>
-          <span className={styles.percentage}>{totalCount}</span>
         </>
       );
     }
