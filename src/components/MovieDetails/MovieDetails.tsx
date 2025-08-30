@@ -6,6 +6,7 @@ import styles from "./MovieDetails.module.css";
 import ActorCard from "../ActorCard/ActorCard.tsx";
 import Select from "../Select/Select";
 import SettingsMenu from "../SettingsMenu/SettingsMenu";
+import StatusTag from "../StatusTag/StatusTag";
 
 const MovieDetails: React.FC = () => {
   const { movieId } = useParams<{ movieId: string }>();
@@ -70,9 +71,9 @@ const MovieDetails: React.FC = () => {
       return 0;
     });
 
-  // Calculate Metrics Based on Filtered List
-  const totalActors = filteredCast.length;
-  const actorsAlive = filteredCast.filter((actor) => !actor.deathday).length;
+  // Calculate Metrics Based on Original Cast (not filtered)
+  const totalActors = cast.length;
+  const actorsAlive = cast.filter((actor) => !actor.deathday).length;
   const actorsDeceased = totalActors - actorsAlive;
 
   const statusOptions = [
@@ -114,19 +115,47 @@ const MovieDetails: React.FC = () => {
         <div className={styles.movieInfo}>
           <h1 className={styles.movieTitle}>{movie.title}</h1>
           <p className={styles.movieReleaseDate}>
-            Release Date: {movie.release_date}
+            <span className={styles.dateWithTooltip}>
+              {new Date(movie.release_date).getFullYear()}
+              <span className={styles.tooltipText}>
+                Released on{" "}
+                {new Date(movie.release_date).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </span>
+            </span>
           </p>
           <p className={styles.movieAge}>
             Movie Age: {calculateMovieAge(movie.release_date)} years
           </p>
+          <div className={styles.mortalityTags}>
+            {/* Show living actors tag if there are any living actors */}
+            {actorsAlive > 0 && (
+              <StatusTag
+                deceasedCount={0}
+                totalCount={actorsAlive}
+                variant="living"
+              />
+            )}
+
+            {/* Show deceased actors tag if there are any deceased actors */}
+            {actorsDeceased > 0 && (
+              <StatusTag
+                deceasedCount={actorsDeceased}
+                totalCount={actorsDeceased}
+                variant="deceased"
+              />
+            )}
+          </div>
           <p className={styles.movieOverview}>{movie.overview}</p>
 
           {/* Actor Metrics */}
-          <div className={styles.actorMetrics}>
-            <p>Total Actors: {totalActors}</p>
+          {/* <div className={styles.actorMetrics}>
             <p>Actors Alive: {actorsAlive}</p>
             <p>Actors Deceased: {actorsDeceased}</p>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -161,6 +190,8 @@ const MovieDetails: React.FC = () => {
               .map((_, index) => (
                 <div key={index} className={styles.placeholderCastItem}>
                   <div className={styles.placeholderImage}></div>
+                  <div className={styles.placeholderText}></div>
+                  <div className={styles.placeholderText}></div>
                   <div className={styles.placeholderText}></div>
                 </div>
               ))

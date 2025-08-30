@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./HomePage.module.css";
 import MovieSearch from "../components/MovieSearch/MovieSearch";
+import StatusTag from "../components/StatusTag/StatusTag";
 
 const HomePage: React.FC = () => {
   return (
@@ -13,6 +14,12 @@ const HomePage: React.FC = () => {
         (This is still a work in progress so be kind :D )
       </p>
       <MovieSearch isHeaderSearch={true} />
+
+      <StatusTag status="all-deceased">All Deceased</StatusTag>
+
+      <StatusTag status="partial-deceased">75% Deceased</StatusTag>
+
+      <StatusTag status="all-living">All Living</StatusTag>
     </div>
   );
 };

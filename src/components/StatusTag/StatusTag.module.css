@@ -1,0 +1,159 @@
+/* Base tag styles */
+.statusTag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-1);
+  font-family: inherit;
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 34px;
+  border: 1px solid transparent;
+  transition: all var(--transition);
+  cursor: default;
+  user-select: none;
+}
+
+/* Size variants */
+.size--small {
+  padding: var(--spacing-1) var(--spacing-2);
+  font-size: var(--font-size-xs);
+  min-height: 20px;
+}
+
+.size--medium {
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: var(--font-size-sm);
+  min-height: 28px;
+}
+
+.size--large {
+  padding: var(--spacing-3) var(--spacing-4);
+  font-size: var(--font-size-base);
+  min-height: 36px;
+}
+
+/* Cast mortality status variants */
+/* .status--all-deceased {
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
+.status--partial-deceased {
+  background-color: #ffc107;
+  color: #212529;
+  border-color: #ffc107;
+}
+
+.status--all-living {
+  background-color: #28a745;
+  color: white;
+  border-color: #28a745;
+} */
+
+/* Rich content styling */
+.percentage {
+  font-size: 1.2em;
+  font-weight: var(--font-weight-bold);
+  color: inherit;
+}
+
+.statusLabel {
+  font-weight: var(--font-weight-medium);
+  color: inherit;
+  margin: 0 var(--spacing-1);
+}
+
+.countBadge {
+  font-size: 1em;
+  font-weight: var(--font-weight-bold);
+  color: inherit;
+  opacity: 0.8;
+  /* background: rgba(255, 255, 255, 0.2); */
+  padding: 2px 6px;
+  border-radius: calc(var(--border-radius) - 2px);
+  margin-left: var(--spacing-1);
+}
+
+/* Clickable state */
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--color-shadow);
+}
+
+.clickable:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-focus-ring);
+}
+
+/* Disabled state */
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Icon styling */
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon--left {
+  margin-right: var(--spacing-1);
+}
+
+.icon--right {
+  margin-left: var(--spacing-1);
+}
+
+/* Content wrapper */
+.content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Dark theme overrides */
+@media (prefers-color-scheme: dark) {
+  .status--all-deceased {
+    /* background-color: #b02a37; */
+    color: white;
+    border-color: white;
+  }
+
+  .status--partial-deceased {
+    /* background-color: #b45309; */
+    color: white;
+    border-color: white;
+  }
+
+  .status--all-living {
+    /* background-color: #1e7e34; */
+    color: white;
+    border-color: white;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .size--large {
+    padding: var(--spacing-2) var(--spacing-3);
+    font-size: var(--font-size-sm);
+    min-height: 28px;
+  }
+}
