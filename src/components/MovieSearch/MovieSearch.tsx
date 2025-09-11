@@ -7,6 +7,7 @@ import { Movie, Actor } from "../../types/types";
 import SearchIcon from "../../assets/icons/searchIcon";
 import { withErrorBoundary } from "../ErrorBoundary.tsx";
 import { addBreadcrumb } from "../../utils/sentry";
+import { trackSearchEvent, trackNavigationEvent } from "../../utils/posthog";
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -164,12 +165,18 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
       isHeaderSearch,
     });
 
+    // Track search event with PostHog
+    trackSearchEvent(query, 0, "movie"); // We'll update the count after fetching
+
     setError(null);
     setMovies([]); // Clear previous results
 
     try {
       const movieResults = await fetchMovies(query);
       setMovies(movieResults);
+
+      // Update PostHog with actual results count
+      trackSearchEvent(query, movieResults.length, "movie");
 
       if (movieResults.length === 0) {
         setError("No movies found.");
@@ -258,11 +265,24 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
       itemTitle: item.type === "movie" ? item.title : item.name,
     });
 
+    // Track suggestion click with PostHog
+    trackSearchEvent(
+      item.type === "movie" ? item.title : item.name,
+      1,
+      item.type
+    );
+
     // Update input with selected item's name/title
     setQuery(item.type === "movie" ? item.title : item.name);
     setShowSuggestions(false);
     setSelectedIndex(-1);
     setPreventReopen(true); // Prevent suggestions from reopening
+
+    // Track navigation event
+    const currentPage = window.location.pathname;
+    const targetPage =
+      item.type === "movie" ? `/movie/${item.id}` : `/actor/${item.id}`;
+    trackNavigationEvent(currentPage, targetPage);
 
     // Navigate to appropriate detail page
     if (item.type === "movie") {
