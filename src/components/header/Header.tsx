@@ -17,10 +17,6 @@ const Header: React.FC = () => {
   const handleBack = () => {
     const currentPage = location.pathname;
 
-    logUserAction("back_button_clicked", {
-      currentPage,
-    });
-
     navigate(-1); // Always go back to previous page
   };
 

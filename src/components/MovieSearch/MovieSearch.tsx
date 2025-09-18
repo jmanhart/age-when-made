@@ -115,35 +115,17 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
               self.findIndex((t) => t.id === item.id && t.type === item.type)
           );
 
-          // Only log autocomplete results for queries with 3+ characters to reduce log volume
-          if (query.length >= 3) {
-            logUserAction("autocomplete_results_loaded", {
-              query,
-              totalSuggestions: uniqueSuggestions.length,
-            });
-          }
-
           setSuggestions(uniqueSuggestions);
           setShowSuggestions(true);
 
           // Show helpful message if no suggestions found
           if (uniqueSuggestions.length === 0) {
             setError("No suggestions found.");
-            // Only log no results for meaningful queries
-            if (query.length >= 3) {
-              logUserAction("autocomplete_no_results", {
-                query,
-                isHeaderSearch,
-              });
-            }
           }
         } catch (error) {
           setError("An error occurred while fetching suggestions.");
           setShowSuggestions(false);
           console.error(error);
-          logUserAction("autocomplete_error", {
-            query,
-          });
         }
       } else {
         // Hide suggestions if query is too short or reopening is prevented
@@ -188,10 +170,6 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
   const handleSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
 
-    logUserAction("search_initiated", {
-      query,
-    });
-
     // Log search action for analytics
     addBreadcrumb("search", "User initiated search", "info", {
       query,
@@ -216,21 +194,12 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
 
       if (movieResults.length === 0) {
         setError("No movies found.");
-        logUserAction("search_no_results", { query });
-      } else {
-        logUserAction("search_success", {
-          query,
-          resultCount: movieResults.length,
-        });
       }
     } catch (error) {
       setError(
         "An error occurred while fetching movies. Please try again later."
       );
       console.error(error);
-      logUserAction("search_error", {
-        query,
-      });
     }
 
     // Hide suggestions and prevent them from reopening
@@ -307,11 +276,6 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
     const targetPage =
       item.type === "movie" ? `/movie/${item.id}` : `/actor/${item.id}`;
     const itemTitle = item.type === "movie" ? item.title : item.name;
-
-    logUserAction("suggestion_clicked", {
-      itemType: item.type,
-      itemTitle,
-    });
 
     // Log selection for analytics
     addBreadcrumb("selection", "User clicked suggestion", "info", {

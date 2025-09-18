@@ -12,9 +12,9 @@ export const initSentry = () => {
     replaysSessionSampleRate: 1.0,
     replaysOnErrorSampleRate: 1.0,
 
-    // Performance monitoring
-    tracesSampleRate: 1.0, // Add this back for performance insights
-    profilesSampleRate: 1.0, // Add profiling for React components
+    // Performance monitoring - ENABLED but with minimal logging
+    tracesSampleRate: 1.0, // Full tracing for performance insights
+    profilesSampleRate: 0.1, // Low profiling to reduce spam
 
     // Enable structured logging
     enableLogs: true,
@@ -59,15 +59,30 @@ export const initSentry = () => {
         ],
       }),
 
-      // Performance monitoring
-      Sentry.browserTracingIntegration(),
+      // Performance monitoring - ENABLED with selective tracing
+      Sentry.browserTracingIntegration({
+        // Only trace navigation and major user interactions
+        tracePropagationTargets: [
+          window.location.origin, // Your app
+          /^https:\/\/api\.themoviedb\.org/, // TMDB API
+        ],
+        // Reduce span creation for less noise
+        shouldCreateSpanForRequest: (url) => {
+          // Only create spans for important API calls
+          return (
+            url.includes("/search/") ||
+            url.includes("/movie/") ||
+            url.includes("/person/")
+          );
+        },
+      }),
 
-      // Profiling for React components
+      // Profiling for React components - ENABLED but minimal
       Sentry.browserProfilingIntegration(),
 
-      // Console logging integration - automatically capture console logs
+      // Console logging integration - only capture errors and warnings
       Sentry.consoleLoggingIntegration({
-        levels: ["log", "error", "warn"],
+        levels: ["error", "warn"], // Removed "log" to reduce spam
       }),
     ],
   });

@@ -21,8 +21,6 @@ const fetchActorDetails = async (actorId: number): Promise<ActorDetails> => {
       `https://api.themoviedb.org/3/person/${actorId}?api_key=${apiKey}`
     );
 
-    console.log("Actor Details Response:", response.data); // Log response for debugging
-
     return {
       birthday: response.data.birthday,
       deathday: response.data.deathday,

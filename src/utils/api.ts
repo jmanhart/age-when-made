@@ -20,20 +20,20 @@ const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
  * @returns A list of movies that match the query
  */
 const fetchMovies = async (query: string): Promise<Movie[]> => {
-  const startTime = performance.now();
   const endpoint = `${API_BASE_URL}/search/movie`;
 
   try {
+    logApiCall(endpoint, "GET", { query });
     const response = await axios.get<{ results: Movie[] }>(
       `${endpoint}?api_key=${API_KEY}&query=${encodeURIComponent(query)}`
     );
-
+    logApiSuccess(endpoint, undefined, {
+      query,
+      resultCount: response.data.results.length,
+    });
     return response.data.results;
   } catch (error) {
-    // Only log errors, not successful calls
-    logApiError(endpoint, error as Error, {
-      query,
-    });
+    logApiError(endpoint, error as Error, { query });
     Sentry.captureException(error);
     throw error;
   }
@@ -45,21 +45,20 @@ const fetchMovies = async (query: string): Promise<Movie[]> => {
  * @returns A list of actors that match the query
  */
 const fetchActors = async (query: string): Promise<Actor[]> => {
-  const startTime = performance.now();
   const endpoint = `${API_BASE_URL}/search/person`;
 
   try {
+    logApiCall(endpoint, "GET", { query });
     const response = await axios.get<{ results: Actor[] }>(
       `${endpoint}?api_key=${API_KEY}&query=${encodeURIComponent(query)}`
     );
-
+    logApiSuccess(endpoint, undefined, {
+      query,
+      resultCount: response.data.results.length,
+    });
     return response.data.results;
   } catch (error) {
-    // Only log errors, not successful calls
-    logApiError(endpoint, error as Error, {
-      query,
-    });
-    console.error("Error fetching actors:", error);
+    logApiError(endpoint, error as Error, { query });
     Sentry.captureException(error);
     return [];
   }
@@ -87,17 +86,15 @@ const fetchSuggestions = async (query: string): Promise<(Movie | Actor)[]> => {
  * @returns The detailed movie information or null if not found
  */
 const fetchMovieById = async (movieId: number): Promise<Movie | null> => {
-  const startTime = performance.now();
   const endpoint = `${API_BASE_URL}/movie/${movieId}`;
 
   try {
+    logApiCall(endpoint, "GET", { movieId });
     const response = await axios.get<Movie>(`${endpoint}?api_key=${API_KEY}`);
+    logApiSuccess(endpoint, undefined, { movieId });
     return response.data;
   } catch (error) {
-    logApiError(endpoint, error as Error, {
-      movieId,
-    });
-    console.error("Error fetching movie details:", error);
+    logApiError(endpoint, error as Error, { movieId });
     return null;
   }
 };
@@ -116,6 +113,7 @@ const fetchMovieCast = async (
   const endpoint = `${API_BASE_URL}/movie/${movieId}/credits`;
 
   try {
+    logApiCall(endpoint, "GET", { movieId });
     const response = await axios.get<{ cast: Cast[] }>(
       `${endpoint}?api_key=${API_KEY}`
     );
@@ -182,12 +180,10 @@ const fetchMovieCast = async (
       })
     );
 
+    logApiSuccess(endpoint, undefined, { movieId, castCount });
     return castWithDetails;
   } catch (error) {
-    logApiError(endpoint, error as Error, {
-      movieId,
-    });
-    console.error("Error fetching cast details:", error);
+    logApiError(endpoint, error as Error, { movieId });
     return [];
   }
 };
@@ -202,6 +198,7 @@ const fetchActorFilmography = async (actorId: number): Promise<Movie[]> => {
   const endpoint = `${API_BASE_URL}/person/${actorId}/movie_credits`;
 
   try {
+    logApiCall(endpoint, "GET", { actorId });
     const actorDetails = await fetchActorDetails(actorId); // Fetch actor's birth details
     const response = await axios.get<{ cast: Movie[] }>(
       `${endpoint}?api_key=${API_KEY}`
@@ -224,12 +221,10 @@ const fetchActorFilmography = async (actorId: number): Promise<Movie[]> => {
       };
     });
 
+    logApiSuccess(endpoint, undefined, { actorId, filmographyCount });
     return filmographyWithAges;
   } catch (error) {
-    logApiError(endpoint, error as Error, {
-      actorId,
-    });
-    console.error("Error fetching actor filmography:", error);
+    logApiError(endpoint, error as Error, { actorId });
     return [];
   }
 };
