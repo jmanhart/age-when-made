@@ -3,7 +3,13 @@ import { Movie, Cast, Actor } from "../types/types";
 import fetchActorDetails from "./fetchActorDetails";
 import { calculateAgeAtDate } from "./calculateAge";
 import * as Sentry from "@sentry/react";
-import { addBreadcrumb } from "./sentry";
+import {
+  addBreadcrumb,
+  logApiCall,
+  logApiSuccess,
+  logApiError,
+  logPerformance,
+} from "./sentry";
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -14,22 +20,38 @@ const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
  * @returns A list of movies that match the query
  */
 const fetchMovies = async (query: string): Promise<Movie[]> => {
+  const startTime = performance.now();
+  const endpoint = `${API_BASE_URL}/search/movie`;
+
   try {
+    logApiCall(endpoint, "GET", { query });
     addBreadcrumb("api", "Fetching movies", "info", { query });
 
     const response = await axios.get<{ results: Movie[] }>(
-      `${API_BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(
-        query
-      )}`
+      `${endpoint}?api_key=${API_KEY}&query=${encodeURIComponent(query)}`
     );
+
+    const responseTime = performance.now() - startTime;
+    const resultCount = response.data.results.length;
+
+    logApiSuccess(endpoint, responseTime, {
+      query,
+      resultCount,
+      hasResults: resultCount > 0,
+    });
 
     addBreadcrumb("api", "Movies fetched successfully", "info", {
       query,
-      resultCount: response.data.results.length,
+      resultCount,
     });
 
     return response.data.results;
   } catch (error) {
+    const responseTime = performance.now() - startTime;
+    logApiError(endpoint, error as Error, {
+      query,
+      responseTime,
+    });
     Sentry.captureException(error);
     throw error;
   }
@@ -41,14 +63,32 @@ const fetchMovies = async (query: string): Promise<Movie[]> => {
  * @returns A list of actors that match the query
  */
 const fetchActors = async (query: string): Promise<Actor[]> => {
+  const startTime = performance.now();
+  const endpoint = `${API_BASE_URL}/search/person`;
+
   try {
+    logApiCall(endpoint, "GET", { query });
+
     const response = await axios.get<{ results: Actor[] }>(
-      `${API_BASE_URL}/search/person?api_key=${API_KEY}&query=${encodeURIComponent(
-        query
-      )}`
+      `${endpoint}?api_key=${API_KEY}&query=${encodeURIComponent(query)}`
     );
+
+    const responseTime = performance.now() - startTime;
+    const resultCount = response.data.results.length;
+
+    logApiSuccess(endpoint, responseTime, {
+      query,
+      resultCount,
+      hasResults: resultCount > 0,
+    });
+
     return response.data.results;
   } catch (error) {
+    const responseTime = performance.now() - startTime;
+    logApiError(endpoint, error as Error, {
+      query,
+      responseTime,
+    });
     console.error("Error fetching actors:", error);
     Sentry.captureException(error);
     return [];
@@ -77,12 +117,29 @@ const fetchSuggestions = async (query: string): Promise<(Movie | Actor)[]> => {
  * @returns The detailed movie information or null if not found
  */
 const fetchMovieById = async (movieId: number): Promise<Movie | null> => {
+  const startTime = performance.now();
+  const endpoint = `${API_BASE_URL}/movie/${movieId}`;
+
   try {
-    const response = await axios.get<Movie>(
-      `${API_BASE_URL}/movie/${movieId}?api_key=${API_KEY}`
-    );
+    logApiCall(endpoint, "GET", { movieId });
+
+    const response = await axios.get<Movie>(`${endpoint}?api_key=${API_KEY}`);
+
+    const responseTime = performance.now() - startTime;
+
+    logApiSuccess(endpoint, responseTime, {
+      movieId,
+      movieTitle: response.data.title,
+      releaseDate: response.data.release_date,
+    });
+
     return response.data;
   } catch (error) {
+    const responseTime = performance.now() - startTime;
+    logApiError(endpoint, error as Error, {
+      movieId,
+      responseTime,
+    });
     console.error("Error fetching movie details:", error);
     return null;
   }
@@ -98,65 +155,136 @@ const fetchMovieCast = async (
   movieId: number,
   releaseDate: string
 ): Promise<Actor[]> => {
+  const startTime = performance.now();
+  const endpoint = `${API_BASE_URL}/movie/${movieId}/credits`;
+
+  logApiCall(endpoint, "GET", { movieId, releaseDate });
   addBreadcrumb("api", "Fetching movie cast", "info", { movieId, releaseDate });
 
   console.log("fetchMovieCast called with:", { movieId, releaseDate });
 
   try {
     const response = await axios.get<{ cast: Cast[] }>(
-      `${API_BASE_URL}/movie/${movieId}/credits?api_key=${API_KEY}`
+      `${endpoint}?api_key=${API_KEY}`
     );
 
     const formattedReleaseDate = releaseDate
       ? new Date(releaseDate).toISOString().slice(0, 10)
       : null;
 
+    const castCount = response.data.cast.length;
+    Sentry.logger.info(
+      Sentry.logger
+        .fmt`Processing ${castCount} cast members for movie ${movieId}`,
+      {
+        movieId,
+        castCount,
+        releaseDate: formattedReleaseDate,
+      }
+    );
+
     // Enrich cast with actor details, including birthday and age calculations
     const castWithDetails = await Promise.all(
-      response.data.cast.map(async (actor) => {
-        const actorDetails = await fetchActorDetails(actor.id);
+      response.data.cast.map(async (actor, index) => {
+        const actorStartTime = performance.now();
 
-        console.log("Actor Details:", {
-          name: actor.name,
-          birthday: actorDetails.birthday,
-          deathday: actorDetails.deathday,
-        });
+        try {
+          const actorDetails = await fetchActorDetails(actor.id);
 
-        const formattedBirthday = actorDetails.birthday
-          ? new Date(actorDetails.birthday).toISOString().slice(0, 10)
-          : null;
-        const formattedDeathday = actorDetails.deathday
-          ? new Date(actorDetails.deathday).toISOString().slice(0, 10)
-          : null;
+          Sentry.logger.debug(
+            Sentry.logger.fmt`Processing actor ${index + 1}/${castCount}: ${
+              actor.name
+            }`,
+            {
+              actorId: actor.id,
+              actorName: actor.name,
+              hasBirthday: !!actorDetails.birthday,
+              hasDeathday: !!actorDetails.deathday,
+            }
+          );
 
-        // Calculate ages based on birthday and movie release date
-        const ageAtRelease =
-          formattedBirthday && formattedReleaseDate
-            ? calculateAgeAtDate(formattedBirthday, formattedReleaseDate)
+          const formattedBirthday = actorDetails.birthday
+            ? new Date(actorDetails.birthday).toISOString().slice(0, 10)
             : null;
-        const currentAge =
-          formattedBirthday && !formattedDeathday
-            ? calculateAgeAtDate(
-                formattedBirthday,
-                new Date().toISOString().slice(0, 10)
-              )
-            : null;
-        const ageAtDeath =
-          formattedBirthday && formattedDeathday
-            ? calculateAgeAtDate(actorDetails.birthday, actorDetails.deathday)
+          const formattedDeathday = actorDetails.deathday
+            ? new Date(actorDetails.deathday).toISOString().slice(0, 10)
             : null;
 
-        return {
-          ...actor,
-          birthday: formattedBirthday,
-          deathday: formattedDeathday,
-          profile_path: actor.profile_path,
-          ageAtRelease,
-          currentAge,
-          ageAtDeath,
-        };
+          // Calculate ages based on birthday and movie release date
+          const ageAtRelease =
+            formattedBirthday && formattedReleaseDate
+              ? calculateAgeAtDate(formattedBirthday, formattedReleaseDate)
+              : null;
+          const currentAge =
+            formattedBirthday && !formattedDeathday
+              ? calculateAgeAtDate(
+                  formattedBirthday,
+                  new Date().toISOString().slice(0, 10)
+                )
+              : null;
+          const ageAtDeath =
+            formattedBirthday && formattedDeathday
+              ? calculateAgeAtDate(actorDetails.birthday, actorDetails.deathday)
+              : null;
+
+          const actorProcessingTime = performance.now() - actorStartTime;
+
+          Sentry.logger.trace(
+            Sentry.logger
+              .fmt`Actor ${actor.name} processed in ${actorProcessingTime}ms`,
+            {
+              actorId: actor.id,
+              actorName: actor.name,
+              processingTime: actorProcessingTime,
+              ageAtRelease,
+              currentAge,
+              ageAtDeath,
+            }
+          );
+
+          return {
+            ...actor,
+            birthday: formattedBirthday,
+            deathday: formattedDeathday,
+            profile_path: actor.profile_path,
+            ageAtRelease,
+            currentAge,
+            ageAtDeath,
+          };
+        } catch (actorError) {
+          Sentry.logger.warn(
+            Sentry.logger.fmt`Failed to process actor ${actor.name}: ${
+              (actorError as Error).message
+            }`,
+            {
+              actorId: actor.id,
+              actorName: actor.name,
+              error: (actorError as Error).message,
+            }
+          );
+
+          // Return basic actor info without enriched details
+          return {
+            ...actor,
+            birthday: null,
+            deathday: null,
+            profile_path: actor.profile_path,
+            ageAtRelease: null,
+            currentAge: null,
+            ageAtDeath: null,
+          };
+        }
       })
     );
+
+    const totalTime = performance.now() - startTime;
+
+    logApiSuccess(endpoint, totalTime, {
+      movieId,
+      castCount,
+      processedCount: castWithDetails.length,
+      releaseDate: formattedReleaseDate,
+    });
 
     addBreadcrumb("api", "Cast fetched successfully", "info", {
       movieId,
@@ -165,6 +293,13 @@ const fetchMovieCast = async (
 
     return castWithDetails;
   } catch (error) {
+    const totalTime = performance.now() - startTime;
+    logApiError(endpoint, error as Error, {
+      movieId,
+      releaseDate,
+      responseTime: totalTime,
+    });
+
     addBreadcrumb("api", "Error fetching cast", "error", {
       movieId,
       error: error instanceof Error ? error.message : String(error),
@@ -180,13 +315,31 @@ const fetchMovieCast = async (
  * @returns A list of movies with age calculations for the actor at the time of each movie's release
  */
 const fetchActorFilmography = async (actorId: number): Promise<Movie[]> => {
+  const startTime = performance.now();
+  const endpoint = `${API_BASE_URL}/person/${actorId}/movie_credits`;
+
   try {
+    logApiCall(endpoint, "GET", { actorId });
+
     const actorDetails = await fetchActorDetails(actorId); // Fetch actor's birth details
     const response = await axios.get<{ cast: Movie[] }>(
-      `${API_BASE_URL}/person/${actorId}/movie_credits?api_key=${API_KEY}`
+      `${endpoint}?api_key=${API_KEY}`
     );
 
-    const filmographyWithAges = response.data.cast.map((movie) => {
+    const filmographyCount = response.data.cast.length;
+
+    Sentry.logger.info(
+      Sentry.logger
+        .fmt`Processing ${filmographyCount} movies for actor ${actorId}`,
+      {
+        actorId,
+        actorName: actorDetails.name,
+        filmographyCount,
+        hasBirthday: !!actorDetails.birthday,
+      }
+    );
+
+    const filmographyWithAges = response.data.cast.map((movie, index) => {
       const formattedReleaseDate = movie.release_date
         ? new Date(movie.release_date).toISOString().slice(0, 10)
         : null;
@@ -195,14 +348,43 @@ const fetchActorFilmography = async (actorId: number): Promise<Movie[]> => {
           ? calculateAgeAtDate(actorDetails.birthday, formattedReleaseDate)
           : null;
 
+      // Log every 10th movie to avoid spam but still track progress
+      if (index % 10 === 0) {
+        Sentry.logger.debug(
+          Sentry.logger.fmt`Processing movie ${
+            index + 1
+          }/${filmographyCount}: ${movie.title}`,
+          {
+            movieId: movie.id,
+            movieTitle: movie.title,
+            releaseDate: formattedReleaseDate,
+            ageAtRelease,
+          }
+        );
+      }
+
       return {
         ...movie,
         ageAtRelease, // Actor's age during this movie's release
       };
     });
 
+    const totalTime = performance.now() - startTime;
+
+    logApiSuccess(endpoint, totalTime, {
+      actorId,
+      actorName: actorDetails.name,
+      filmographyCount,
+      processedCount: filmographyWithAges.length,
+    });
+
     return filmographyWithAges;
   } catch (error) {
+    const totalTime = performance.now() - startTime;
+    logApiError(endpoint, error as Error, {
+      actorId,
+      responseTime: totalTime,
+    });
     console.error("Error fetching actor filmography:", error);
     return [];
   }

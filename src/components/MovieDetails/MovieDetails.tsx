@@ -7,6 +7,11 @@ import ActorCard from "../ActorCard/ActorCard.tsx";
 import Select from "../Select/Select";
 import SettingsMenu from "../SettingsMenu/SettingsMenu";
 import StatusTag from "../StatusTag/StatusTag";
+import {
+  logComponentRender,
+  logUserAction,
+  logPerformance,
+} from "../../utils/sentry";
 
 const MovieDetails: React.FC = () => {
   const { movieId } = useParams<{ movieId: string }>();
@@ -18,9 +23,18 @@ const MovieDetails: React.FC = () => {
   const [hideNoBirthDate, setHideNoBirthDate] = useState(false);
   const [loadingCast, setLoadingCast] = useState<boolean>(true);
 
+  // Log component render
+  useEffect(() => {
+    logComponentRender("MovieDetails", { movieId });
+  }, [movieId]);
+
   useEffect(() => {
     const getMovieDetails = async () => {
       if (movieId) {
+        const startTime = performance.now();
+
+        logUserAction("movie_details_load_started", { movieId });
+
         const movieData = await fetchMovieById(Number(movieId));
         setMovie(movieData);
 
@@ -32,6 +46,20 @@ const MovieDetails: React.FC = () => {
           );
           setCast(castData);
           setLoadingCast(false);
+
+          const totalTime = performance.now() - startTime;
+          logPerformance("movie_details_loaded", totalTime, {
+            movieId,
+            movieTitle: movieData.title,
+            castCount: castData.length,
+          });
+
+          logUserAction("movie_details_loaded", {
+            movieId,
+            movieTitle: movieData.title,
+            castCount: castData.length,
+            loadTime: totalTime,
+          });
         }
       }
     };
@@ -70,6 +98,30 @@ const MovieDetails: React.FC = () => {
         return (a.currentAge || 0) - (b.currentAge || 0);
       return 0;
     });
+
+  // Log filter changes
+  useEffect(() => {
+    if (movie) {
+      logUserAction("cast_filter_applied", {
+        movieId: movie.id,
+        movieTitle: movie.title,
+        statusFilter,
+        sortOrder,
+        hideNoImage,
+        hideNoBirthDate,
+        totalCast: cast.length,
+        filteredCast: filteredCast.length,
+      });
+    }
+  }, [
+    statusFilter,
+    sortOrder,
+    hideNoImage,
+    hideNoBirthDate,
+    cast.length,
+    filteredCast.length,
+    movie,
+  ]);
 
   // Calculate Metrics Based on Original Cast (not filtered)
   const totalActors = cast.length;

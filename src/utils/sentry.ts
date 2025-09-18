@@ -16,6 +16,9 @@ export const initSentry = () => {
     tracesSampleRate: 1.0, // Add this back for performance insights
     profilesSampleRate: 1.0, // Add profiling for React components
 
+    // Enable structured logging
+    enableLogs: true,
+
     environment: import.meta.env.MODE,
     debug: import.meta.env.DEV,
     release: __SENTRY_RELEASE__,
@@ -57,15 +60,15 @@ export const initSentry = () => {
       }),
 
       // Performance monitoring
-      Sentry.browserTracingIntegration({
-        tracePropagationTargets: [
-          "localhost",
-          /^https:\/\/api\.themoviedb\.org/, // TMDB API
-        ],
-      }),
+      Sentry.browserTracingIntegration(),
 
       // Profiling for React components
       Sentry.browserProfilingIntegration(),
+
+      // Console logging integration - automatically capture console logs
+      Sentry.consoleLoggingIntegration({
+        levels: ["log", "error", "warn"],
+      }),
     ],
   });
 };
@@ -90,4 +93,111 @@ export const addBreadcrumb = (
     level,
     data,
   });
+};
+
+// Structured logging utilities
+export const logUserAction = (
+  action: string,
+  data?: Record<string, unknown>
+) => {
+  Sentry.logger.info(Sentry.logger.fmt`User action: ${action}`, {
+    action,
+    ...data,
+  });
+};
+
+export const logApiCall = (
+  endpoint: string,
+  method: string = "GET",
+  data?: Record<string, unknown>
+) => {
+  Sentry.logger.debug(Sentry.logger.fmt`API call: ${method} ${endpoint}`, {
+    endpoint,
+    method,
+    ...data,
+  });
+};
+
+export const logApiSuccess = (
+  endpoint: string,
+  responseTime?: number,
+  data?: Record<string, unknown>
+) => {
+  Sentry.logger.info(Sentry.logger.fmt`API success: ${endpoint}`, {
+    endpoint,
+    responseTime,
+    ...data,
+  });
+};
+
+export const logApiError = (
+  endpoint: string,
+  error: Error,
+  data?: Record<string, unknown>
+) => {
+  Sentry.logger.error(
+    Sentry.logger.fmt`API error: ${endpoint} - ${error.message}`,
+    {
+      endpoint,
+      error: error.message,
+      stack: error.stack,
+      ...data,
+    }
+  );
+};
+
+export const logComponentRender = (
+  componentName: string,
+  props?: Record<string, unknown>
+) => {
+  Sentry.logger.trace(Sentry.logger.fmt`Component rendered: ${componentName}`, {
+    component: componentName,
+    ...props,
+  });
+};
+
+export const logPerformance = (
+  operation: string,
+  duration: number,
+  data?: Record<string, unknown>
+) => {
+  Sentry.logger.info(
+    Sentry.logger.fmt`Performance: ${operation} took ${duration}ms`,
+    {
+      operation,
+      duration,
+      ...data,
+    }
+  );
+};
+
+export const logSearchQuery = (
+  query: string,
+  resultCount: number,
+  searchType: string
+) => {
+  Sentry.logger.info(
+    Sentry.logger
+      .fmt`Search: "${query}" returned ${resultCount} ${searchType} results`,
+    {
+      query,
+      resultCount,
+      searchType,
+    }
+  );
+};
+
+export const logNavigation = (
+  from: string,
+  to: string,
+  method: string = "click"
+) => {
+  Sentry.logger.info(
+    Sentry.logger.fmt`Navigation: ${from} → ${to} (${method})`,
+    {
+      from,
+      to,
+      method,
+    }
+  );
 };
