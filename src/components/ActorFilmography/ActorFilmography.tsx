@@ -26,11 +26,6 @@ const ActorFilmography: React.FC = () => {
   const [filmography, setFilmography] = useState<Movie[]>([]); // Array of movies the actor appeared in
   const [actor, setActor] = useState<Actor | null>(null); // Actor's personal details
 
-  // Log component render
-  useEffect(() => {
-    logComponentRender("ActorFilmography", { actorId });
-  }, [actorId]);
-
   // Commented out navigation hook - could be used for programmatic navigation
   // const navigate = useNavigate();
 
@@ -52,8 +47,6 @@ const ActorFilmography: React.FC = () => {
       if (actorId) {
         const startTime = performance.now();
 
-        logUserAction("actor_filmography_load_started", { actorId });
-
         // Fetch actor's personal details (name, profile image, etc.)
         const actorDetails = (await fetchActorDetails(
           Number(actorId)
@@ -71,21 +64,6 @@ const ActorFilmography: React.FC = () => {
             new Date(a.release_date).getTime()
         );
         setFilmography(filmographyData);
-
-        const totalTime = performance.now() - startTime;
-
-        logPerformance("actor_filmography_loaded", totalTime, {
-          actorId,
-          actorName: actorDetails.name,
-          filmographyCount: filmographyData.length,
-        });
-
-        logUserAction("actor_filmography_loaded", {
-          actorId,
-          actorName: actorDetails.name,
-          filmographyCount: filmographyData.length,
-          loadTime: totalTime,
-        });
       }
     };
     getActorData();

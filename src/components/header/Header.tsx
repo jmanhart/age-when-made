@@ -19,10 +19,7 @@ const Header: React.FC = () => {
 
     logUserAction("back_button_clicked", {
       currentPage,
-      hasHistory: window.history.length > 1,
     });
-
-    logNavigation(currentPage, "previous_page", "back_button");
 
     navigate(-1); // Always go back to previous page
   };

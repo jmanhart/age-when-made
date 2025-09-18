@@ -5,14 +5,6 @@ import StatusTag from "../components/StatusTag/StatusTag";
 import { logComponentRender } from "../utils/sentry";
 
 const HomePage: React.FC = () => {
-  // Log homepage render
-  React.useEffect(() => {
-    logComponentRender("HomePage", {
-      isLandingPage: true,
-      hasSearchComponent: true,
-    });
-  }, []);
-
   return (
     <div className={styles.homePage}>
       <h1>age-when-made</h1>

@@ -10,18 +10,8 @@ import ActorFilmography from "./components/ActorFilmography";
 import HomePage from "./pages/HomePage";
 
 const App = () => {
-  // Log app initialization
+  // Set initial theme based on user preference
   useEffect(() => {
-    const startTime = performance.now();
-    logComponentRender("App", {
-      userAgent: navigator.userAgent,
-      viewport: `${window.innerWidth}x${window.innerHeight}`,
-      theme: window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light",
-    });
-
-    // Set initial theme based on user preference
     const prefersDark = window.matchMedia(
       "(prefers-color-scheme: dark)"
     ).matches;
@@ -29,12 +19,6 @@ const App = () => {
       "data-theme",
       prefersDark ? "dark" : "light"
     );
-
-    const initTime = performance.now() - startTime;
-    logPerformance("app_initialization", initTime, {
-      theme: prefersDark ? "dark" : "light",
-      userAgent: navigator.userAgent,
-    });
   }, []);
 
   return (

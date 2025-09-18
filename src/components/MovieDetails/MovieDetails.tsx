@@ -23,17 +23,10 @@ const MovieDetails: React.FC = () => {
   const [hideNoBirthDate, setHideNoBirthDate] = useState(false);
   const [loadingCast, setLoadingCast] = useState<boolean>(true);
 
-  // Log component render
-  useEffect(() => {
-    logComponentRender("MovieDetails", { movieId });
-  }, [movieId]);
-
   useEffect(() => {
     const getMovieDetails = async () => {
       if (movieId) {
         const startTime = performance.now();
-
-        logUserAction("movie_details_load_started", { movieId });
 
         const movieData = await fetchMovieById(Number(movieId));
         setMovie(movieData);
@@ -46,60 +39,11 @@ const MovieDetails: React.FC = () => {
           );
           setCast(castData);
           setLoadingCast(false);
-
-          const totalTime = performance.now() - startTime;
-          logPerformance("movie_details_loaded", totalTime, {
-            movieId,
-            movieTitle: movieData.title,
-            castCount: castData.length,
-          });
-
-          logUserAction("movie_details_loaded", {
-            movieId,
-            movieTitle: movieData.title,
-            castCount: castData.length,
-            loadTime: totalTime,
-          });
         }
       }
     };
     getMovieDetails();
   }, [movieId]);
-
-  // Log individual filter changes to avoid infinite re-renders
-  useEffect(() => {
-    if (movie) {
-      logUserAction("status_filter_changed", {
-        movieId: movie.id,
-        movieTitle: movie.title,
-        statusFilter,
-        totalCast: cast.length,
-      });
-    }
-  }, [statusFilter, movie, cast.length]);
-
-  useEffect(() => {
-    if (movie) {
-      logUserAction("sort_order_changed", {
-        movieId: movie.id,
-        movieTitle: movie.title,
-        sortOrder,
-        totalCast: cast.length,
-      });
-    }
-  }, [sortOrder, movie, cast.length]);
-
-  useEffect(() => {
-    if (movie) {
-      logUserAction("display_preferences_changed", {
-        movieId: movie.id,
-        movieTitle: movie.title,
-        hideNoImage,
-        hideNoBirthDate,
-        totalCast: cast.length,
-      });
-    }
-  }, [hideNoImage, hideNoBirthDate, movie, cast.length]);
 
   if (!movie) return <p>Loading movie details...</p>;
 

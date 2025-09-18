@@ -26,11 +26,3 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     </PostHogProvider>
   </React.StrictMode>
 );
-
-// Log app startup performance after render
-const appRenderTime = performance.now() - appStartTime;
-logPerformance("app_startup", appRenderTime, {
-  environment: import.meta.env.MODE,
-  userAgent: navigator.userAgent,
-  viewport: `${window.innerWidth}x${window.innerHeight}`,
-});

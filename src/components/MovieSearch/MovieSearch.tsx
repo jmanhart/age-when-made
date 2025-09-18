@@ -79,12 +79,6 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
     const fetchAutocomplete = async () => {
       // Only fetch if query has 2+ characters and we're not preventing reopening
       if (query.trim().length > 1 && !preventReopen) {
-        logUserAction("autocomplete_search_started", {
-          query,
-          queryLength: query.length,
-          isHeaderSearch,
-        });
-
         setError(null);
         try {
           // Fetch both movies and actors simultaneously for better UX
@@ -121,13 +115,13 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
               self.findIndex((t) => t.id === item.id && t.type === item.type)
           );
 
-          logUserAction("autocomplete_results_loaded", {
-            query,
-            movieCount: movieResults.length,
-            actorCount: actorResults.length,
-            totalSuggestions: uniqueSuggestions.length,
-            isHeaderSearch,
-          });
+          // Only log autocomplete results for queries with 3+ characters to reduce log volume
+          if (query.length >= 3) {
+            logUserAction("autocomplete_results_loaded", {
+              query,
+              totalSuggestions: uniqueSuggestions.length,
+            });
+          }
 
           setSuggestions(uniqueSuggestions);
           setShowSuggestions(true);
@@ -135,7 +129,13 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
           // Show helpful message if no suggestions found
           if (uniqueSuggestions.length === 0) {
             setError("No suggestions found.");
-            logUserAction("autocomplete_no_results", { query, isHeaderSearch });
+            // Only log no results for meaningful queries
+            if (query.length >= 3) {
+              logUserAction("autocomplete_no_results", {
+                query,
+                isHeaderSearch,
+              });
+            }
           }
         } catch (error) {
           setError("An error occurred while fetching suggestions.");
@@ -143,20 +143,11 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
           console.error(error);
           logUserAction("autocomplete_error", {
             query,
-            error: (error as Error).message,
-            isHeaderSearch,
           });
         }
       } else {
         // Hide suggestions if query is too short or reopening is prevented
         setShowSuggestions(false);
-        if (query.trim().length <= 1) {
-          logUserAction("autocomplete_query_too_short", {
-            query,
-            queryLength: query.length,
-            isHeaderSearch,
-          });
-        }
       }
     };
 
@@ -199,9 +190,6 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
 
     logUserAction("search_initiated", {
       query,
-      queryLength: query.length,
-      isHeaderSearch,
-      hasSuggestions: suggestions.length > 0,
     });
 
     // Log search action for analytics
@@ -228,12 +216,11 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
 
       if (movieResults.length === 0) {
         setError("No movies found.");
-        logUserAction("search_no_results", { query, isHeaderSearch });
+        logUserAction("search_no_results", { query });
       } else {
         logUserAction("search_success", {
           query,
           resultCount: movieResults.length,
-          isHeaderSearch,
         });
       }
     } catch (error) {
@@ -243,8 +230,6 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
       console.error(error);
       logUserAction("search_error", {
         query,
-        error: (error as Error).message,
-        isHeaderSearch,
       });
     }
 
@@ -325,11 +310,7 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
 
     logUserAction("suggestion_clicked", {
       itemType: item.type,
-      itemId: item.id,
       itemTitle,
-      currentPage,
-      targetPage,
-      isHeaderSearch,
     });
 
     // Log selection for analytics
