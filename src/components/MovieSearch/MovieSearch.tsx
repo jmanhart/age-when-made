@@ -6,7 +6,13 @@ import styles from "./MovieSearch.module.css";
 import { Movie, Actor } from "../../types/types";
 import SearchIcon from "../../assets/icons/searchIcon";
 import { withErrorBoundary } from "../ErrorBoundary.tsx";
-import { addBreadcrumb } from "../../utils/sentry";
+import {
+  addBreadcrumb,
+  logUserAction,
+  logSearchQuery,
+  logNavigation,
+  logComponentRender,
+} from "../../utils/sentry";
 import { trackSearchEvent, trackNavigationEvent } from "../../utils/posthog";
 
 // ============================================================================
@@ -52,6 +58,11 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
 
   const navigate = useNavigate(); // React Router hook for navigation
 
+  // Log component render
+  React.useEffect(() => {
+    logComponentRender("MovieSearch", { isHeaderSearch });
+  }, [isHeaderSearch]);
+
   // ============================================================================
   // REFS FOR DOM MANIPULATION
   // ============================================================================
@@ -68,6 +79,12 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
     const fetchAutocomplete = async () => {
       // Only fetch if query has 2+ characters and we're not preventing reopening
       if (query.trim().length > 1 && !preventReopen) {
+        logUserAction("autocomplete_search_started", {
+          query,
+          queryLength: query.length,
+          isHeaderSearch,
+        });
+
         setError(null);
         try {
           // Fetch both movies and actors simultaneously for better UX
@@ -104,21 +121,42 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
               self.findIndex((t) => t.id === item.id && t.type === item.type)
           );
 
+          logUserAction("autocomplete_results_loaded", {
+            query,
+            movieCount: movieResults.length,
+            actorCount: actorResults.length,
+            totalSuggestions: uniqueSuggestions.length,
+            isHeaderSearch,
+          });
+
           setSuggestions(uniqueSuggestions);
           setShowSuggestions(true);
 
           // Show helpful message if no suggestions found
           if (uniqueSuggestions.length === 0) {
             setError("No suggestions found.");
+            logUserAction("autocomplete_no_results", { query, isHeaderSearch });
           }
         } catch (error) {
           setError("An error occurred while fetching suggestions.");
           setShowSuggestions(false);
           console.error(error);
+          logUserAction("autocomplete_error", {
+            query,
+            error: (error as Error).message,
+            isHeaderSearch,
+          });
         }
       } else {
         // Hide suggestions if query is too short or reopening is prevented
         setShowSuggestions(false);
+        if (query.trim().length <= 1) {
+          logUserAction("autocomplete_query_too_short", {
+            query,
+            queryLength: query.length,
+            isHeaderSearch,
+          });
+        }
       }
     };
 
@@ -159,6 +197,13 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
   const handleSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
 
+    logUserAction("search_initiated", {
+      query,
+      queryLength: query.length,
+      isHeaderSearch,
+      hasSuggestions: suggestions.length > 0,
+    });
+
     // Log search action for analytics
     addBreadcrumb("search", "User initiated search", "info", {
       query,
@@ -175,17 +220,32 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
       const movieResults = await fetchMovies(query);
       setMovies(movieResults);
 
+      // Log search results
+      logSearchQuery(query, movieResults.length, "movie");
+
       // Update PostHog with actual results count
       trackSearchEvent(query, movieResults.length, "movie");
 
       if (movieResults.length === 0) {
         setError("No movies found.");
+        logUserAction("search_no_results", { query, isHeaderSearch });
+      } else {
+        logUserAction("search_success", {
+          query,
+          resultCount: movieResults.length,
+          isHeaderSearch,
+        });
       }
     } catch (error) {
       setError(
         "An error occurred while fetching movies. Please try again later."
       );
       console.error(error);
+      logUserAction("search_error", {
+        query,
+        error: (error as Error).message,
+        isHeaderSearch,
+      });
     }
 
     // Hide suggestions and prevent them from reopening
@@ -258,30 +318,40 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
 
   // Handle clicking on a suggestion item
   const handleSuggestionClick = (item: Suggestion) => {
+    const currentPage = window.location.pathname;
+    const targetPage =
+      item.type === "movie" ? `/movie/${item.id}` : `/actor/${item.id}`;
+    const itemTitle = item.type === "movie" ? item.title : item.name;
+
+    logUserAction("suggestion_clicked", {
+      itemType: item.type,
+      itemId: item.id,
+      itemTitle,
+      currentPage,
+      targetPage,
+      isHeaderSearch,
+    });
+
     // Log selection for analytics
     addBreadcrumb("selection", "User clicked suggestion", "info", {
       itemType: item.type,
       itemId: item.id,
-      itemTitle: item.type === "movie" ? item.title : item.name,
+      itemTitle,
     });
 
+    // Log navigation
+    logNavigation(currentPage, targetPage, "suggestion_click");
+
     // Track suggestion click with PostHog
-    trackSearchEvent(
-      item.type === "movie" ? item.title : item.name,
-      1,
-      item.type
-    );
+    trackSearchEvent(itemTitle, 1, item.type);
 
     // Update input with selected item's name/title
-    setQuery(item.type === "movie" ? item.title : item.name);
+    setQuery(itemTitle);
     setShowSuggestions(false);
     setSelectedIndex(-1);
     setPreventReopen(true); // Prevent suggestions from reopening
 
     // Track navigation event
-    const currentPage = window.location.pathname;
-    const targetPage =
-      item.type === "movie" ? `/movie/${item.id}` : `/actor/${item.id}`;
     trackNavigationEvent(currentPage, targetPage);
 
     // Navigate to appropriate detail page

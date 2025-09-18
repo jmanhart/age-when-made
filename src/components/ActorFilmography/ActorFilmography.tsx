@@ -3,6 +3,11 @@ import { useParams, Link } from "react-router-dom";
 import { fetchActorFilmography, fetchActorDetails } from "../../utils/api";
 import { Movie, Actor } from "../../types/types";
 import styles from "./ActorFilmography.module.css";
+import {
+  logComponentRender,
+  logUserAction,
+  logPerformance,
+} from "../../utils/sentry";
 
 /**
  * ActorFilmography Component
@@ -20,6 +25,11 @@ const ActorFilmography: React.FC = () => {
   // State management for component data
   const [filmography, setFilmography] = useState<Movie[]>([]); // Array of movies the actor appeared in
   const [actor, setActor] = useState<Actor | null>(null); // Actor's personal details
+
+  // Log component render
+  useEffect(() => {
+    logComponentRender("ActorFilmography", { actorId });
+  }, [actorId]);
 
   // Commented out navigation hook - could be used for programmatic navigation
   // const navigate = useNavigate();
@@ -40,6 +50,10 @@ const ActorFilmography: React.FC = () => {
   useEffect(() => {
     const getActorData = async () => {
       if (actorId) {
+        const startTime = performance.now();
+
+        logUserAction("actor_filmography_load_started", { actorId });
+
         // Fetch actor's personal details (name, profile image, etc.)
         const actorDetails = (await fetchActorDetails(
           Number(actorId)
@@ -57,6 +71,21 @@ const ActorFilmography: React.FC = () => {
             new Date(a.release_date).getTime()
         );
         setFilmography(filmographyData);
+
+        const totalTime = performance.now() - startTime;
+
+        logPerformance("actor_filmography_loaded", totalTime, {
+          actorId,
+          actorName: actorDetails.name,
+          filmographyCount: filmographyData.length,
+        });
+
+        logUserAction("actor_filmography_loaded", {
+          actorId,
+          actorName: actorDetails.name,
+          filmographyCount: filmographyData.length,
+          loadTime: totalTime,
+        });
       }
     };
     getActorData();
