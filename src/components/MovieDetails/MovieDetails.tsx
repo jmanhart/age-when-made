@@ -66,6 +66,41 @@ const MovieDetails: React.FC = () => {
     getMovieDetails();
   }, [movieId]);
 
+  // Log individual filter changes to avoid infinite re-renders
+  useEffect(() => {
+    if (movie) {
+      logUserAction("status_filter_changed", {
+        movieId: movie.id,
+        movieTitle: movie.title,
+        statusFilter,
+        totalCast: cast.length,
+      });
+    }
+  }, [statusFilter, movie, cast.length]);
+
+  useEffect(() => {
+    if (movie) {
+      logUserAction("sort_order_changed", {
+        movieId: movie.id,
+        movieTitle: movie.title,
+        sortOrder,
+        totalCast: cast.length,
+      });
+    }
+  }, [sortOrder, movie, cast.length]);
+
+  useEffect(() => {
+    if (movie) {
+      logUserAction("display_preferences_changed", {
+        movieId: movie.id,
+        movieTitle: movie.title,
+        hideNoImage,
+        hideNoBirthDate,
+        totalCast: cast.length,
+      });
+    }
+  }, [hideNoImage, hideNoBirthDate, movie, cast.length]);
+
   if (!movie) return <p>Loading movie details...</p>;
 
   // Calculate the movie's age
@@ -98,30 +133,6 @@ const MovieDetails: React.FC = () => {
         return (a.currentAge || 0) - (b.currentAge || 0);
       return 0;
     });
-
-  // Log filter changes
-  useEffect(() => {
-    if (movie) {
-      logUserAction("cast_filter_applied", {
-        movieId: movie.id,
-        movieTitle: movie.title,
-        statusFilter,
-        sortOrder,
-        hideNoImage,
-        hideNoBirthDate,
-        totalCast: cast.length,
-        filteredCast: filteredCast.length,
-      });
-    }
-  }, [
-    statusFilter,
-    sortOrder,
-    hideNoImage,
-    hideNoBirthDate,
-    cast.length,
-    filteredCast.length,
-    movie,
-  ]);
 
   // Calculate Metrics Based on Original Cast (not filtered)
   const totalActors = cast.length;
