@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Movie } from "../../types/types";
+import { createMovieSlug } from "../../utils/slugUtils";
 
 import styles from "./MovieItem.module.css";
 interface MovieItemProps {
@@ -11,7 +12,7 @@ const MovieItem: React.FC<MovieItemProps> = ({ movie }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/movie/${movie.id}`);
+    navigate(`/movie/${createMovieSlug(movie.title, movie.release_date)}`);
   };
 
   return (

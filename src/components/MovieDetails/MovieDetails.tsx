@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchMovieById, fetchMovieCast } from "../../utils/api";
+import {
+  fetchMovieById,
+  fetchMovieByTitle,
+  fetchMovieCast,
+} from "../../utils/api";
 import { Movie, Actor } from "../../types/types";
 import styles from "./MovieDetails.module.css";
 import ActorCard from "../ActorCard/ActorCard.tsx";
 import Select from "../Select/Select";
 import SettingsMenu from "../SettingsMenu/SettingsMenu";
 import StatusTag from "../StatusTag/StatusTag";
+import { parseMovieIdentifier } from "../../utils/slugUtils";
 import {
   logComponentRender,
   logUserAction,
@@ -14,7 +19,7 @@ import {
 } from "../../utils/sentry";
 
 const MovieDetails: React.FC = () => {
-  const { movieId } = useParams<{ movieId: string }>();
+  const { movieIdentifier } = useParams<{ movieIdentifier: string }>();
   const [movie, setMovie] = useState<Movie | null>(null);
   const [cast, setCast] = useState<Actor[]>([]);
   const [statusFilter, setStatusFilter] = useState("All");
@@ -25,25 +30,37 @@ const MovieDetails: React.FC = () => {
 
   useEffect(() => {
     const getMovieDetails = async () => {
-      if (movieId) {
-        const startTime = performance.now();
+      if (movieIdentifier) {
+        const parsed = parseMovieIdentifier(movieIdentifier);
+        if (parsed) {
+          const startTime = performance.now();
 
-        const movieData = await fetchMovieById(Number(movieId));
-        setMovie(movieData);
+          let movieData: Movie | null = null;
 
-        if (movieData?.release_date) {
-          setLoadingCast(true);
-          const castData = await fetchMovieCast(
-            Number(movieId),
-            movieData.release_date
-          );
-          setCast(castData);
-          setLoadingCast(false);
+          if (parsed.id) {
+            // Numeric ID - fetch by ID
+            movieData = await fetchMovieById(parsed.id);
+          } else if (parsed.title) {
+            // Slug - fetch by title and year
+            movieData = await fetchMovieByTitle(parsed.title, parsed.year);
+          }
+
+          setMovie(movieData);
+
+          if (movieData?.id && movieData?.release_date) {
+            setLoadingCast(true);
+            const castData = await fetchMovieCast(
+              movieData.id,
+              movieData.release_date
+            );
+            setCast(castData);
+            setLoadingCast(false);
+          }
         }
       }
     };
     getMovieDetails();
-  }, [movieId]);
+  }, [movieIdentifier]);
 
   if (!movie) return <p>Loading movie details...</p>;
 

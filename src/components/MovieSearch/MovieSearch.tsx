@@ -14,6 +14,7 @@ import {
   logComponentRender,
 } from "../../utils/sentry";
 import { trackSearchEvent, trackNavigationEvent } from "../../utils/posthog";
+import { createMovieSlug, createActorSlug } from "../../utils/slugUtils";
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -272,10 +273,12 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
 
   // Handle clicking on a suggestion item
   const handleSuggestionClick = (item: Suggestion) => {
-    const currentPage = window.location.pathname;
-    const targetPage =
-      item.type === "movie" ? `/movie/${item.id}` : `/actor/${item.id}`;
     const itemTitle = item.type === "movie" ? item.title : item.name;
+    const targetPage =
+      item.type === "movie"
+        ? `/movie/${createMovieSlug(item.title, item.release_date)}`
+        : `/actor/${createActorSlug(item.name)}`;
+    const currentPage = window.location.pathname;
 
     // Log selection for analytics
     addBreadcrumb("selection", "User clicked suggestion", "info", {
@@ -301,9 +304,9 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
 
     // Navigate to appropriate detail page
     if (item.type === "movie") {
-      navigate(`/movie/${item.id}`);
+      navigate(`/movie/${createMovieSlug(item.title, item.release_date)}`);
     } else {
-      navigate(`/actor/${item.id}`);
+      navigate(`/actor/${createActorSlug(item.name)}`);
     }
   };
 
