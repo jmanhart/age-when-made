@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { fetchActorFilmography, fetchActorDetails } from "../../utils/api";
+import {
+  fetchActorFilmography,
+  fetchActorDetails,
+  fetchActorByName,
+} from "../../utils/api";
 import { Movie, Actor } from "../../types/types";
 import styles from "./ActorFilmography.module.css";
+import { parseActorIdentifier, createMovieSlug } from "../../utils/slugUtils";
 import {
   logComponentRender,
   logUserAction,
@@ -19,8 +24,8 @@ import {
  * - Navigation links to individual movie pages
  */
 const ActorFilmography: React.FC = () => {
-  // Extract actor ID from URL parameters (e.g., /actor/123)
-  const { actorId } = useParams<{ actorId: string }>();
+  // Extract actor identifier from URL parameters (e.g., /actor/123 or /actor/actor-name-123)
+  const { actorIdentifier } = useParams<{ actorIdentifier: string }>();
 
   // State management for component data
   const [filmography, setFilmography] = useState<Movie[]>([]); // Array of movies the actor appeared in
@@ -40,34 +45,47 @@ const ActorFilmography: React.FC = () => {
 
   /**
    * Main data fetching effect
-   * Runs when actorId changes (component mounts or URL changes)
+   * Runs when actorIdentifier changes (component mounts or URL changes)
    */
   useEffect(() => {
     const getActorData = async () => {
-      if (actorId) {
-        const startTime = performance.now();
+      if (actorIdentifier) {
+        const parsed = parseActorIdentifier(actorIdentifier);
+        if (parsed) {
+          const startTime = performance.now();
 
-        // Fetch actor's personal details (name, profile image, etc.)
-        const actorDetails = (await fetchActorDetails(
-          Number(actorId)
-        )) as Actor;
-        setActor(actorDetails);
+          let actorDetails: Actor | null = null;
 
-        // Fetch actor's complete filmography
-        let filmographyData = await fetchActorFilmography(Number(actorId));
+          if (parsed.id) {
+            // Numeric ID - fetch by ID
+            actorDetails = (await fetchActorDetails(parsed.id)) as Actor;
+          } else if (parsed.name) {
+            // Slug - fetch by name
+            actorDetails = await fetchActorByName(
+              parsed.name.replace(/-/g, " ")
+            );
+          }
 
-        // Sort filmography by release date (newest first)
-        // This creates a chronological timeline from most recent to oldest
-        filmographyData = filmographyData.sort(
-          (a, b) =>
-            new Date(b.release_date).getTime() -
-            new Date(a.release_date).getTime()
-        );
-        setFilmography(filmographyData);
+          if (actorDetails) {
+            setActor(actorDetails);
+
+            // Fetch actor's complete filmography
+            let filmographyData = await fetchActorFilmography(actorDetails.id);
+
+            // Sort filmography by release date (newest first)
+            // This creates a chronological timeline from most recent to oldest
+            filmographyData = filmographyData.sort(
+              (a, b) =>
+                new Date(b.release_date).getTime() -
+                new Date(a.release_date).getTime()
+            );
+            setFilmography(filmographyData);
+          }
+        }
       }
     };
     getActorData();
-  }, [actorId]);
+  }, [actorIdentifier]);
 
   // Loading states - show appropriate messages while data is being fetched
   if (!actor) return <p>Loading actor data...</p>;
@@ -129,7 +147,10 @@ const ActorFilmography: React.FC = () => {
         {filmography.map((movie) => (
           <li key={movie.id} className={styles.filmographyItem}>
             {/* Each movie is a clickable link to its details page */}
-            <Link to={`/movie/${movie.id}`} className={styles.movieLink}>
+            <Link
+              to={`/movie/${createMovieSlug(movie.title, movie.release_date)}`}
+              className={styles.movieLink}
+            >
               {/* Movie poster image */}
               <div className={styles.filmographyItemContent}>
                 <img

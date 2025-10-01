@@ -229,10 +229,81 @@ const fetchActorFilmography = async (actorId: number): Promise<Movie[]> => {
   }
 };
 
+/**
+ * Fetches a movie by its title and optionally year (for slug-based URLs)
+ * @param title - The movie title
+ * @param year - Optional release year for disambiguation
+ * @returns The movie information or null if not found
+ */
+const fetchMovieByTitle = async (
+  title: string,
+  year?: number
+): Promise<Movie | null> => {
+  try {
+    // Search for the movie by title
+    const movies = await fetchMovies(title);
+
+    let exactMatch: Movie | undefined;
+
+    if (year) {
+      // If year is provided, find exact match by title and year
+      exactMatch = movies.find(
+        (movie) =>
+          movie.title.toLowerCase() === title.toLowerCase() &&
+          new Date(movie.release_date).getFullYear() === year
+      );
+    } else {
+      // If no year, find exact match by title only
+      exactMatch = movies.find(
+        (movie) => movie.title.toLowerCase() === title.toLowerCase()
+      );
+    }
+
+    if (exactMatch) {
+      return exactMatch;
+    }
+
+    // If no exact match, return the first result
+    return movies.length > 0 ? movies[0] : null;
+  } catch (error) {
+    console.error("Error fetching movie by title:", error);
+    return null;
+  }
+};
+
+/**
+ * Fetches an actor by their name (for slug-based URLs)
+ * @param name - The actor name
+ * @returns The actor information or null if not found
+ */
+const fetchActorByName = async (name: string): Promise<Actor | null> => {
+  try {
+    // Search for the actor by name
+    const actors = await fetchActors(name);
+
+    // Find exact match (case-insensitive)
+    const exactMatch = actors.find(
+      (actor) => actor.name.toLowerCase() === name.toLowerCase()
+    );
+
+    if (exactMatch) {
+      return exactMatch;
+    }
+
+    // If no exact match, return the first result
+    return actors.length > 0 ? actors[0] : null;
+  } catch (error) {
+    console.error("Error fetching actor by name:", error);
+    return null;
+  }
+};
+
 export {
   fetchActorDetails,
   fetchActorFilmography,
   fetchMovieById,
+  fetchMovieByTitle,
+  fetchActorByName,
   fetchSuggestions,
   fetchMovieCast,
   fetchMovies,

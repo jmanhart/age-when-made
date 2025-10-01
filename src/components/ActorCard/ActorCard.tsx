@@ -7,6 +7,7 @@ import { ActorHeader } from "./components/ActorHeader";
 import { ActorMetrics } from "./components/ActorMetrics";
 import classNames from "classnames";
 import { trackActorEvent, trackNavigationEvent } from "../../utils/posthog";
+import { createActorSlug } from "../../utils/slugUtils";
 
 const ActorCard: React.FC<ActorCardProps> = ({
   actor,
@@ -29,7 +30,8 @@ const ActorCard: React.FC<ActorCardProps> = ({
   );
 
   const handleCardClick = () => {
-    console.log("Card clicked, navigating to:", `/actor/${actor.id}`);
+    const actorSlug = createActorSlug(actor.name);
+    console.log("Card clicked, navigating to:", `/actor/${actorSlug}`);
 
     // Track actor card click with PostHog
     trackActorEvent("actor_card_clicked", {
@@ -43,10 +45,10 @@ const ActorCard: React.FC<ActorCardProps> = ({
 
     // Track navigation event
     const currentPage = window.location.pathname;
-    const targetPage = `/actor/${actor.id}`;
+    const targetPage = `/actor/${actorSlug}`;
     trackNavigationEvent(currentPage, targetPage);
 
-    navigate(`/actor/${actor.id}`);
+    navigate(`/actor/${actorSlug}`);
   };
 
   return (

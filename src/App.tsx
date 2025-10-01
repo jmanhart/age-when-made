@@ -29,8 +29,11 @@ const App = () => {
           <Routes>
             <Route path="/" element={<HomePage />} />
             {/* <Route path="/" element={<MovieSearch />} /> */}
-            <Route path="/movie/:movieId" element={<MovieDetails />} />
-            <Route path="/actor/:actorId" element={<ActorFilmography />} />
+            <Route path="/movie/:movieIdentifier" element={<MovieDetails />} />
+            <Route
+              path="/actor/:actorIdentifier"
+              element={<ActorFilmography />}
+            />
           </Routes>
         </main>
       </Router>
