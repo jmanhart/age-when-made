@@ -5,6 +5,14 @@ import { initSentry, logPerformance } from "./utils/sentry";
 import { PostHogProvider } from "posthog-js/react";
 import "./styles/global.css";
 
+// Initialize MSW for development
+if (import.meta.env.DEV) {
+  const { worker } = await import("./__mocks__/browser");
+  await worker.start({
+    onUnhandledRequest: "bypass",
+  });
+}
+
 // Initialize Sentry
 initSentry();
 
