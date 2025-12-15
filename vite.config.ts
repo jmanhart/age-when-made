@@ -1,10 +1,13 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import svgr from "vite-plugin-svgr";
-import { sentryVitePlugin } from "@sentry/vite-plugin";
+// import { sentryVitePlugin } from "@sentry/vite-plugin"; // Disabled for Windows dev env
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 import { version } from "./package.json";
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -19,19 +22,20 @@ export default defineConfig({
         process: true,
       },
     }),
-    // Only include Sentry plugin if auth token is available
-    process.env.SENTRY_AUTH_TOKEN &&
-      sentryVitePlugin({
-        org: "movieapp",
-        project: "javascript-react",
-        authToken: process.env.SENTRY_AUTH_TOKEN,
-        release: {
-          name: `movieapp@${version}`,
-        },
-        sourcemaps: {
-          assets: ["./dist/**"],
-        },
-      }),
+    // Sentry Vite plugin disabled on this machine to avoid acorn/unplugin resolution issues.
+    // If you need Sentry sourcemap uploads/build-time instrumentation, re-enable this block:
+    // process.env.SENTRY_AUTH_TOKEN &&
+    //   sentryVitePlugin({
+    //     org: "movieapp",
+    //     project: "javascript-react",
+    //     authToken: process.env.SENTRY_AUTH_TOKEN,
+    //     release: {
+    //       name: `movieapp@${version}`,
+    //     },
+    //     sourcemaps: {
+    //       assets: ["./dist/**"],
+    //     },
+    //   }),
   ].filter(Boolean),
   resolve: {
     alias: {

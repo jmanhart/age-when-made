@@ -7,7 +7,7 @@ import { logComponentRender } from "../utils/sentry";
 const HomePage: React.FC = () => {
   return (
     <div className={styles.homePage}>
-      <h1>age-when-made</h1>
+      <h1>Age When Made</h1>
       <p>
         Have you ever wondered how old an actor was when they made a certain
         movie? <br />
