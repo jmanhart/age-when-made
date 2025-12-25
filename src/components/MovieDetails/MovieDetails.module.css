@@ -1,62 +1,63 @@
 /* ==============================
+   CSS Variables for Easy Customization
+============================== */
+:root {
+  --sidebar-width: 320px; /* Easy to adjust sidebar width */
+}
+
+/* ==============================
    Movie Details Container
 ============================== */
 .movieDetailsContainer {
-  max-width: 900px;
+  max-width: 1400px;
   margin: var(--spacing-5) auto;
   padding: var(--spacing-5);
   background-color: var(--color-bg-primary);
   border-radius: var(--border-radius);
   box-shadow: var(--color-shadow);
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  gap: var(--spacing-6);
   color: var(--text-primary);
   width: 100%;
   box-sizing: border-box;
 }
 
 /* ==============================
-   Back Button
+   Movie Sidebar
 ============================== */
-.backButton {
-  align-self: flex-start;
-  margin-bottom: var(--spacing-5);
-  padding: var(--spacing-2) var(--spacing-4);
-  background-color: var(--color-primary);
-  color: var(--color-text-inverse);
-  border: none;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  transition: var(--transition);
-}
-
-.backButton:hover {
-  background-color: var(--color-primary-hover);
-}
-
-/* ==============================
-   Movie Header
-============================== */
-.movieHeader {
+.movieSidebar {
   display: flex;
-  gap: var(--spacing-5);
-  margin-bottom: var(--spacing-5);
-  align-items: flex-start;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  position: sticky;
+  top: var(--spacing-5);
+  height: fit-content;
 }
 
 .moviePoster {
-  width: 150px;
+  width: 100%;
   height: auto;
   border-radius: var(--border-radius);
   box-shadow: var(--color-shadow-hover);
+  aspect-ratio: 2/3;
+  object-fit: cover;
 }
 
 .movieInfo {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
+}
+
+/* ==============================
+   Main Content Area
+============================== */
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  min-width: 0;
 }
 
 .movieTitle {
@@ -177,24 +178,81 @@
 /* ==============================
    Responsive Layout
 ============================== */
-@media (max-width: 600px) {
-  .movieHeader {
-    flex-direction: column;
-    align-items: center;
+
+/* Tablet (1024px and below) - 3 columns */
+@media (max-width: 1024px) {
+  .movieDetailsContainer {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-5);
   }
 
-  .moviePoster {
+  .movieSidebar {
+    position: static;
+    max-width: 100%;
+  }
+
+  .castGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Tablet portrait and mobile (768px and below) - 2 columns */
+@media (max-width: 768px) {
+  .movieDetailsContainer {
+    padding: var(--spacing-4);
+  }
+
+  .castGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-3);
+  }
+
+  .filterSortContainer {
+    flex-direction: column;
+    gap: var(--spacing-3);
+    align-items: stretch;
+  }
+
+  .filterSortWrapper {
+    flex-direction: column;
     width: 100%;
-    max-width: 250px;
-    margin-bottom: var(--spacing-5);
   }
 
   .movieTitle {
-    font-size: var(--font-size-2xl);
+    font-size: var(--font-size-xl);
+  }
+}
+
+/* Mobile (600px and below) - 1 column */
+@media (max-width: 600px) {
+  .movieDetailsContainer {
+    padding: var(--spacing-3);
+  }
+
+  .castGrid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-3);
+  }
+
+  .movieTitle {
+    font-size: var(--font-size-lg);
   }
 
   .movieOverview {
     font-size: var(--font-size-sm);
+  }
+
+  .moviePoster {
+    max-width: 250px;
+    margin: 0 auto;
+  }
+
+  .movieInfo {
+    text-align: center;
+  }
+
+  .mortalityTags {
+    justify-content: center;
   }
 }
 
@@ -203,10 +261,9 @@
 ============================== */
 .castGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--spacing-4);
   width: 100%;
-  padding: var(--spacing-4);
 }
 
 .castItem {

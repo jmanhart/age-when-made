@@ -29,7 +29,6 @@ const MovieDetails: React.FC = () => {
       if (movieIdentifier) {
         const parsed = parseMovieIdentifier(movieIdentifier);
         if (parsed) {
-
           let movieData: Movie | null = null;
 
           if (parsed.id) {
@@ -124,34 +123,34 @@ const MovieDetails: React.FC = () => {
 
   return (
     <div className={styles.movieDetailsContainer}>
-      {/* Movie Header */}
-      <div className={styles.movieHeader}>
+      {/* Movie Info Sidebar */}
+      <aside className={styles.movieSidebar}>
         <img
           src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
           alt={`${movie.title} poster`}
           className={styles.moviePoster}
         />
+
         <div className={styles.movieInfo}>
-          <div className={styles.movieTitleContainer}>
-            <h1 className={styles.movieTitle}>{movie.title}</h1>
-            <p className={styles.movieReleaseDate}>
-              <DateWithTooltip 
-                date={movie.release_date} 
-                displayFormat="year" 
-                tooltipPrefix="Released on" 
-              />
-              {/* Show movie age as simple text */}
-              {calculateMovieAge(movie.release_date) > 0 && (
-                <span className={styles.movieAge}>
-                  {" "}
-                  {calculateMovieAge(movie.release_date)} years old
-                </span>
-              )}
-            </p>
-          </div>
+          <h1 className={styles.movieTitle}>{movie.title}</h1>
+
+          <p className={styles.movieReleaseDate}>
+            <DateWithTooltip
+              date={movie.release_date}
+              displayFormat="year"
+              tooltipPrefix="Released on"
+            />
+            {calculateMovieAge(movie.release_date) > 0 && (
+              <span className={styles.movieAge}>
+                {" • "}
+                {calculateMovieAge(movie.release_date)} years old
+              </span>
+            )}
+          </p>
+
+          <p className={styles.movieOverview}>{movie.overview}</p>
 
           <div className={styles.mortalityTags}>
-            {/* Show living actors tag if there are any living actors */}
             {actorsAlive > 0 && (
               <StatusTag
                 deceasedCount={0}
@@ -159,8 +158,6 @@ const MovieDetails: React.FC = () => {
                 variant="living"
               />
             )}
-
-            {/* Show deceased actors tag if there are any deceased actors */}
             {actorsDeceased > 0 && (
               <StatusTag
                 deceasedCount={actorsDeceased}
@@ -169,69 +166,65 @@ const MovieDetails: React.FC = () => {
               />
             )}
           </div>
-          <p className={styles.movieOverview}>{movie.overview}</p>
-
-          {/* Actor Metrics */}
-          {/* <div className={styles.actorMetrics}>
-            <p>Actors Alive: {actorsAlive}</p>
-            <p>Actors Deceased: {actorsDeceased}</p>
-          </div> */}
         </div>
-      </div>
+      </aside>
 
-      {/* Filter and Sort Controls */}
-      <div className={styles.filterSortContainer}>
-        <div className={styles.filterSortWrapper}>
-          <Select
-            value={statusFilter}
-            onChange={setStatusFilter}
-            options={statusOptions}
-            className={styles.statusFilter}
-          />
+      {/* Main Content Area */}
+      <main className={styles.mainContent}>
+        {/* Filter and Sort Controls */}
+        <div className={styles.filterSortContainer}>
+          <div className={styles.filterSortWrapper}>
+            <Select
+              value={statusFilter}
+              onChange={setStatusFilter}
+              options={statusOptions}
+              className={styles.statusFilter}
+            />
 
-          <Select
-            value={sortOrder}
-            onChange={setSortOrder}
-            options={sortOptions}
-            className={styles.sortOrder}
-          />
+            <Select
+              value={sortOrder}
+              onChange={setSortOrder}
+              options={sortOptions}
+              className={styles.sortOrder}
+            />
+          </div>
+
+          <div>
+            <SettingsMenu options={settingsOptions} />
+          </div>
         </div>
 
-        <div>
-          <SettingsMenu options={settingsOptions} />
+        {/* Cast Grid */}
+        <div className={styles.castGrid}>
+          {loadingCast
+            ? Array(8)
+                .fill(0)
+                .map((_, index) => (
+                  <div key={index} className={styles.placeholderCastItem}>
+                    <div className={styles.placeholderImage}></div>
+                    <div className={styles.placeholderText}></div>
+                    <div className={styles.placeholderText}></div>
+                    <div className={styles.placeholderText}></div>
+                  </div>
+                ))
+            : filteredCast.map((actor) => (
+                <ActorCard
+                  key={actor.id}
+                  actor={{
+                    id: actor.id,
+                    name: actor.name,
+                    character: actor.character,
+                    profilePath: actor.profile_path || undefined,
+                    birthday: actor.birthday || undefined,
+                    deathday: actor.deathday || undefined,
+                    currentAge: actor.currentAge || undefined,
+                    ageAtDeath: actor.ageAtDeath || undefined,
+                    ageAtRelease: actor.ageAtRelease || undefined,
+                  }}
+                />
+              ))}
         </div>
-      </div>
-
-      {/* Cast List Grid */}
-      <div className={styles.castGrid}>
-        {loadingCast
-          ? Array(8)
-              .fill(0)
-              .map((_, index) => (
-                <div key={index} className={styles.placeholderCastItem}>
-                  <div className={styles.placeholderImage}></div>
-                  <div className={styles.placeholderText}></div>
-                  <div className={styles.placeholderText}></div>
-                  <div className={styles.placeholderText}></div>
-                </div>
-              ))
-          : filteredCast.map((actor) => (
-              <ActorCard
-                key={actor.id}
-                actor={{
-                  id: actor.id,
-                  name: actor.name,
-                  character: actor.character,
-                  profilePath: actor.profile_path || undefined,
-                  birthday: actor.birthday || undefined,
-                  deathday: actor.deathday || undefined,
-                  currentAge: actor.currentAge || undefined,
-                  ageAtDeath: actor.ageAtDeath || undefined,
-                  ageAtRelease: actor.ageAtRelease || undefined,
-                }}
-              />
-            ))}
-      </div>
+      </main>
     </div>
   );
 };

@@ -197,7 +197,7 @@
   color: var(--text-secondary);
   line-height: var(--line-height-snug);
   white-space: nowrap;
-  overflow: hidden;
+  overflow: visible; /* Changed from hidden to visible to allow tooltips */
   text-overflow: ellipsis;
 }
 
