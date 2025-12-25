@@ -5,12 +5,16 @@ import { initSentry, logPerformance } from "./utils/sentry";
 import { PostHogProvider } from "posthog-js/react";
 import "./styles/global.css";
 
-// Initialize MSW for development
-if (import.meta.env.DEV) {
+// Initialize MSW for development (only if VITE_USE_MOCK is true)
+const useMock = import.meta.env.VITE_USE_MOCK === "true";
+if (import.meta.env.DEV && useMock) {
+  console.log("🎭 Mock Service Worker enabled - using mock data");
   const { worker } = await import("./__mocks__/browser");
   await worker.start({
     onUnhandledRequest: "bypass",
   });
+} else if (import.meta.env.DEV) {
+  console.log("🌐 Mock Service Worker disabled - using real API");
 }
 
 // Initialize Sentry

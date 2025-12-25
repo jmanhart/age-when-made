@@ -12,11 +12,7 @@ import Select from "../Select/Select";
 import SettingsMenu from "../SettingsMenu/SettingsMenu";
 import StatusTag from "../StatusTag/StatusTag";
 import { parseMovieIdentifier } from "../../utils/slugUtils";
-import {
-  logComponentRender,
-  logUserAction,
-  logPerformance,
-} from "../../utils/sentry";
+import { DateWithTooltip } from "../DateWithTooltip";
 
 const MovieDetails: React.FC = () => {
   const { movieIdentifier } = useParams<{ movieIdentifier: string }>();
@@ -33,7 +29,6 @@ const MovieDetails: React.FC = () => {
       if (movieIdentifier) {
         const parsed = parseMovieIdentifier(movieIdentifier);
         if (parsed) {
-          const startTime = performance.now();
 
           let movieData: Movie | null = null;
 
@@ -140,17 +135,11 @@ const MovieDetails: React.FC = () => {
           <div className={styles.movieTitleContainer}>
             <h1 className={styles.movieTitle}>{movie.title}</h1>
             <p className={styles.movieReleaseDate}>
-              <span className={styles.dateWithTooltip}>
-                {new Date(movie.release_date).getFullYear()}
-                <span className={styles.tooltipText}>
-                  Released on{" "}
-                  {new Date(movie.release_date).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </span>
-              </span>
+              <DateWithTooltip 
+                date={movie.release_date} 
+                displayFormat="year" 
+                tooltipPrefix="Released on" 
+              />
               {/* Show movie age as simple text */}
               {calculateMovieAge(movie.release_date) > 0 && (
                 <span className={styles.movieAge}>

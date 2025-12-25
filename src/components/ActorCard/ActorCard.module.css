@@ -13,6 +13,63 @@
   width: 100%;
 }
 
+/* Age with Tooltip */
+.ageWithTooltip {
+  display: inline-block !important;
+  cursor: pointer !important;
+  position: relative !important;
+  text-decoration: underline !important;
+  text-decoration-style: dotted !important;
+  text-underline-offset: 2px !important;
+}
+
+.ageWithTooltip:hover {
+  cursor: pointer !important;
+}
+
+.ageWithTooltip .tooltipText {
+  visibility: hidden !important;
+  width: max-content !important;
+  max-width: 200px !important;
+  background-color: var(--color-bg-primary) !important;
+  color: var(--text-primary) !important;
+  text-align: center !important;
+  border-radius: var(--border-radius) !important;
+  padding: var(--spacing-2) var(--spacing-3) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: var(--color-shadow) !important;
+
+  /* Position the tooltip */
+  position: absolute !important;
+  z-index: 9999 !important;
+  bottom: 125% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+
+  /* Fade in */
+  opacity: 0 !important;
+  transition: opacity var(--transition) !important;
+  pointer-events: none !important;
+}
+
+/* Show tooltip on hover */
+.ageWithTooltip:hover .tooltipText {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Arrow pointing down */
+.ageWithTooltip .tooltipText::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 100% !important;
+  left: 50% !important;
+  margin-left: -5px !important;
+  border-width: 5px !important;
+  border-style: solid !important;
+  border-color: var(--color-bg-primary) transparent transparent transparent !important;
+}
+
 /* .castItem:hover {
   transform: translateY(-3px);
   box-shadow: var(--color-shadow-hover);
@@ -224,13 +281,6 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.actorCardLink:hover {
-  transform: translateY(-2px);
-}
-
-.actorCardLink:hover .castItem {
-  box-shadow: var(--color-shadow-hover);
-}
 
 .actorCardLink:focus {
   outline: 2px solid var(--color-primary);

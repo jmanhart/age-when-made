@@ -1,0 +1,56 @@
+/* Date with Tooltip */
+.dateWithTooltip {
+  display: inline-block;
+  cursor: pointer;
+  position: relative;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+}
+
+.dateWithTooltip:hover {
+  cursor: pointer;
+}
+
+.tooltipText {
+  visibility: hidden;
+  width: max-content;
+  max-width: 200px;
+  background-color: var(--color-bg-primary);
+  color: var(--text-primary);
+  text-align: center;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-2) var(--spacing-3);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--color-shadow);
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 99999;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  /* Fade in */
+  opacity: 0;
+  transition: opacity var(--transition);
+  pointer-events: none;
+}
+
+/* Show tooltip on hover */
+.dateWithTooltip:hover .tooltipText {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Arrow pointing down */
+.tooltipText::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--color-bg-primary) transparent transparent transparent;
+}
