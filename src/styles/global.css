@@ -165,12 +165,14 @@ button {
 ============================== */
 html {
   box-sizing: border-box;
+  overscroll-behavior: none;
 }
 
 body {
   margin: 0;
   font-family: system-ui, sans-serif;
   line-height: 1.5;
+  overscroll-behavior: none;
 }
 
 /* utility classes */

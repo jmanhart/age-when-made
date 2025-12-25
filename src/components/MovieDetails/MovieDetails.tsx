@@ -7,12 +7,9 @@ import {
 } from "../../utils/api";
 import { Movie, Actor } from "../../types/types";
 import styles from "./MovieDetails.module.css";
-import ActorCard from "../ActorCard/ActorCard.tsx";
-import Select from "../Select/Select";
-import SettingsMenu from "../SettingsMenu/SettingsMenu";
-import StatusTag from "../StatusTag/StatusTag";
 import { parseMovieIdentifier } from "../../utils/slugUtils";
-import { DateWithTooltip } from "../DateWithTooltip";
+import MovieSidebar from "./MovieSidebar";
+import CastContent from "./CastContent";
 
 const MovieDetails: React.FC = () => {
   const { movieIdentifier } = useParams<{ movieIdentifier: string }>();
@@ -29,7 +26,6 @@ const MovieDetails: React.FC = () => {
       if (movieIdentifier) {
         const parsed = parseMovieIdentifier(movieIdentifier);
         if (parsed) {
-
           let movieData: Movie | null = null;
 
           if (parsed.id) {
@@ -59,17 +55,10 @@ const MovieDetails: React.FC = () => {
 
   if (!movie) return <p>Loading movie details...</p>;
 
-  // Calculate the movie's age
-  const calculateMovieAge = (releaseDate: string) => {
-    const releaseYear = new Date(releaseDate).getFullYear();
-    const currentYear = new Date().getFullYear();
-    return currentYear - releaseYear;
-  };
-
-  // Calculate actor metrics
-  // const totalActors = cast.length;
-  // const actorsAlive = cast.filter((actor) => !actor.deathday).length;
-  // const actorsDeceased = totalActors - actorsAlive;
+  // Calculate Metrics Based on Original Cast (not filtered)
+  const totalActors = cast.length;
+  const actorsAlive = cast.filter((actor) => !actor.deathday).length;
+  const actorsDeceased = totalActors - actorsAlive;
 
   // Filtered Cast Calculation
   const filteredCast = cast
@@ -90,148 +79,25 @@ const MovieDetails: React.FC = () => {
       return 0;
     });
 
-  // Calculate Metrics Based on Original Cast (not filtered)
-  const totalActors = cast.length;
-  const actorsAlive = cast.filter((actor) => !actor.deathday).length;
-  const actorsDeceased = totalActors - actorsAlive;
-
-  const statusOptions = [
-    { value: "All", label: "All" },
-    { value: "Alive", label: "Alive" },
-    { value: "Deceased", label: "Deceased" },
-  ];
-
-  const sortOptions = [
-    { value: "none", label: "No Sort" },
-    { value: "oldest", label: "Oldest" },
-    { value: "youngest", label: "Youngest" },
-  ];
-
-  const settingsOptions = [
-    {
-      id: "hideNoImage",
-      label: "Hide Actors Without Images",
-      checked: hideNoImage,
-      onChange: setHideNoImage,
-    },
-    {
-      id: "hideNoBirthDate",
-      label: "Hide Actors Without Birth Dates",
-      checked: hideNoBirthDate,
-      onChange: setHideNoBirthDate,
-    },
-  ];
-
   return (
     <div className={styles.movieDetailsContainer}>
-      {/* Movie Header */}
-      <div className={styles.movieHeader}>
-        <img
-          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-          alt={`${movie.title} poster`}
-          className={styles.moviePoster}
-        />
-        <div className={styles.movieInfo}>
-          <div className={styles.movieTitleContainer}>
-            <h1 className={styles.movieTitle}>{movie.title}</h1>
-            <p className={styles.movieReleaseDate}>
-              <DateWithTooltip 
-                date={movie.release_date} 
-                displayFormat="year" 
-                tooltipPrefix="Released on" 
-              />
-              {/* Show movie age as simple text */}
-              {calculateMovieAge(movie.release_date) > 0 && (
-                <span className={styles.movieAge}>
-                  {" "}
-                  {calculateMovieAge(movie.release_date)} years old
-                </span>
-              )}
-            </p>
-          </div>
-
-          <div className={styles.mortalityTags}>
-            {/* Show living actors tag if there are any living actors */}
-            {actorsAlive > 0 && (
-              <StatusTag
-                deceasedCount={0}
-                totalCount={actorsAlive}
-                variant="living"
-              />
-            )}
-
-            {/* Show deceased actors tag if there are any deceased actors */}
-            {actorsDeceased > 0 && (
-              <StatusTag
-                deceasedCount={actorsDeceased}
-                totalCount={actorsDeceased}
-                variant="deceased"
-              />
-            )}
-          </div>
-          <p className={styles.movieOverview}>{movie.overview}</p>
-
-          {/* Actor Metrics */}
-          {/* <div className={styles.actorMetrics}>
-            <p>Actors Alive: {actorsAlive}</p>
-            <p>Actors Deceased: {actorsDeceased}</p>
-          </div> */}
-        </div>
-      </div>
-
-      {/* Filter and Sort Controls */}
-      <div className={styles.filterSortContainer}>
-        <div className={styles.filterSortWrapper}>
-          <Select
-            value={statusFilter}
-            onChange={setStatusFilter}
-            options={statusOptions}
-            className={styles.statusFilter}
-          />
-
-          <Select
-            value={sortOrder}
-            onChange={setSortOrder}
-            options={sortOptions}
-            className={styles.sortOrder}
-          />
-        </div>
-
-        <div>
-          <SettingsMenu options={settingsOptions} />
-        </div>
-      </div>
-
-      {/* Cast List Grid */}
-      <div className={styles.castGrid}>
-        {loadingCast
-          ? Array(8)
-              .fill(0)
-              .map((_, index) => (
-                <div key={index} className={styles.placeholderCastItem}>
-                  <div className={styles.placeholderImage}></div>
-                  <div className={styles.placeholderText}></div>
-                  <div className={styles.placeholderText}></div>
-                  <div className={styles.placeholderText}></div>
-                </div>
-              ))
-          : filteredCast.map((actor) => (
-              <ActorCard
-                key={actor.id}
-                actor={{
-                  id: actor.id,
-                  name: actor.name,
-                  character: actor.character,
-                  profilePath: actor.profile_path || undefined,
-                  birthday: actor.birthday || undefined,
-                  deathday: actor.deathday || undefined,
-                  currentAge: actor.currentAge || undefined,
-                  ageAtDeath: actor.ageAtDeath || undefined,
-                  ageAtRelease: actor.ageAtRelease || undefined,
-                }}
-              />
-            ))}
-      </div>
+      <MovieSidebar
+        movie={movie}
+        actorsAlive={actorsAlive}
+        actorsDeceased={actorsDeceased}
+      />
+      <CastContent
+        filteredCast={filteredCast}
+        loadingCast={loadingCast}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+        sortOrder={sortOrder}
+        setSortOrder={setSortOrder}
+        hideNoImage={hideNoImage}
+        setHideNoImage={setHideNoImage}
+        hideNoBirthDate={hideNoBirthDate}
+        setHideNoBirthDate={setHideNoBirthDate}
+      />
     </div>
   );
 };

@@ -1,62 +1,67 @@
 /* ==============================
+   CSS Variables for Easy Customization
+============================== */
+:root {
+  --sidebar-width: 280px; /* Easy to adjust sidebar width */
+  --actor-card-width: 200px; /* Standard actor card width */
+}
+
+/* ==============================
    Movie Details Container
 ============================== */
 .movieDetailsContainer {
-  max-width: 900px;
-  margin: var(--spacing-5) auto;
-  padding: var(--spacing-5);
-  background-color: var(--color-bg-primary);
-  border-radius: var(--border-radius);
-  box-shadow: var(--color-shadow);
+  display: flex;
+  gap: var(--spacing-6);
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--spacing-4) var(--spacing-5);
+  color: var(--text-primary);
+}
+
+/* ==============================
+   Movie Sidebar
+============================== */
+.movieSidebar {
+  position: fixed;
+  top: calc(var(--header-height) + var(--spacing-4));
+  left: 50%;
+  transform: translateX(
+    calc(-700px + var(--spacing-5))
+  ); /* Center with max-width offset */
   display: flex;
   flex-direction: column;
-  color: var(--text-primary);
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* ==============================
-   Back Button
-============================== */
-.backButton {
-  align-self: flex-start;
-  margin-bottom: var(--spacing-5);
-  padding: var(--spacing-2) var(--spacing-4);
-  background-color: var(--color-primary);
-  color: var(--color-text-inverse);
-  border: none;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  transition: var(--transition);
-}
-
-.backButton:hover {
-  background-color: var(--color-primary-hover);
-}
-
-/* ==============================
-   Movie Header
-============================== */
-.movieHeader {
-  display: flex;
-  gap: var(--spacing-5);
-  margin-bottom: var(--spacing-5);
-  align-items: flex-start;
+  gap: var(--spacing-4);
+  width: var(--sidebar-width);
+  max-height: calc(100vh - var(--header-height) - var(--spacing-4) * 2);
+  overflow-y: auto;
 }
 
 .moviePoster {
-  width: 150px;
+  width: 100%;
   height: auto;
   border-radius: var(--border-radius);
   box-shadow: var(--color-shadow-hover);
+  aspect-ratio: 2/3;
+  object-fit: cover;
 }
 
 .movieInfo {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
+}
+
+/* ==============================
+   Main Content Area
+============================== */
+.mainContent {
+  flex: 1;
+  margin-left: calc(var(--sidebar-width) + var(--spacing-6));
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  min-width: 0;
+  padding-bottom: var(--spacing-8); /* Space at bottom */
 }
 
 .movieTitle {
@@ -177,24 +182,90 @@
 /* ==============================
    Responsive Layout
 ============================== */
-@media (max-width: 600px) {
-  .movieHeader {
+
+/* Tablet (1024px and below) - Stack layout */
+@media (max-width: 1024px) {
+  .movieDetailsContainer {
     flex-direction: column;
-    align-items: center;
   }
 
-  .moviePoster {
+  .movieSidebar {
+    position: static;
+    transform: none;
     width: 100%;
-    max-width: 250px;
-    margin-bottom: var(--spacing-5);
+    max-height: none;
+    overflow: visible;
+  }
+
+  .mainContent {
+    margin-left: 0;
+  }
+}
+
+/* Tablet portrait and mobile (768px and below) */
+@media (max-width: 768px) {
+  :root {
+    --actor-card-width: 180px; /* Smaller cards on mobile */
+  }
+
+  .movieDetailsContainer {
+    padding: var(--spacing-4);
+  }
+
+  .castGrid {
+    gap: var(--spacing-3);
+  }
+
+  .filterSortContainer {
+    flex-direction: column;
+    gap: var(--spacing-3);
+    align-items: stretch;
+  }
+
+  .filterSortWrapper {
+    flex-direction: column;
+    width: 100%;
   }
 
   .movieTitle {
-    font-size: var(--font-size-2xl);
+    font-size: var(--font-size-xl);
+  }
+}
+
+/* Mobile (600px and below) */
+@media (max-width: 600px) {
+  :root {
+    --actor-card-width: 160px; /* Even smaller on small mobile */
+  }
+
+  .movieDetailsContainer {
+    padding: var(--spacing-3);
+  }
+
+  .castGrid {
+    gap: var(--spacing-3);
+    justify-content: center; /* Center cards on small screens */
+  }
+
+  .movieTitle {
+    font-size: var(--font-size-lg);
   }
 
   .movieOverview {
     font-size: var(--font-size-sm);
+  }
+
+  .moviePoster {
+    max-width: 250px;
+    margin: 0 auto;
+  }
+
+  .movieInfo {
+    text-align: center;
+  }
+
+  .mortalityTags {
+    justify-content: center;
   }
 }
 
@@ -203,10 +274,10 @@
 ============================== */
 .castGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, var(--actor-card-width));
   gap: var(--spacing-4);
   width: 100%;
-  padding: var(--spacing-4);
+  justify-content: start;
 }
 
 .castItem {
@@ -402,7 +473,6 @@
   margin-bottom: var(--spacing-4);
   flex-wrap: wrap;
 }
-
 
 .movieTitleContainer {
   display: flex;
