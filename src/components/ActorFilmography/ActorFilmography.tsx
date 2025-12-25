@@ -8,11 +8,6 @@ import {
 import { Movie, Actor } from "../../types/types";
 import styles from "./ActorFilmography.module.css";
 import { parseActorIdentifier, createMovieSlug } from "../../utils/slugUtils";
-import {
-  logComponentRender,
-  logUserAction,
-  logPerformance,
-} from "../../utils/sentry";
 
 /**
  * ActorFilmography Component
@@ -52,8 +47,6 @@ const ActorFilmography: React.FC = () => {
       if (actorIdentifier) {
         const parsed = parseActorIdentifier(actorIdentifier);
         if (parsed) {
-          const startTime = performance.now();
-
           let actorDetails: Actor | null = null;
 
           if (parsed.id) {
@@ -93,23 +86,20 @@ const ActorFilmography: React.FC = () => {
 
   return (
     <div className={styles.actorFilmographyContainer}>
-      {/* Actor Profile Header Section */}
-      <div className={styles.actorHeader}>
-        {/* Actor's profile image from TMDB */}
+      {/* Actor Info Sidebar */}
+      <aside className={styles.actorSidebar}>
         <img
-          src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}
+          src={`https://image.tmdb.org/t/p/w500${actor.profile_path}`}
           alt={`${actor.name}'s profile`}
-          className={styles.actorFilmographyImage}
+          className={styles.actorImage}
         />
-        <div>
-          {/* Actor's name as main heading */}
-          <h2 className={styles.actorName}>{actor.name}</h2>
-
-          {/* Actor's age/death status */}
+        
+        <div className={styles.actorInfo}>
+          <h1 className={styles.actorName}>{actor.name}</h1>
+          
           {actor.birthday && (
             <p className={styles.actorAgeStatus}>
               {actor.deathday ? (
-                // Actor is deceased - separate elements for styling
                 <>
                   <span className={styles.wouldBeAge}>
                     Would be {calculateCurrentAge(actor.birthday)}
@@ -122,7 +112,6 @@ const ActorFilmography: React.FC = () => {
                   </span>
                 </>
               ) : (
-                // Actor is alive - show current age
                 <>
                   <span className={styles.currentAge}>
                     {calculateCurrentAge(actor.birthday)}
@@ -137,87 +126,68 @@ const ActorFilmography: React.FC = () => {
             </p>
           )}
         </div>
-      </div>
+      </aside>
 
-      {/* Filmography List Section */}
-      <h3 className={styles.filmographyTitle}>Filmography</h3>
+      {/* Main Content Area */}
+      <main className={styles.mainContent}>
+        <h2 className={styles.filmographyTitle}>Filmography</h2>
 
-      {/* Grid/List of all movies */}
-      <ul className={styles.filmographyList}>
-        {filmography.map((movie) => (
-          <li key={movie.id} className={styles.filmographyItem}>
-            {/* Each movie is a clickable link to its details page */}
+        {/* Movie Grid */}
+        <div className={styles.filmographyGrid}>
+          {filmography.map((movie) => (
             <Link
+              key={movie.id}
               to={`/movie/${createMovieSlug(movie.title, movie.release_date)}`}
-              className={styles.movieLink}
+              className={styles.movieCard}
             >
-              {/* Movie poster image */}
-              <div className={styles.filmographyItemContent}>
-                <img
-                  src={`https://image.tmdb.org/t/p/w185${movie.poster_path}`}
-                  alt={`${movie.title} poster`}
-                  className={styles.moviePoster}
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = "none";
-                    const fallback = target.nextElementSibling as HTMLElement;
-                    if (fallback) {
-                      fallback.style.display = "flex";
-                    }
-                  }}
-                />
-                <div
-                  className={styles.imageFallback}
-                  style={{ display: "none" }}
-                >
-                  <span>No Image</span>
-                </div>
+              <img
+                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                alt={`${movie.title} poster`}
+                className={styles.moviePoster}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = "none";
+                  const fallback = target.nextElementSibling as HTMLElement;
+                  if (fallback) {
+                    fallback.style.display = "flex";
+                  }
+                }}
+              />
+              <div
+                className={styles.imageFallback}
+                style={{ display: "none" }}
+              >
+                <span>No Image</span>
+              </div>
 
-                {/* Movie information container */}
-                <div className={styles.movieDetails}>
-                  {/* Movie title */}
-                  <h4 className={styles.movieTitle}>{movie.title}</h4>
+              <div className={styles.movieInfo}>
+                <h3 className={styles.movieTitle}>{movie.title}</h3>
+                
+                <p className={styles.movieYear}>
+                  {new Date(movie.release_date).getFullYear()}
+                </p>
 
-                  {/* Release date - full date format */}
-                  <p className={styles.movieReleaseDate}>
-                    Release Date: {movie.release_date}
-                  </p>
-
-                  {/* Actor's age when the movie was filmed/released */}
-                  <p className={styles.ageAtRelease}>
-                    {actor.deathday &&
-                    new Date(movie.release_date) > new Date(actor.deathday) ? (
-                      // Posthumous release - show age they would have been
-                      <>
-                        <span className={styles.posthumousLabel}>
-                          Would have been{" "}
-                        </span>
-                        <span className={styles.posthumousAge}>
-                          {movie.ageAtRelease ?? "N/A"}
-                        </span>
-                        <span className={styles.posthumousSuffix}>
-                          {" "}
-                          years old
-                        </span>
-                      </>
-                    ) : (
-                      // Regular release - show age during filming
-                      <>
-                        <span className={styles.filmingLabel}>
-                          Age during filming:{" "}
-                        </span>
-                        <span className={styles.filmingAge}>
-                          {movie.ageAtRelease ?? "N/A"}
-                        </span>
-                      </>
-                    )}
-                  </p>
-                </div>
+                <p className={styles.ageAtRelease}>
+                  {actor.deathday &&
+                  new Date(movie.release_date) > new Date(actor.deathday) ? (
+                    <>
+                      <span className={styles.posthumousAge}>
+                        Would have been {movie.ageAtRelease ?? "N/A"}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className={styles.filmingAge}>
+                        Age {movie.ageAtRelease ?? "N/A"}
+                      </span>
+                    </>
+                  )}
+                </p>
               </div>
             </Link>
-          </li>
-        ))}
-      </ul>
+          ))}
+        </div>
+      </main>
     </div>
   );
 };

@@ -9,60 +9,10 @@ const AgeWithBirthTooltip: React.FC<{
   age: number;
   birthday?: string;
 }> = ({ age, birthday }) => {
-  // #region agent log
-  fetch("http://127.0.0.1:7242/ingest/3008bd3e-97f9-4a21-aba7-a942f3f48b31", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      location: "ActorMetrics.tsx:12",
-      message: "AgeWithBirthTooltip entry",
-      data: {
-        age,
-        birthday,
-        hasBirthday: !!birthday,
-        ageString: age.toString(),
-      },
-      timestamp: Date.now(),
-      sessionId: "debug-session",
-      hypothesisId: "B,E",
-    }),
-  }).catch(() => {});
-  // #endregion
-
   if (!birthday) {
-    // #region agent log
-    fetch("http://127.0.0.1:7242/ingest/3008bd3e-97f9-4a21-aba7-a942f3f48b31", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        location: "ActorMetrics.tsx:17",
-        message: "No birthday - returning plain span",
-        data: { age },
-        timestamp: Date.now(),
-        sessionId: "debug-session",
-        hypothesisId: "B",
-      }),
-    }).catch(() => {});
-    // #endregion
     return <span>{age}</span>;
   }
 
-  // #region agent log
-  fetch("http://127.0.0.1:7242/ingest/3008bd3e-97f9-4a21-aba7-a942f3f48b31", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      location: "ActorMetrics.tsx:24",
-      message: "Rendering DateWithTooltip with customDisplayText",
-      data: { birthday, age, customDisplayText: age.toString() },
-      timestamp: Date.now(),
-      sessionId: "debug-session",
-      hypothesisId: "A,E",
-    }),
-  }).catch(() => {});
-  // #endregion
-
-  // Just use the working DateWithTooltip component but show age as display text
   return (
     <DateWithTooltip
       date={birthday}
@@ -84,29 +34,6 @@ export const ActorMetrics: React.FC<ActorMetricsProps> = ({
   variant = "default",
   className,
 }) => {
-  // #region agent log
-  fetch("http://127.0.0.1:7242/ingest/3008bd3e-97f9-4a21-aba7-a942f3f48b31", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      location: "ActorMetrics.tsx:48",
-      message: "ActorMetrics render entry",
-      data: {
-        actorName: actor.name,
-        currentAge: actor.currentAge,
-        birthday: actor.birthday,
-        ageAtDeath: actor.ageAtDeath,
-        ageAtRelease: actor.ageAtRelease,
-        variant,
-        className,
-      },
-      timestamp: Date.now(),
-      sessionId: "debug-session",
-      hypothesisId: "B",
-    }),
-  }).catch(() => {});
-  // #endregion
-
   return (
     <div className={`${styles.metrics} ${className || ""}`}>
       {actor.currentAge && (
