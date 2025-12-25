@@ -1,4 +1,9 @@
 :root {
+  /* Header Dimensions (adjust these to change header size globally) */
+  --header-height: 40px; /* Total header height */
+  --header-padding-x: 8px; /* Horizontal padding */
+  --header-padding-y: 8px; /* Vertical padding */
+
   /* Typography Scale */
   --font-size-xs: 0.75rem; /* 12px */
   --font-size-sm: 0.875rem; /* 14px */
@@ -157,6 +162,21 @@
   /* Component-specific dark mode */
   --select-arrow-color: var(--color-text);
   --checkbox-border: var(--color-border);
+}
+
+/* Responsive Header Dimensions */
+@media (max-width: 768px) {
+  :root {
+    --header-padding-x: 20px;
+    --header-padding-y: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  :root {
+    --header-padding-x: 16px;
+    --header-padding-y: 12px;
+  }
 }
 
 /* System Preference Override */

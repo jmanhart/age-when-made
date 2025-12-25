@@ -1,14 +1,22 @@
+/* ==============================
+   Header Styles
+============================== */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 20px;
-  background-color: #333;
-  color: white;
-  position: sticky;
+  padding: var(--header-padding-y) var(--header-padding-x);
+  min-height: var(--header-height);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   z-index: 1000;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
 }
 
 .backButton {
@@ -34,4 +42,19 @@
 .searchContainer {
   flex: 1;
   margin-left: 20px;
+}
+
+/* ==============================
+   Responsive Design
+============================== */
+@media (max-width: 768px) {
+  .header {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .header {
+    gap: 8px;
+  }
 }

@@ -2,15 +2,13 @@
 .castItem {
   display: flex;
   flex-direction: column;
-
-  /* padding: var(--spacing-5); */
+  width: var(--actor-card-width, 200px); /* Standard width matching image ratio */
   background-color: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius);
   box-shadow: var(--color-shadow);
   transition: var(--transition);
   color: var(--text-primary);
-  width: 100%;
 }
 
 /* Age with Tooltip */
@@ -105,9 +103,8 @@
 }
 
 .actorImage {
-  width: 100% !important;
-  height: 350px !important; /* Force override */
-  aspect-ratio: unset !important; /* Remove the 2/3 ratio */
+  width: 100%;
+  aspect-ratio: 2/3; /* Maintain consistent image ratio */
   border-radius: var(--border-radius);
   box-shadow: var(--color-shadow);
   margin-bottom: var(--spacing-3);

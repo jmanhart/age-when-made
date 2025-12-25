@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 import "./styles/theme.css";
 import { SentryErrorBoundary } from "./components/ErrorBoundary";
-import { logComponentRender, logPerformance } from "./utils/sentry";
 
 import Header from "./components/header";
 import MovieDetails from "./components/MovieDetails";
@@ -24,18 +23,35 @@ const App = () => {
   return (
     <SentryErrorBoundary>
       <Router>
-        <Header />
-        <main>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            {/* <Route path="/" element={<MovieSearch />} /> */}
-            <Route path="/movie/:movieIdentifier" element={<MovieDetails />} />
-            <Route
-              path="/actor/:actorIdentifier"
-              element={<ActorFilmography />}
-            />
-          </Routes>
-        </main>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100vh",
+            overscrollBehavior: "none",
+          }}
+        >
+          <main
+            style={{
+              paddingTop: "var(--header-height)",
+              flex: 1,
+              overscrollBehavior: "none",
+            }}
+          >
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              {/* <Route path="/" element={<MovieSearch />} /> */}
+              <Route
+                path="/movie/:movieIdentifier"
+                element={<MovieDetails />}
+              />
+              <Route
+                path="/actor/:actorIdentifier"
+                element={<ActorFilmography />}
+              />
+            </Routes>
+          </main>
+        </div>
       </Router>
     </SentryErrorBoundary>
   );

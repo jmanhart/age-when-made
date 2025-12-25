@@ -2,37 +2,38 @@
    CSS Variables for Easy Customization
 ============================== */
 :root {
-  --sidebar-width: 320px; /* Easy to adjust sidebar width */
+  --sidebar-width: 280px; /* Easy to adjust sidebar width */
+  --actor-card-width: 200px; /* Standard actor card width */
 }
 
 /* ==============================
    Movie Details Container
 ============================== */
 .movieDetailsContainer {
-  max-width: 1400px;
-  margin: var(--spacing-5) auto;
-  padding: var(--spacing-5);
-  background-color: var(--color-bg-primary);
-  border-radius: var(--border-radius);
-  box-shadow: var(--color-shadow);
-  display: grid;
-  grid-template-columns: var(--sidebar-width) 1fr;
+  display: flex;
   gap: var(--spacing-6);
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--spacing-4) var(--spacing-5);
   color: var(--text-primary);
-  width: 100%;
-  box-sizing: border-box;
 }
 
 /* ==============================
    Movie Sidebar
 ============================== */
 .movieSidebar {
+  position: fixed;
+  top: calc(var(--header-height) + var(--spacing-4));
+  left: 50%;
+  transform: translateX(
+    calc(-700px + var(--spacing-5))
+  ); /* Center with max-width offset */
   display: flex;
   flex-direction: column;
   gap: var(--spacing-4);
-  position: sticky;
-  top: var(--spacing-5);
-  height: fit-content;
+  width: var(--sidebar-width);
+  max-height: calc(100vh - var(--header-height) - var(--spacing-4) * 2);
+  overflow-y: auto;
 }
 
 .moviePoster {
@@ -54,10 +55,13 @@
    Main Content Area
 ============================== */
 .mainContent {
+  flex: 1;
+  margin-left: calc(var(--sidebar-width) + var(--spacing-6));
   display: flex;
   flex-direction: column;
   gap: var(--spacing-4);
   min-width: 0;
+  padding-bottom: var(--spacing-8); /* Space at bottom */
 }
 
 .movieTitle {
@@ -179,31 +183,36 @@
    Responsive Layout
 ============================== */
 
-/* Tablet (1024px and below) - 3 columns */
+/* Tablet (1024px and below) - Stack layout */
 @media (max-width: 1024px) {
   .movieDetailsContainer {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-5);
+    flex-direction: column;
   }
 
   .movieSidebar {
     position: static;
-    max-width: 100%;
+    transform: none;
+    width: 100%;
+    max-height: none;
+    overflow: visible;
   }
 
-  .castGrid {
-    grid-template-columns: repeat(3, 1fr);
+  .mainContent {
+    margin-left: 0;
   }
 }
 
-/* Tablet portrait and mobile (768px and below) - 2 columns */
+/* Tablet portrait and mobile (768px and below) */
 @media (max-width: 768px) {
+  :root {
+    --actor-card-width: 180px; /* Smaller cards on mobile */
+  }
+
   .movieDetailsContainer {
     padding: var(--spacing-4);
   }
 
   .castGrid {
-    grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-3);
   }
 
@@ -223,15 +232,19 @@
   }
 }
 
-/* Mobile (600px and below) - 1 column */
+/* Mobile (600px and below) */
 @media (max-width: 600px) {
+  :root {
+    --actor-card-width: 160px; /* Even smaller on small mobile */
+  }
+
   .movieDetailsContainer {
     padding: var(--spacing-3);
   }
 
   .castGrid {
-    grid-template-columns: 1fr;
     gap: var(--spacing-3);
+    justify-content: center; /* Center cards on small screens */
   }
 
   .movieTitle {
@@ -261,9 +274,10 @@
 ============================== */
 .castGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fill, var(--actor-card-width));
   gap: var(--spacing-4);
   width: 100%;
+  justify-content: start;
 }
 
 .castItem {
@@ -459,7 +473,6 @@
   margin-bottom: var(--spacing-4);
   flex-wrap: wrap;
 }
-
 
 .movieTitleContainer {
   display: flex;
