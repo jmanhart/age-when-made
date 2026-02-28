@@ -15,6 +15,8 @@ function useFetch<T>(url: string): UseFetchResult<T> {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchData = async () => {
       const startTime = performance.now();
       setLoading(true);
@@ -23,7 +25,9 @@ function useFetch<T>(url: string): UseFetchResult<T> {
       try {
         logApiCall(url, "GET", { hook: "useFetch" });
 
-        const response: AxiosResponse<T> = await axios.get(url);
+        const response: AxiosResponse<T> = await axios.get(url, {
+          signal: controller.signal,
+        });
         const responseTime = performance.now() - startTime;
 
         logApiSuccess(url, responseTime, {
@@ -33,6 +37,9 @@ function useFetch<T>(url: string): UseFetchResult<T> {
 
         setData(response.data);
       } catch (err) {
+        // Don't update state if the request was cancelled
+        if (axios.isCancel(err)) return;
+
         const responseTime = performance.now() - startTime;
         const errorMessage =
           err instanceof Error ? err.message : "Failed to fetch data";
@@ -47,11 +54,15 @@ function useFetch<T>(url: string): UseFetchResult<T> {
 
         setError(errorMessage);
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchData();
+
+    return () => controller.abort();
   }, [url]);
 
   return { data, loading, error };

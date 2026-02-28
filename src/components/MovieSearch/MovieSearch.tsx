@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import MovieList from "../MovieList/MovieList";
 import { fetchMovies, fetchActors } from "../../utils/api";
@@ -64,12 +65,20 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
     logComponentRender("MovieSearch", { isHeaderSearch });
   }, [isHeaderSearch]);
 
+  // Clean up blur timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
+    };
+  }, []);
+
   // ============================================================================
   // REFS FOR DOM MANIPULATION
   // ============================================================================
 
   const suggestionsRef = useRef<HTMLUListElement>(null); // Reference to suggestions list container
   const selectedItemRef = useRef<HTMLLIElement>(null); // Reference to currently selected suggestion item
+  const blurTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null); // Track onBlur timeout for cleanup
 
   // ============================================================================
   // EFFECTS
@@ -77,16 +86,20 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
 
   // Effect 1: Fetch autocomplete suggestions when query changes
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchAutocomplete = async () => {
       // Only fetch if query has 2+ characters and we're not preventing reopening
       if (query.trim().length > 1 && !preventReopen) {
         setError(null);
         try {
           // Fetch both movies and actors simultaneously for better UX
-          const movieResults: Movie[] = await fetchMovies(query);
-          const actorResults: Actor[] = await fetchActors(query);
+          const [movieResults, actorResults] = await Promise.all([
+            fetchMovies(query, controller.signal),
+            fetchActors(query, controller.signal),
+          ]);
 
-          // Transform movies to include type discriminator
+          // Transform and combine suggestions with type discriminators
           const movieSuggestions: MovieSuggestion[] = movieResults.map(
             (item) => ({
               ...item,
@@ -94,7 +107,6 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
             })
           );
 
-          // Transform actors to include type discriminator
           const actorSuggestions: ActorSuggestion[] = actorResults.map(
             (item) => ({
               ...item,
@@ -102,14 +114,12 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
             })
           );
 
-          // Combine both types of suggestions
           const combinedSuggestions: Suggestion[] = [
             ...movieSuggestions,
             ...actorSuggestions,
           ];
 
           // Remove duplicates based on unique combination of id and type
-          // This prevents the same movie/actor from appearing twice
           const uniqueSuggestions = combinedSuggestions.filter(
             (item, index, self) =>
               index ===
@@ -119,22 +129,27 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
           setSuggestions(uniqueSuggestions);
           setShowSuggestions(true);
 
-          // Show helpful message if no suggestions found
           if (uniqueSuggestions.length === 0) {
             setError("No suggestions found.");
           }
         } catch (error) {
+          // Don't update state if the request was cancelled
+          if (axios.isCancel(error)) return;
           setError("An error occurred while fetching suggestions.");
           setShowSuggestions(false);
           console.error(error);
         }
       } else {
-        // Hide suggestions if query is too short or reopening is prevented
         setShowSuggestions(false);
       }
     };
 
-    fetchAutocomplete();
+    // Debounce: wait 350ms after the user stops typing before fetching
+    const debounceTimer = setTimeout(fetchAutocomplete, 350);
+    return () => {
+      clearTimeout(debounceTimer);
+      controller.abort();
+    };
   }, [query, preventReopen]); // Re-run when query or preventReopen changes
 
   // Effect 2: Handle auto-scrolling for keyboard navigation
@@ -352,13 +367,14 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
                 setShowSuggestions(true);
               }
             }}
-            onBlur={() =>
+            onBlur={() => {
               // Hide suggestions after a small delay to allow clicks to register
-              setTimeout(() => {
+              if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
+              blurTimeoutRef.current = setTimeout(() => {
                 setShowSuggestions(false);
                 setSelectedIndex(-1);
-              }, 100)
-            }
+              }, 100);
+            }}
           />
         </div>
       </form>

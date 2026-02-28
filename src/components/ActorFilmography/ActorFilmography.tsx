@@ -43,6 +43,8 @@ const ActorFilmography: React.FC = () => {
    * Runs when actorIdentifier changes (component mounts or URL changes)
    */
   useEffect(() => {
+    const controller = new AbortController();
+
     const getActorData = async () => {
       if (actorIdentifier) {
         const parsed = parseActorIdentifier(actorIdentifier);
@@ -50,23 +52,26 @@ const ActorFilmography: React.FC = () => {
           let actorDetails: Actor | null = null;
 
           if (parsed.id) {
-            // Numeric ID - fetch by ID
             actorDetails = (await fetchActorDetails(parsed.id)) as Actor;
           } else if (parsed.name) {
-            // Slug - fetch by name
             actorDetails = await fetchActorByName(
-              parsed.name.replace(/-/g, " ")
+              parsed.name.replace(/-/g, " "),
+              controller.signal
             );
           }
+
+          if (controller.signal.aborted) return;
 
           if (actorDetails) {
             setActor(actorDetails);
 
-            // Fetch actor's complete filmography
-            let filmographyData = await fetchActorFilmography(actorDetails.id);
+            let filmographyData = await fetchActorFilmography(
+              actorDetails.id,
+              controller.signal
+            );
 
-            // Sort filmography by release date (newest first)
-            // This creates a chronological timeline from most recent to oldest
+            if (controller.signal.aborted) return;
+
             filmographyData = filmographyData.sort(
               (a, b) =>
                 new Date(b.release_date).getTime() -
@@ -77,7 +82,12 @@ const ActorFilmography: React.FC = () => {
         }
       }
     };
-    getActorData();
+
+    getActorData().catch((err) => {
+      if (!controller.signal.aborted) console.error(err);
+    });
+
+    return () => controller.abort();
   }, [actorIdentifier]);
 
   // Loading states - show appropriate messages while data is being fetched

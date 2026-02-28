@@ -22,6 +22,8 @@ const MovieDetails: React.FC = () => {
   const [loadingCast, setLoadingCast] = useState<boolean>(true);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const getMovieDetails = async () => {
       if (movieIdentifier) {
         const parsed = parseMovieIdentifier(movieIdentifier);
@@ -29,28 +31,39 @@ const MovieDetails: React.FC = () => {
           let movieData: Movie | null = null;
 
           if (parsed.id) {
-            // Numeric ID - fetch by ID
-            movieData = await fetchMovieById(parsed.id);
+            movieData = await fetchMovieById(parsed.id, controller.signal);
           } else if (parsed.title) {
-            // Slug - fetch by title and year
-            movieData = await fetchMovieByTitle(parsed.title, parsed.year);
+            movieData = await fetchMovieByTitle(
+              parsed.title,
+              parsed.year,
+              controller.signal
+            );
           }
 
+          if (controller.signal.aborted) return;
           setMovie(movieData);
 
           if (movieData?.id && movieData?.release_date) {
             setLoadingCast(true);
             const castData = await fetchMovieCast(
               movieData.id,
-              movieData.release_date
+              movieData.release_date,
+              controller.signal
             );
+            if (controller.signal.aborted) return;
             setCast(castData);
             setLoadingCast(false);
           }
         }
       }
     };
-    getMovieDetails();
+
+    getMovieDetails().catch((err) => {
+      // Silently ignore cancelled requests
+      if (!controller.signal.aborted) console.error(err);
+    });
+
+    return () => controller.abort();
   }, [movieIdentifier]);
 
   if (!movie) return <p>Loading movie details...</p>;

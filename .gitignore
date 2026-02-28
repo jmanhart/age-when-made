@@ -44,3 +44,6 @@ coverage/
 *storybook.log
 .storybook/cache/   # ✅ Ignore Storybook cache
 .storybook/node_modules/  # ✅ Ignore local Storybook dependencies
+
+# Project TODO
+TODO.md
