@@ -1,8 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import { initSentry, logPerformance } from "./utils/sentry";
-import { PostHogProvider } from "posthog-js/react";
+import { initSentry } from "./utils/sentry";
 import "./styles/global.css";
 
 // Initialize MSW for development (only if VITE_USE_MOCK is true)
@@ -20,21 +19,8 @@ if (import.meta.env.DEV && useMock) {
 // Initialize Sentry
 initSentry();
 
-// Log app startup performance
-const appStartTime = performance.now();
-
-const options = {
-  api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
-  defaults: "2025-05-24",
-};
-
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <PostHogProvider
-      apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
-      options={options}
-    >
-      <App />
-    </PostHogProvider>
+    <App />
   </React.StrictMode>
 );

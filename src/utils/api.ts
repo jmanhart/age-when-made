@@ -4,11 +4,9 @@ import fetchActorDetails from "./fetchActorDetails";
 import { calculateAgeAtDate } from "./calculateAge";
 import * as Sentry from "@sentry/react";
 import {
-  addBreadcrumb,
   logApiCall,
   logApiSuccess,
   logApiError,
-  logPerformance,
 } from "./sentry";
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
@@ -70,7 +68,7 @@ const fetchActors = async (
     if (axios.isCancel(error)) throw error;
     logApiError(endpoint, error as Error, { query });
     Sentry.captureException(error);
-    return [];
+    throw error;
   }
 };
 
@@ -80,14 +78,9 @@ const fetchActors = async (
  * @returns A list of suggested movies and actors that match the query
  */
 const fetchSuggestions = async (query: string): Promise<(Movie | Actor)[]> => {
-  try {
-    const movieResults = await fetchMovies(query);
-    const actorResults = await fetchActors(query);
-    return [...movieResults, ...actorResults];
-  } catch (error) {
-    console.error("Error fetching suggestions:", error);
-    return [];
-  }
+  const movieResults = await fetchMovies(query);
+  const actorResults = await fetchActors(query);
+  return [...movieResults, ...actorResults];
 };
 
 /**
@@ -112,7 +105,8 @@ const fetchMovieById = async (
   } catch (error) {
     if (axios.isCancel(error)) throw error;
     logApiError(endpoint, error as Error, { movieId });
-    return null;
+    Sentry.captureException(error);
+    throw error;
   }
 };
 
@@ -240,7 +234,8 @@ const fetchMovieCast = async (
   } catch (error) {
     if (axios.isCancel(error)) throw error;
     logApiError(endpoint, error as Error, { movieId });
-    return [];
+    Sentry.captureException(error);
+    throw error;
   }
 };
 
@@ -285,7 +280,8 @@ const fetchActorFilmography = async (
   } catch (error) {
     if (axios.isCancel(error)) throw error;
     logApiError(endpoint, error as Error, { actorId });
-    return [];
+    Sentry.captureException(error);
+    throw error;
   }
 };
 
@@ -326,8 +322,9 @@ const fetchMovieByTitle = async (
     // If no exact match, return the first result
     return movies.length > 0 ? movies[0] : null;
   } catch (error) {
-    console.error("Error fetching movie by title:", error);
-    return null;
+    if (axios.isCancel(error)) throw error;
+    Sentry.captureException(error);
+    throw error;
   }
 };
 
@@ -355,8 +352,9 @@ const fetchActorByName = async (
     // If no exact match, return the first result
     return actors.length > 0 ? actors[0] : null;
   } catch (error) {
-    console.error("Error fetching actor by name:", error);
-    return null;
+    if (axios.isCancel(error)) throw error;
+    Sentry.captureException(error);
+    throw error;
   }
 };
 

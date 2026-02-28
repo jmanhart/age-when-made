@@ -20,7 +20,7 @@ export const initSentry = () => {
     enableLogs: true,
 
     environment: import.meta.env.MODE,
-    debug: import.meta.env.DEV,
+    debug: false,
     release: __SENTRY_RELEASE__,
 
     integrations: [

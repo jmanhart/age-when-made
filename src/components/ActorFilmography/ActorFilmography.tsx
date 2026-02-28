@@ -154,6 +154,7 @@ const ActorFilmography: React.FC = () => {
                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                 alt={`${movie.title} poster`}
                 className={styles.moviePoster}
+                loading="lazy"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.style.display = "none";

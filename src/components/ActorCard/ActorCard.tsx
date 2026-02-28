@@ -6,10 +6,9 @@ import { ActorImage } from "./components/ActorImage";
 import { ActorHeader } from "./components/ActorHeader";
 import { ActorMetrics } from "./components/ActorMetrics";
 import classNames from "classnames";
-import { trackActorEvent, trackNavigationEvent } from "../../utils/posthog";
 import { createActorSlug } from "../../utils/slugUtils";
 
-const ActorCard: React.FC<ActorCardProps> = ({
+const ActorCard: React.FC<ActorCardProps> = React.memo(({
   actor,
   variant = "default",
   orientation = "vertical",
@@ -31,28 +30,23 @@ const ActorCard: React.FC<ActorCardProps> = ({
 
   const handleCardClick = () => {
     const actorSlug = createActorSlug(actor.name);
-    console.log("Card clicked, navigating to:", `/actor/${actorSlug}`);
-
-    // Track actor card click with PostHog
-    trackActorEvent("actor_card_clicked", {
-      actor_id: actor.id,
-      actor_name: actor.name,
-      actor_character: actor.character,
-      is_deceased: !!actor.deathday,
-      variant,
-      orientation,
-    });
-
-    // Track navigation event
-    const currentPage = window.location.pathname;
-    const targetPage = `/actor/${actorSlug}`;
-    trackNavigationEvent(currentPage, targetPage);
-
     navigate(`/actor/${actorSlug}`);
   };
 
   return (
-    <div className={styles.actorCardLink} onClick={handleCardClick}>
+    <div
+      className={styles.actorCardLink}
+      onClick={handleCardClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleCardClick();
+        }
+      }}
+      role="link"
+      tabIndex={0}
+      aria-label={`View ${actor.name}'s filmography`}
+    >
       <div className={cardClasses}>
         {showImage && <ActorImage actor={actor} size={imageSize} />}
         <div className={styles.actorDetails}>
@@ -67,6 +61,8 @@ const ActorCard: React.FC<ActorCardProps> = ({
       </div>
     </div>
   );
-};
+});
+
+ActorCard.displayName = "ActorCard";
 
 export default ActorCard;

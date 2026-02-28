@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   fetchMovieById,
@@ -66,31 +66,36 @@ const MovieDetails: React.FC = () => {
     return () => controller.abort();
   }, [movieIdentifier]);
 
-  if (!movie) return <p>Loading movie details...</p>;
-
   // Calculate Metrics Based on Original Cast (not filtered)
-  const totalActors = cast.length;
-  const actorsAlive = cast.filter((actor) => !actor.deathday).length;
-  const actorsDeceased = totalActors - actorsAlive;
+  const { actorsAlive, actorsDeceased } = useMemo(() => {
+    const alive = cast.filter((actor) => !actor.deathday).length;
+    return { actorsAlive: alive, actorsDeceased: cast.length - alive };
+  }, [cast]);
 
   // Filtered Cast Calculation
-  const filteredCast = cast
-    .filter((actor) => {
-      const statusCondition =
-        statusFilter === "All" ||
-        (statusFilter === "Deceased" && actor.deathday) ||
-        (statusFilter === "Alive" && !actor.deathday);
-      const imageCondition = !hideNoImage || actor.profile_path;
-      const birthDateCondition = !hideNoBirthDate || actor.birthday; // New filter condition
-      return statusCondition && imageCondition && birthDateCondition;
-    })
-    .sort((a, b) => {
-      if (sortOrder === "oldest")
-        return (b.currentAge || 0) - (a.currentAge || 0);
-      if (sortOrder === "youngest")
-        return (a.currentAge || 0) - (b.currentAge || 0);
-      return 0;
-    });
+  const filteredCast = useMemo(
+    () =>
+      cast
+        .filter((actor) => {
+          const statusCondition =
+            statusFilter === "All" ||
+            (statusFilter === "Deceased" && actor.deathday) ||
+            (statusFilter === "Alive" && !actor.deathday);
+          const imageCondition = !hideNoImage || actor.profile_path;
+          const birthDateCondition = !hideNoBirthDate || actor.birthday;
+          return statusCondition && imageCondition && birthDateCondition;
+        })
+        .sort((a, b) => {
+          if (sortOrder === "oldest")
+            return (b.currentAge || 0) - (a.currentAge || 0);
+          if (sortOrder === "youngest")
+            return (a.currentAge || 0) - (b.currentAge || 0);
+          return 0;
+        }),
+    [cast, statusFilter, sortOrder, hideNoImage, hideNoBirthDate]
+  );
+
+  if (!movie) return <p>Loading movie details...</p>;
 
   return (
     <div className={styles.movieDetailsContainer}>

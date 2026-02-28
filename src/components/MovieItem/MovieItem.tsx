@@ -21,6 +21,7 @@ const MovieItem: React.FC<MovieItemProps> = ({ movie }) => {
         src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
         alt={`${movie.title} poster`}
         className={styles.moviePoster}
+        loading="lazy"
       />
       <h3 className={styles.movieTitle}>{movie.title}</h3>
       <p className={styles.movieReleaseDate}>

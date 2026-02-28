@@ -14,7 +14,6 @@ import {
   logNavigation,
   logComponentRender,
 } from "../../utils/sentry";
-import { trackSearchEvent, trackNavigationEvent } from "../../utils/posthog";
 import { createMovieSlug, createActorSlug } from "../../utils/slugUtils";
 
 // ============================================================================
@@ -192,9 +191,6 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
       isHeaderSearch,
     });
 
-    // Track search event with PostHog
-    trackSearchEvent(query, 0, "movie"); // We'll update the count after fetching
-
     setError(null);
     setMovies([]); // Clear previous results
 
@@ -204,9 +200,6 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
 
       // Log search results
       logSearchQuery(query, movieResults.length, "movie");
-
-      // Update PostHog with actual results count
-      trackSearchEvent(query, movieResults.length, "movie");
 
       if (movieResults.length === 0) {
         setError("No movies found.");
@@ -305,17 +298,11 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
     // Log navigation
     logNavigation(currentPage, targetPage, "suggestion_click");
 
-    // Track suggestion click with PostHog
-    trackSearchEvent(itemTitle, 1, item.type);
-
     // Update input with selected item's name/title
     setQuery(itemTitle);
     setShowSuggestions(false);
     setSelectedIndex(-1);
     setPreventReopen(true); // Prevent suggestions from reopening
-
-    // Track navigation event
-    trackNavigationEvent(currentPage, targetPage);
 
     // Navigate to appropriate detail page
     if (item.type === "movie") {
@@ -353,11 +340,17 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
             value={query}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            placeholder={
-              isHeaderSearch
-                ? "Search for a movie or actor..."
-                : "Search for a movie or actor..."
+            placeholder="Search for a movie or actor..."
+            aria-label="Search for a movie or actor"
+            aria-autocomplete="list"
+            aria-controls={showSuggestions ? "search-suggestions" : undefined}
+            aria-activedescendant={
+              selectedIndex >= 0 && suggestions[selectedIndex]
+                ? `suggestion-${suggestions[selectedIndex].type}-${suggestions[selectedIndex].id}`
+                : undefined
             }
+            role="combobox"
+            aria-expanded={showSuggestions}
             className={`${styles.searchInput} ${
               isHeaderSearch ? styles.headerSearchInput : ""
             }`}
@@ -384,16 +377,25 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
 
       {/* Autocomplete Suggestions */}
       {showSuggestions && (
-        <ul ref={suggestionsRef} className={styles.suggestionsList}>
+        <ul
+          ref={suggestionsRef}
+          className={styles.suggestionsList}
+          id="search-suggestions"
+          role="listbox"
+          aria-label="Search suggestions"
+        >
           {suggestions.map((item, index) => (
             <li
-              key={`${item.type}-${item.id}`} // Unique key combining type and id
-              ref={index === selectedIndex ? selectedItemRef : null} // Ref for scrolling
+              key={`${item.type}-${item.id}`}
+              id={`suggestion-${item.type}-${item.id}`}
+              ref={index === selectedIndex ? selectedItemRef : null}
               onClick={() => handleSuggestionClick(item)}
               className={`${styles.suggestionItem} ${
                 index === selectedIndex ? styles.activeSuggestion : ""
               }`}
-              onMouseEnter={() => setSelectedIndex(index)} // Update selection on hover
+              role="option"
+              aria-selected={index === selectedIndex}
+              onMouseEnter={() => setSelectedIndex(index)}
             >
               {/* Render different content based on item type */}
               {item.type === "movie" ? (

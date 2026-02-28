@@ -34,6 +34,7 @@ export const ActorImage: React.FC<ActorImageProps> = ({
         src={`https://image.tmdb.org/t/p/w500${actor.profilePath}`}
         alt={`${actor.name} as ${actor.character}`}
         className={imageClasses}
+        loading="lazy"
       />
       {actor.deathday && (
         <div className={styles.deceasedRibbon}>

@@ -1,8 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import svgr from "vite-plugin-svgr";
-// import { sentryVitePlugin } from "@sentry/vite-plugin"; // Disabled for Windows dev env
-import { nodePolyfills } from "vite-plugin-node-polyfills";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import { version } from "./package.json";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -14,28 +13,19 @@ export default defineConfig({
   plugins: [
     react(),
     svgr(),
-    nodePolyfills({
-      include: ["util", "buffer", "process"],
-      globals: {
-        Buffer: true,
-        global: true,
-        process: true,
-      },
-    }),
-    // Sentry Vite plugin disabled on this machine to avoid acorn/unplugin resolution issues.
-    // If you need Sentry sourcemap uploads/build-time instrumentation, re-enable this block:
-    // process.env.SENTRY_AUTH_TOKEN &&
-    //   sentryVitePlugin({
-    //     org: "movieapp",
-    //     project: "javascript-react",
-    //     authToken: process.env.SENTRY_AUTH_TOKEN,
-    //     release: {
-    //       name: `movieapp@${version}`,
-    //     },
-    //     sourcemaps: {
-    //       assets: ["./dist/**"],
-    //     },
-    //   }),
+    // Only enable Sentry sourcemap uploads when auth token is available (CI/production builds)
+    process.env.SENTRY_AUTH_TOKEN &&
+      sentryVitePlugin({
+        org: "movieapp",
+        project: "javascript-react",
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+        release: {
+          name: `movieapp@${version}`,
+        },
+        sourcemaps: {
+          assets: ["./dist/**"],
+        },
+      }),
   ].filter(Boolean),
   resolve: {
     alias: {
@@ -56,10 +46,6 @@ export default defineConfig({
   },
   define: {
     __SENTRY_RELEASE__: JSON.stringify(`movieapp@${version}`),
-    global: "globalThis",
-    "process.env": {
-      NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-    },
   },
   optimizeDeps: {
     include: ["@sentry/react"],

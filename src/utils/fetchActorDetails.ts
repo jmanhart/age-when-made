@@ -38,8 +38,7 @@ const fetchActorDetails = async (actorId: number): Promise<ActorDetails> => {
     actorCache.set(actorId, details);
     return details;
   } catch (error) {
-    console.error("Error fetching actor details:", error);
-    return { birthday: null, deathday: null, profile_path: null, name: "" };
+    throw error;
   }
 };
 
