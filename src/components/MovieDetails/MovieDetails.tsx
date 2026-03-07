@@ -20,6 +20,10 @@ const MovieDetails: React.FC = () => {
   const [hideNoImage, setHideNoImage] = useState(true);
   const [hideNoBirthDate, setHideNoBirthDate] = useState(false);
   const [loadingCast, setLoadingCast] = useState<boolean>(true);
+  const [viewMode, setViewMode] = useState<"grid" | "timeline">("grid");
+  const [ageMode, setAgeMode] = useState<"ageAtRelease" | "currentAge">(
+    "ageAtRelease"
+  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -98,25 +102,31 @@ const MovieDetails: React.FC = () => {
   if (!movie) return <p>Loading movie details...</p>;
 
   return (
-    <div className={styles.movieDetailsContainer}>
-      <MovieSidebar
-        movie={movie}
-        actorsAlive={actorsAlive}
-        actorsDeceased={actorsDeceased}
-      />
-      <CastContent
-        filteredCast={filteredCast}
-        loadingCast={loadingCast}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        sortOrder={sortOrder}
-        setSortOrder={setSortOrder}
-        hideNoImage={hideNoImage}
-        setHideNoImage={setHideNoImage}
-        hideNoBirthDate={hideNoBirthDate}
-        setHideNoBirthDate={setHideNoBirthDate}
-      />
-    </div>
+    <>
+      <div className={styles.movieDetailsContainer}>
+        <MovieSidebar
+          movie={movie}
+          actorsAlive={actorsAlive}
+          actorsDeceased={actorsDeceased}
+        />
+        <CastContent
+          filteredCast={filteredCast}
+          loadingCast={loadingCast}
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
+          hideNoImage={hideNoImage}
+          setHideNoImage={setHideNoImage}
+          hideNoBirthDate={hideNoBirthDate}
+          setHideNoBirthDate={setHideNoBirthDate}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          ageMode={ageMode}
+          setAgeMode={setAgeMode}
+        />
+      </div>
+    </>
   );
 };
 
