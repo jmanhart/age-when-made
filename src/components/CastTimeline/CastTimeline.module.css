@@ -1,0 +1,128 @@
+/* ==============================
+   Vertical Age Timeline
+============================== */
+.timeline {
+  position: relative;
+  padding-left: 60px;
+  min-height: 200px;
+}
+
+/* Vertical line */
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 24px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-border);
+}
+
+/* ==============================
+   Age Group Row
+============================== */
+.ageGroup {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-5);
+  position: relative;
+}
+
+/* ==============================
+   Age Marker (circle on line)
+============================== */
+.ageMarker {
+  position: absolute;
+  left: -60px;
+  top: 4px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--color-primary);
+  background: var(--color-bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+/* ==============================
+   Actors Row (wrapping cards)
+============================== */
+.actorsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+  padding-top: 2px;
+}
+
+/* ==============================
+   Unknown Age Section
+============================== */
+.unknownLabel {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+/* ==============================
+   Empty State
+============================== */
+.emptyState {
+  padding: var(--spacing-6);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+}
+
+/* ==============================
+   Responsive
+============================== */
+@media (max-width: 1024px) {
+  .timeline {
+    padding-left: 56px;
+  }
+}
+
+@media (max-width: 768px) {
+  .timeline {
+    padding-left: 52px;
+  }
+
+  .ageMarker {
+    width: 40px;
+    height: 40px;
+    font-size: var(--font-size-xs);
+    left: -52px;
+  }
+
+  .timeline::before {
+    left: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .timeline {
+    padding-left: 48px;
+  }
+
+  .ageMarker {
+    width: 36px;
+    height: 36px;
+    left: -48px;
+  }
+
+  .timeline::before {
+    left: 18px;
+  }
+
+  .actorsRow {
+    gap: var(--spacing-2);
+  }
+}

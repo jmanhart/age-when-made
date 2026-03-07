@@ -1,6 +1,8 @@
 import React from "react";
 import { Actor } from "../../types/types";
 import ActorCard from "../ActorCard/ActorCard";
+import { CastTimeline } from "../CastTimeline";
+import { mapActorToProps } from "./utils";
 import Select from "../Select/Select";
 import SettingsMenu from "../SettingsMenu/SettingsMenu";
 import styles from "./MovieDetails.module.css";
@@ -16,6 +18,10 @@ interface CastContentProps {
   setHideNoImage: (value: boolean) => void;
   hideNoBirthDate: boolean;
   setHideNoBirthDate: (value: boolean) => void;
+  viewMode: "grid" | "timeline";
+  setViewMode: (value: "grid" | "timeline") => void;
+  ageMode: "ageAtRelease" | "currentAge";
+  setAgeMode: (value: "ageAtRelease" | "currentAge") => void;
 }
 
 const CastContent: React.FC<CastContentProps> = ({
@@ -29,6 +35,10 @@ const CastContent: React.FC<CastContentProps> = ({
   setHideNoImage,
   hideNoBirthDate,
   setHideNoBirthDate,
+  viewMode,
+  setViewMode,
+  ageMode,
+  setAgeMode,
 }) => {
   const statusOptions = [
     { value: "All", label: "All" },
@@ -75,6 +85,48 @@ const CastContent: React.FC<CastContentProps> = ({
             options={sortOptions}
             className={styles.sortOrder}
           />
+
+          {/* View Toggle */}
+          <div className={styles.viewToggles}>
+            <button
+              className={`${styles.viewToggleButton} ${
+                viewMode === "grid" ? styles.viewToggleActive : ""
+              }`}
+              onClick={() => setViewMode("grid")}
+            >
+              Grid
+            </button>
+            <button
+              className={`${styles.viewToggleButton} ${
+                viewMode === "timeline" ? styles.viewToggleActive : ""
+              }`}
+              onClick={() => setViewMode("timeline")}
+            >
+              Timeline
+            </button>
+          </div>
+
+          {/* Age Mode Toggle (only in timeline view) */}
+          {viewMode === "timeline" && (
+            <div className={styles.ageToggles}>
+              <button
+                className={`${styles.viewToggleButton} ${
+                  ageMode === "ageAtRelease" ? styles.viewToggleActive : ""
+                }`}
+                onClick={() => setAgeMode("ageAtRelease")}
+              >
+                Age When Made
+              </button>
+              <button
+                className={`${styles.viewToggleButton} ${
+                  ageMode === "currentAge" ? styles.viewToggleActive : ""
+                }`}
+                onClick={() => setAgeMode("currentAge")}
+              >
+                Current Age
+              </button>
+            </div>
+          )}
         </div>
 
         <div>
@@ -82,39 +134,32 @@ const CastContent: React.FC<CastContentProps> = ({
         </div>
       </div>
 
-      {/* Cast Grid */}
-      <div className={styles.castGrid}>
-        {loadingCast
-          ? Array(8)
-              .fill(0)
-              .map((_, index) => (
-                <div key={index} className={styles.placeholderCastItem}>
-                  <div className={styles.placeholderImage}></div>
-                  <div className={styles.placeholderText}></div>
-                  <div className={styles.placeholderText}></div>
-                  <div className={styles.placeholderText}></div>
-                </div>
-              ))
-          : filteredCast.map((actor) => (
-              <ActorCard
-                key={actor.id}
-                actor={{
-                  id: actor.id,
-                  name: actor.name,
-                  character: actor.character,
-                  profilePath: actor.profile_path || undefined,
-                  birthday: actor.birthday || undefined,
-                  deathday: actor.deathday || undefined,
-                  currentAge: actor.currentAge || undefined,
-                  ageAtDeath: actor.ageAtDeath || undefined,
-                  ageAtRelease: actor.ageAtRelease || undefined,
-                }}
-              />
-            ))}
-      </div>
+      {/* Cast View */}
+      {viewMode === "grid" ? (
+        <div className={styles.castGrid}>
+          {loadingCast
+            ? Array(8)
+                .fill(0)
+                .map((_, index) => (
+                  <div key={index} className={styles.placeholderCastItem}>
+                    <div className={styles.placeholderImage}></div>
+                    <div className={styles.placeholderText}></div>
+                    <div className={styles.placeholderText}></div>
+                    <div className={styles.placeholderText}></div>
+                  </div>
+                ))
+            : filteredCast.map((actor) => (
+                <ActorCard
+                  key={actor.id}
+                  actor={mapActorToProps(actor)}
+                />
+              ))}
+        </div>
+      ) : (
+        <CastTimeline filteredCast={filteredCast} ageMode={ageMode} sortOrder={sortOrder} />
+      )}
     </main>
   );
 };
 
 export default CastContent;
-
