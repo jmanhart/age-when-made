@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Actor } from "../../types/types";
 import ActorCard from "../ActorCard/ActorCard";
+import YouCard from "../YouCard/YouCard";
 import { CastTimeline } from "../CastTimeline";
 import { mapActorToProps } from "./utils";
-import Select from "../Select/Select";
+import { calculateAgeAtDate } from "../../utils/calculateAge";
+import SegmentControl from "../SegmentControl/SegmentControl";
+import SortCycleButton from "../SortCycleButton/SortCycleButton";
 import SettingsMenu from "../SettingsMenu/SettingsMenu";
 import styles from "./MovieDetails.module.css";
 
@@ -22,6 +25,11 @@ interface CastContentProps {
   setViewMode: (value: "grid" | "timeline") => void;
   ageMode: "ageAtRelease" | "currentAge";
   setAgeMode: (value: "ageAtRelease" | "currentAge") => void;
+  birthDate?: string | null;
+  movieReleaseDate?: string;
+  totalCast: number;
+  actorsAlive: number;
+  actorsDeceased: number;
 }
 
 const CastContent: React.FC<CastContentProps> = ({
@@ -39,18 +47,48 @@ const CastContent: React.FC<CastContentProps> = ({
   setViewMode,
   ageMode,
   setAgeMode,
+  birthDate,
+  movieReleaseDate,
+  totalCast,
+  actorsAlive,
+  actorsDeceased,
 }) => {
-  const statusOptions = [
-    { value: "All", label: "All" },
-    { value: "Alive", label: "Alive" },
-    { value: "Deceased", label: "Deceased" },
+  const statusSegments = [
+    { value: "All", label: "All", count: totalCast },
+    { value: "Alive", label: "Alive", count: actorsAlive },
+    { value: "Deceased", label: "Dead", count: actorsDeceased },
   ];
 
-  const sortOptions = [
-    { value: "none", label: "No Sort" },
-    { value: "oldest", label: "Oldest" },
-    { value: "youngest", label: "Youngest" },
+  const viewSegments = [
+    { value: "grid", label: "Grid" },
+    { value: "timeline", label: "Timeline" },
   ];
+
+  const ageModeSegments = [
+    { value: "ageAtRelease", label: "Age When Made" },
+    { value: "currentAge", label: "Current Age" },
+  ];
+
+  const showYouCard = !!birthDate && !!movieReleaseDate && statusFilter !== "Deceased";
+
+  const userCurrentAge = useMemo(() => {
+    if (!birthDate) return null;
+    return calculateAgeAtDate(birthDate, new Date().toISOString().split("T")[0]);
+  }, [birthDate]);
+
+  const youCardIndex = useMemo(() => {
+    if (!showYouCard || userCurrentAge === null) return 0;
+    if (sortOrder === "none") return 0;
+
+    const idx = filteredCast.findIndex((actor) => {
+      const actorAge = actor.currentAge || 0;
+      if (sortOrder === "oldest") return userCurrentAge > actorAge;
+      if (sortOrder === "youngest") return userCurrentAge < actorAge;
+      return false;
+    });
+
+    return idx === -1 ? filteredCast.length : idx;
+  }, [filteredCast, sortOrder, userCurrentAge, showYouCard]);
 
   const settingsOptions = [
     {
@@ -72,60 +110,27 @@ const CastContent: React.FC<CastContentProps> = ({
       {/* Filter and Sort Controls */}
       <div className={styles.filterSortContainer}>
         <div className={styles.filterSortWrapper}>
-          <Select
+          <SegmentControl
+            segments={statusSegments}
             value={statusFilter}
             onChange={setStatusFilter}
-            options={statusOptions}
-            className={styles.statusFilter}
           />
 
-          <Select
-            value={sortOrder}
-            onChange={setSortOrder}
-            options={sortOptions}
-            className={styles.sortOrder}
-          />
+          <SortCycleButton value={sortOrder} onChange={setSortOrder} />
 
-          {/* View Toggle */}
-          <div className={styles.viewToggles}>
-            <button
-              className={`${styles.viewToggleButton} ${
-                viewMode === "grid" ? styles.viewToggleActive : ""
-              }`}
-              onClick={() => setViewMode("grid")}
-            >
-              Grid
-            </button>
-            <button
-              className={`${styles.viewToggleButton} ${
-                viewMode === "timeline" ? styles.viewToggleActive : ""
-              }`}
-              onClick={() => setViewMode("timeline")}
-            >
-              Timeline
-            </button>
-          </div>
+          <SegmentControl
+            segments={viewSegments}
+            value={viewMode}
+            onChange={(v) => setViewMode(v as "grid" | "timeline")}
+          />
 
           {/* Age Mode Toggle (only in timeline view) */}
           {viewMode === "timeline" && (
-            <div className={styles.ageToggles}>
-              <button
-                className={`${styles.viewToggleButton} ${
-                  ageMode === "ageAtRelease" ? styles.viewToggleActive : ""
-                }`}
-                onClick={() => setAgeMode("ageAtRelease")}
-              >
-                Age When Made
-              </button>
-              <button
-                className={`${styles.viewToggleButton} ${
-                  ageMode === "currentAge" ? styles.viewToggleActive : ""
-                }`}
-                onClick={() => setAgeMode("currentAge")}
-              >
-                Current Age
-              </button>
-            </div>
+            <SegmentControl
+              segments={ageModeSegments}
+              value={ageMode}
+              onChange={(v) => setAgeMode(v as "ageAtRelease" | "currentAge")}
+            />
           )}
         </div>
 
@@ -148,15 +153,28 @@ const CastContent: React.FC<CastContentProps> = ({
                     <div className={styles.placeholderText}></div>
                   </div>
                 ))
-            : filteredCast.map((actor) => (
-                <ActorCard
-                  key={actor.id}
-                  actor={mapActorToProps(actor)}
-                />
-              ))}
+            : <>
+                {filteredCast.map((actor, index) => (
+                  <React.Fragment key={actor.id}>
+                    {showYouCard && index === youCardIndex && (
+                      <YouCard birthDate={birthDate!} movieReleaseDate={movieReleaseDate!} />
+                    )}
+                    <ActorCard actor={mapActorToProps(actor)} />
+                  </React.Fragment>
+                ))}
+                {showYouCard && youCardIndex >= filteredCast.length && (
+                  <YouCard birthDate={birthDate!} movieReleaseDate={movieReleaseDate!} />
+                )}
+              </>}
         </div>
       ) : (
-        <CastTimeline filteredCast={filteredCast} ageMode={ageMode} sortOrder={sortOrder} />
+        <CastTimeline
+          filteredCast={filteredCast}
+          ageMode={ageMode}
+          sortOrder={sortOrder}
+          birthDate={statusFilter !== "Deceased" ? birthDate : null}
+          movieReleaseDate={movieReleaseDate}
+        />
       )}
     </main>
   );

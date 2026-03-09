@@ -34,6 +34,14 @@
   align-self: flex-start;
 }
 
+.logo {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+}
+
 .moviePoster {
   width: 100%;
   height: auto;
@@ -460,44 +468,7 @@
   align-items: center;
 }
 
-/* ==============================
-   View Toggle Buttons
-============================== */
-.viewToggles,
-.ageToggles {
-  display: flex;
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius);
-  overflow: hidden;
-}
-
-.viewToggleButton {
-  padding: var(--spacing-2) var(--spacing-3);
-  font-size: var(--font-size-sm);
-  border: none;
-  background-color: var(--color-bg-primary);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: var(--transition);
-  white-space: nowrap;
-}
-
-.viewToggleButton:not(:last-child) {
-  border-right: 1px solid var(--color-border);
-}
-
-.viewToggleButton:hover {
-  background-color: var(--color-hover);
-}
-
-.viewToggleActive {
-  background-color: var(--color-primary);
-  color: var(--color-button-text);
-}
-
-.viewToggleActive:hover {
-  background-color: var(--color-primary-hover);
-}
+/* (Status and view toggle styles moved to SegmentControl component) */
 
 /* Mortality Tags Container */
 .mortalityTags {

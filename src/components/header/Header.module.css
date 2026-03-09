@@ -4,8 +4,8 @@
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: var(--header-padding-y) var(--header-padding-x);
+  gap: var(--spacing-4);
+  padding: var(--spacing-3) var(--spacing-5);
   min-height: var(--header-height);
   background-color: var(--color-bg);
   color: var(--color-text);
@@ -19,29 +19,19 @@
   box-sizing: border-box;
 }
 
-.backButton {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 18px;
+.logo {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
   cursor: pointer;
-  padding: 8px 12px;
+  flex-shrink: 0;
+  user-select: none;
 }
 
-.backButton:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-}
-
-.logo h1 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.searchContainer {
-  flex: 1;
-  margin-left: 20px;
+.logo:hover {
+  color: var(--color-primary);
 }
 
 /* ==============================
@@ -49,12 +39,14 @@
 ============================== */
 @media (max-width: 768px) {
   .header {
-    gap: 12px;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3) var(--spacing-4);
   }
 }
 
 @media (max-width: 600px) {
   .header {
-    gap: 8px;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-3);
   }
 }

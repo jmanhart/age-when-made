@@ -1,0 +1,42 @@
+.segmentControl {
+  display: flex;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.segment {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  border: none;
+  background-color: var(--color-bg-primary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.segment:not(:last-child) {
+  border-right: 1px solid var(--color-border);
+}
+
+.segment:hover {
+  background-color: var(--color-hover);
+}
+
+.segmentActive {
+  background-color: var(--color-primary);
+  color: var(--color-button-text);
+}
+
+.segmentActive:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.count {
+  font-weight: var(--font-weight-bold);
+}

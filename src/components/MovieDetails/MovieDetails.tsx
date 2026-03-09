@@ -10,9 +10,11 @@ import styles from "./MovieDetails.module.css";
 import { parseMovieIdentifier } from "../../utils/slugUtils";
 import MovieSidebar from "./MovieSidebar";
 import CastContent from "./CastContent";
+import { useBirthDate } from "../../hooks/useBirthDate";
 
 const MovieDetails: React.FC = () => {
   const { movieIdentifier } = useParams<{ movieIdentifier: string }>();
+  const { birthDate } = useBirthDate();
   const [movie, setMovie] = useState<Movie | null>(null);
   const [cast, setCast] = useState<Actor[]>([]);
   const [statusFilter, setStatusFilter] = useState("All");
@@ -124,6 +126,11 @@ const MovieDetails: React.FC = () => {
           setViewMode={setViewMode}
           ageMode={ageMode}
           setAgeMode={setAgeMode}
+          birthDate={birthDate}
+          movieReleaseDate={movie.release_date}
+          totalCast={cast.length}
+          actorsAlive={actorsAlive}
+          actorsDeceased={actorsDeceased}
         />
       </div>
     </>

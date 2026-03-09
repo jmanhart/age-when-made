@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 import "./styles/theme.css";
 import { SentryErrorBoundary } from "./components/ErrorBoundary";
+import { BirthDateProvider } from "./hooks/useBirthDate";
 
 import Header from "./components/header";
 import MovieDetails from "./components/MovieDetails";
@@ -22,6 +23,7 @@ const App = () => {
 
   return (
     <SentryErrorBoundary>
+      <BirthDateProvider>
       <Router>
         <div
           style={{
@@ -31,9 +33,10 @@ const App = () => {
             overscrollBehavior: "none",
           }}
         >
+          <Header />
           <main
             style={{
-              paddingTop: "var(--header-height)",
+              paddingTop: "calc(var(--header-height) + var(--spacing-4))",
               flex: 1,
               overscrollBehavior: "none",
             }}
@@ -53,6 +56,7 @@ const App = () => {
           </main>
         </div>
       </Router>
+      </BirthDateProvider>
     </SentryErrorBoundary>
   );
 };

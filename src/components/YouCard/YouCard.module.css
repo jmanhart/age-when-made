@@ -1,0 +1,97 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  width: var(--actor-card-width, 200px);
+  background-color: var(--color-bg-secondary);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--border-radius);
+  box-shadow: var(--color-shadow);
+  color: var(--text-primary);
+}
+
+.card--compact {
+  width: auto;
+  padding: var(--spacing-3);
+  gap: var(--spacing-2);
+}
+
+.avatarPlaceholder {
+  width: 100%;
+  aspect-ratio: 2/3;
+  border-radius: var(--border-radius);
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-3);
+}
+
+.avatarPlaceholder--compact {
+  width: var(--actor-image-width-small);
+  aspect-ratio: 2/3;
+  font-size: var(--font-size-xl);
+  margin-bottom: 0;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin: var(--spacing-4);
+}
+
+.card--compact .details {
+  margin: 0;
+}
+
+.name {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  line-height: var(--line-height-tight);
+  margin: 0;
+}
+
+.metrics {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-2);
+}
+
+.metricRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: var(--line-height-snug);
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.metricLabel {
+  text-align: left;
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  margin-right: var(--spacing-2);
+  font-size: var(--font-size-base);
+}
+
+.metricValue {
+  text-align: right;
+  color: var(--text-primary);
+  flex-shrink: 0;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+}
+
+.olderNote {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  font-style: italic;
+  margin-top: var(--spacing-2);
+}
