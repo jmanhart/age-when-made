@@ -238,7 +238,6 @@
 
   .castGrid {
     gap: var(--spacing-3);
-    justify-content: center; /* Center cards on small screens */
   }
 
   .movieTitle {
@@ -268,7 +267,7 @@
 ============================== */
 .castGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, var(--actor-card-width));
+  grid-template-columns: repeat(auto-fill, minmax(var(--actor-card-width), 1fr));
   gap: var(--spacing-4);
   width: 100%;
   justify-content: start;

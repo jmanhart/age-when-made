@@ -1,7 +1,7 @@
 .card {
   display: flex;
   flex-direction: column;
-  width: var(--actor-card-width, 200px);
+  width: 100%;
   background-color: var(--color-bg-secondary);
   border: 2px solid var(--color-primary);
   border-radius: var(--border-radius);
@@ -95,3 +95,4 @@
   font-style: italic;
   margin-top: var(--spacing-2);
 }
+

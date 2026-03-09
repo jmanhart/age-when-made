@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { Actor } from "../../types/types";
 import ActorCard from "../ActorCard/ActorCard";
 import YouCard from "../YouCard/YouCard";
-import { CastTimeline } from "../CastTimeline";
 import { mapActorToProps } from "./utils";
 import { calculateAgeAtDate } from "../../utils/calculateAge";
 import SegmentControl from "../SegmentControl/SegmentControl";
@@ -117,6 +116,7 @@ const CastContent: React.FC<CastContentProps> = ({
 
         <SortCycleButton value={sortOrder} onChange={setSortOrder} />
 
+        {/* Timeline toggle hidden for now
         <SegmentControl
           segments={viewSegments}
           value={viewMode}
@@ -130,47 +130,38 @@ const CastContent: React.FC<CastContentProps> = ({
             onChange={(v) => setAgeMode(v as "ageAtRelease" | "currentAge")}
           />
         )}
+        */}
 
         <SettingsMenu options={settingsOptions} />
       </div>
 
       {/* Cast View */}
-      {viewMode === "grid" ? (
-        <div className={styles.castGrid}>
-          {loadingCast
-            ? Array(8)
-                .fill(0)
-                .map((_, index) => (
-                  <div key={index} className={styles.placeholderCastItem}>
-                    <div className={styles.placeholderImage}></div>
-                    <div className={styles.placeholderText}></div>
-                    <div className={styles.placeholderText}></div>
-                    <div className={styles.placeholderText}></div>
-                  </div>
-                ))
-            : <>
-                {filteredCast.map((actor, index) => (
-                  <React.Fragment key={actor.id}>
-                    {showYouCard && index === youCardIndex && (
-                      <YouCard birthDate={birthDate!} movieReleaseDate={movieReleaseDate!} />
-                    )}
-                    <ActorCard actor={mapActorToProps(actor)} />
-                  </React.Fragment>
-                ))}
-                {showYouCard && youCardIndex >= filteredCast.length && (
-                  <YouCard birthDate={birthDate!} movieReleaseDate={movieReleaseDate!} />
-                )}
-              </>}
-        </div>
-      ) : (
-        <CastTimeline
-          filteredCast={filteredCast}
-          ageMode={ageMode}
-          sortOrder={sortOrder}
-          birthDate={statusFilter !== "Deceased" ? birthDate : null}
-          movieReleaseDate={movieReleaseDate}
-        />
-      )}
+      <div className={styles.castGrid}>
+        {loadingCast
+          ? Array(8)
+              .fill(0)
+              .map((_, index) => (
+                <div key={index} className={styles.placeholderCastItem}>
+                  <div className={styles.placeholderImage}></div>
+                  <div className={styles.placeholderText}></div>
+                  <div className={styles.placeholderText}></div>
+                  <div className={styles.placeholderText}></div>
+                </div>
+              ))
+          : <>
+              {filteredCast.map((actor, index) => (
+                <React.Fragment key={actor.id}>
+                  {showYouCard && index === youCardIndex && (
+                    <YouCard birthDate={birthDate!} movieReleaseDate={movieReleaseDate!} />
+                  )}
+                  <ActorCard actor={mapActorToProps(actor)} />
+                </React.Fragment>
+              ))}
+              {showYouCard && youCardIndex >= filteredCast.length && (
+                <YouCard birthDate={birthDate!} movieReleaseDate={movieReleaseDate!} />
+              )}
+            </>}
+      </div>
     </main>
   );
 };

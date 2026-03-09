@@ -2,7 +2,7 @@
 .castItem {
   display: flex;
   flex-direction: column;
-  width: var(--actor-card-width, 200px); /* Standard width matching image ratio */
+  width: 100%;
   background-color: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius);
@@ -118,17 +118,6 @@
   display: block;
 }
 
-.image--small {
-  width: var(--actor-image-width-small);
-}
-
-.image--medium {
-  width: var(--actor-image-width-medium);
-}
-
-.image--large {
-  width: var(--actor-image-width-large);
-}
 
 .deceased {
   filter: grayscale(100%) brightness(0.7) contrast(1);
@@ -225,22 +214,11 @@
     flex-direction: column;
   }
 
-  .image--small {
-    width: calc(var(--actor-image-width-small) * 0.8);
-  }
-
-  .image--medium {
-    width: calc(var(--actor-image-width-medium) * 0.8);
-  }
-
-  .image--large {
-    width: calc(var(--actor-image-width-large) * 0.8);
-  }
 }
 
 .imageContainer {
   position: relative;
-  display: inline-block;
+  width: 100%;
 }
 
 .deceasedRibbon {

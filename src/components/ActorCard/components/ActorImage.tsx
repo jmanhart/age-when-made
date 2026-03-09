@@ -19,7 +19,6 @@ export const ActorImage: React.FC<ActorImageProps> = ({
     {
       [styles.deceased]: actor.deathday,
       [styles.noImage]: !actor.profilePath,
-      [styles[`image--${size}`]]: size,
     },
     className
   );

@@ -383,6 +383,7 @@ const MovieSearch: React.FC<MovieSearchProps> = ({
           id="search-suggestions"
           role="listbox"
           aria-label="Search suggestions"
+          onMouseDown={(e) => e.preventDefault()}
         >
           {suggestions.map((item, index) => (
             <li
