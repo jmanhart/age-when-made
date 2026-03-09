@@ -112,13 +112,7 @@
 /* ==============================
    Filter and Sort Controls
 ============================== */
-.filterSortContainer {
-  display: flex;
-  gap: var(--spacing-3);
-  margin-bottom: var(--spacing-5);
-  align-items: center;
-  justify-content: space-between;
-}
+/* (filterSortContainer removed — controls are in filterSortWrapper) */
 
 .statusFilter,
 .sortOrder {
@@ -463,9 +457,10 @@
 
 .filterSortWrapper {
   display: flex;
-  gap: var(--spacing-4);
+  gap: var(--spacing-3);
   flex-wrap: wrap;
   align-items: center;
+  margin-bottom: var(--spacing-5);
 }
 
 /* (Status and view toggle styles moved to SegmentControl component) */

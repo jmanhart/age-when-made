@@ -108,35 +108,30 @@ const CastContent: React.FC<CastContentProps> = ({
   return (
     <main className={styles.mainContent}>
       {/* Filter and Sort Controls */}
-      <div className={styles.filterSortContainer}>
-        <div className={styles.filterSortWrapper}>
+      <div className={styles.filterSortWrapper}>
+        <SegmentControl
+          segments={statusSegments}
+          value={statusFilter}
+          onChange={setStatusFilter}
+        />
+
+        <SortCycleButton value={sortOrder} onChange={setSortOrder} />
+
+        <SegmentControl
+          segments={viewSegments}
+          value={viewMode}
+          onChange={(v) => setViewMode(v as "grid" | "timeline")}
+        />
+
+        {viewMode === "timeline" && (
           <SegmentControl
-            segments={statusSegments}
-            value={statusFilter}
-            onChange={setStatusFilter}
+            segments={ageModeSegments}
+            value={ageMode}
+            onChange={(v) => setAgeMode(v as "ageAtRelease" | "currentAge")}
           />
+        )}
 
-          <SortCycleButton value={sortOrder} onChange={setSortOrder} />
-
-          <SegmentControl
-            segments={viewSegments}
-            value={viewMode}
-            onChange={(v) => setViewMode(v as "grid" | "timeline")}
-          />
-
-          {/* Age Mode Toggle (only in timeline view) */}
-          {viewMode === "timeline" && (
-            <SegmentControl
-              segments={ageModeSegments}
-              value={ageMode}
-              onChange={(v) => setAgeMode(v as "ageAtRelease" | "currentAge")}
-            />
-          )}
-        </div>
-
-        <div>
-          <SettingsMenu options={settingsOptions} />
-        </div>
+        <SettingsMenu options={settingsOptions} />
       </div>
 
       {/* Cast View */}
